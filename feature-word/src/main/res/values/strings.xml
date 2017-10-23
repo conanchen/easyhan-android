@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">粉红字帖</string>
+    <string name="prompt_url">请输入图片URL</string>
+    <string name="prompt_infourl">请输入推广图片的网页URL</string>
+    <string name="title_prompt">请输入图片标题</string>
+    <string name="pageto">立即翻到页数</string>
+    <string name="memory_level_0">此时与君未相识</string>
+    <string name="memory_level_1">与君始相识</string>
+    <string name="memory_level_2">回头忘相识</string>
+    <string name="memory_level_3">忆初相识到今朝</string>
+    <string name="memory_level_4">相识虽新有故情</string>
+    <string name="memory_level_5">十五即相识</string>
+    <string name="memory_level_6">村中相识久</string>
+    <string name="memory_level_7">恨与卢君相识迟</string>
+</resources>

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.ditto.feature.word.profile.UpsertActivity">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:statusBarScrim="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <!--封面图片-->
+            <ImageView
+                android:id="@+id/backdrop"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sexy_girl08"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7"
+                android:fitsSystemWindows="true" />
+
+            <!--视频及弹幕控件-->
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <!--自定义带图片的立即保存按钮-->
+                <android.support.v7.widget.ButtonBarLayout
+                    android:id="@+id/toolbar_button_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:visibility="gone">
+
+                    <ImageButton
+                        android:id="@+id/saveButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_save_black_24dp" />
+
+                </android.support.v7.widget.ButtonBarLayout>
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+    <!--
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/url_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+
+                    <AutoCompleteTextView
+                        android:id="@+id/textViewUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_url"
+                        android:text="http://n.7k7kimg.cn/2013/0316/1363403583271.jpg"
+                        android:inputType="textUri"
+                        android:imeOptions="actionNext"/>
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/infourl_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/url_layout">
+
+
+                    <AutoCompleteTextView
+                        android:id="@+id/textViewInfoUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/prompt_infourl"
+                        android:inputType="textUri"
+                        android:imeOptions="actionNext"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/title_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/infourl_layout">
+
+                    <android.support.v7.widget.AppCompatEditText
+                        android:id="@+id/textViewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dp_8"
+                        android:hint="@string/title_prompt"
+                        android:inputType="text"
+                        android:imeOptions="actionNext"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.v7.widget.GridLayout
+                    android:id="@+id/type_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_8"
+                    android:layout_marginStart="@dimen/dp_8"
+
+                    app:columnCount="3"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_layout">
+
+                    <RadioButton
+                        android:id="@+id/radioNormal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Normal"
+                        app:layout_columnWeight="1" />
+
+                    <RadioButton
+                        android:id="@+id/radioPoster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poster"
+                        app:layout_columnWeight="1" />
+
+                    <Space app:layout_columnWeight="1" />
+
+                    <RadioButton
+                        android:id="@+id/radioSexy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sexy"
+                        app:layout_columnWeight="1" />
+
+                    <RadioButton
+                        android:id="@+id/radioPorn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Porn"
+                        app:layout_columnWeight="1" />
+
+                    <RadioButton
+                        android:id="@+id/radioSecret"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Secret"
+                        app:layout_columnWeight="1" />
+                </android.support.v7.widget.GridLayout>
+
+                <android.support.v7.widget.GridLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/dp_8"
+                    android:layout_marginTop="@dimen/dp_16"
+                    app:columnCount="3"
+                    app:layout_constraintBottom_toTopOf="@+id/visitCountValue"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/type_layout">
+
+
+                    <CheckBox
+                        android:id="@+id/checkActive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Active"
+                        app:layout_columnWeight="1" />
+
+                    <CheckBox
+                        android:id="@+id/checkToprank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Toprank"
+                        app:layout_columnWeight="1" />
+
+                    <Space app:layout_columnWeight="1" />
+                </android.support.v7.widget.GridLayout>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/visitCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:text="Visit Count: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toTopOf="@+id/created"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/visitCountValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:text="33388"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toTopOf="@+id/created"
+                    app:layout_constraintLeft_toRightOf="@+id/visitCount"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:text="Created: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toTopOf="@+id/lastUpdated"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/createdValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:maxLines="1"
+                    android:text="2019-09-21 23:23:22.234"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toTopOf="@+id/lastUpdated"
+                    app:layout_constraintLeft_toRightOf="@+id/created"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/lastUpdated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:text="LastUpd: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/lastUpdatedValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_16"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:maxLines="1"
+                    android:text="2019-09-22 23:23:22.234"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/lastUpdated"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+    -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/itemlist"
+        android:name="org.ditto.hiask.MesssagesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="GridLayoutManager"
+        tools:listitem="@layout/fragment_item"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_save_black_24dp"
+        android:visibility="visible"
+        android:gravity="top"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|right" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabdel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_delete_forever_black_24dp"
+        android:visibility="gone"
+        android:gravity="top"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|center" />
+
+
+</android.support.design.widget.CoordinatorLayout>

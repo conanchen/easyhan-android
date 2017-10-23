@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/type_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/dp_8"
+    android:layout_marginStart="@dimen/dp_8"
+    app:columnCount="3">
+
+    <RadioButton
+        android:id="@+id/radioNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Normal"
+        app:layout_columnWeight="1" />
+
+    <RadioButton
+        android:id="@+id/radioPoster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Poster"
+        app:layout_columnWeight="1" />
+
+    <Space app:layout_columnWeight="1" />
+
+    <RadioButton
+        android:id="@+id/radioSexy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sexy"
+        app:layout_columnWeight="1" />
+
+    <RadioButton
+        android:id="@+id/radioPorn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Porn"
+        app:layout_columnWeight="1" />
+
+    <RadioButton
+        android:id="@+id/radioSecret"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Secret"
+        app:layout_columnWeight="1" />
+</android.support.v7.widget.GridLayout>
+

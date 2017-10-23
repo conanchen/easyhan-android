@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">module-common</string>
+    <string name="ads_network">服务器连接失败，不能处理你的请求。担心网络流量？购买中国🇨🇳联通冰淇淋🍦套餐，再也不用担心了。没有打开网络连接？设置立即打开。</string>
+    <string name="loadmore">装载更多....</string>
+    <string name="refresh">正在刷新获取最新数据</string>
+</resources>

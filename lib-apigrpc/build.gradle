@@ -1,0 +1,108 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url 'https://dl.google.com/dl/android/maven2' }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.5.0'
+        classpath "com.jakewharton:butterknife-gradle-plugin:$BUTTERKNIFE_VERSION"
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.jakewharton.butterknife'
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+
+    publishNonDefault true
+
+    compileSdkVersion rootProject.COMPILE_SDK_VERSION
+    buildToolsVersion rootProject.ANDROID_BUILD_TOOLS_VERSION
+
+    // For retrolambda
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
+    defaultConfig {
+        minSdkVersion rootProject.MIN_SDK_VERSION
+        targetSdkVersion rootProject.TARGET_SDK_VERSION
+        //multiDexEnabled true
+        versionCode 1
+        versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName() ]
+            }
+        }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+            buildConfigField 'String', 'ENVIRONMENT', '"PRODUCTION"'
+            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
+            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"'
+            buildConfigField 'Integer', 'GRPC_SERVER_PORT', '8980'
+        }
+
+        debug {
+            signingConfig signingConfigs.debug
+            buildConfigField 'String', 'AMAPKEY', '"4d83adc4a7dea5315096f8629a8c9a02"'
+            buildConfigField 'String', 'ENVIRONMENT', '"DEBUG"'
+            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
+//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"' //本机公司
+//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.0.100"' //本机家里
+            buildConfigField 'String', 'GRPC_SERVER_HOST', '"10.9.62.84"'  //PC公司
+            buildConfigField 'Integer', 'GRPC_SERVER_PORT', '8980'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.github.conanchen.easyhan-api:grpc-manage-javalite:master-SNAPSHOT'
+
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile "android.arch.lifecycle:extensions:$arch_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$arch_version"
+
+
+    //grpc
+    compile "io.grpc:grpc-okhttp:$GRPC_VERSION"
+    compile "io.grpc:grpc-protobuf-lite:$GRPC_VERSION"
+    compile "io.grpc:grpc-stub:$GRPC_VERSION"
+
+    compile "com.google.code.gson:gson:$GSON_VERSION"
+    compile("io.grpc:grpc-services:$GRPC_VERSION")
+
+    compile "com.google.dagger:dagger:$dagger_version"
+    compile "com.google.dagger:dagger-android:$dagger_version"
+    compile "com.google.dagger:dagger-android-support:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+
+
+    testCompile 'junit:junit:4.12'
+}
