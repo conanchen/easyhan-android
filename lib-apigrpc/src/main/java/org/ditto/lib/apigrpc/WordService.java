@@ -191,7 +191,7 @@ public class WordService {
         ManagedChannel channel = getManagedChannel();
 
         ConnectivityState connectivityState = channel.getState(true);
-        Log.i(TAG, String.format("listWords connectivityState = [%s]", gson.toJson(connectivityState)));
+        Log.i(TAG, String.format("listMyWords BuildConfig.GRPC_SERVER_HOST=%s, BuildConfig.GRPC_SERVER_PORT=%d,connectivityState = [%s]", BuildConfig.GRPC_SERVER_HOST, BuildConfig.GRPC_SERVER_PORT,gson.toJson(connectivityState)));
 
         HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
@@ -203,13 +203,13 @@ public class WordService {
                     public void onNext(HealthCheckResponse value) {
 
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
-                            Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%l]", requestLastUpdated));
-                            org.easyhan.myword.grpc.ListRequest upsertRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
+                            Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%d]", requestLastUpdated));
+                            org.easyhan.myword.grpc.ListRequest listRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
                                     .setLastUpdated(requestLastUpdated).build();
-                            myWordStub.withWaitForReady().list(upsertRequest, new StreamObserver<MyWordResponse>() {
+                            myWordStub.withWaitForReady().list(listRequest, new StreamObserver<MyWordResponse>() {
                                 @Override
                                 public void onNext(MyWordResponse value) {
-                                    Log.i(TAG, String.format("listMyWords upsert.onNext UpsertResponse=%s", gson.toJson(value)));
+                                    Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
                                     callback.onMyWordReceived(value);
                                 }
 
@@ -232,6 +232,7 @@ public class WordService {
                     public void onError(Throwable t) {
                         Log.i(TAG, String.format("listMyWords healthStub.check onError grpc service check health\n%s", t.getMessage()));
                         callback.onApiError();
+                        t.printStackTrace();
                     }
 
                     @Override

@@ -82,30 +82,18 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     }
 
     private String getNameCurrentPageNo() {
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        return level.name() + "_CURRENT_PGNO";
+        return  "MYWORD_CURRENT_PGNO";
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        viewModel.refresh(level);
-        viewModel.loadPage(level, currentPageNo, getPageSize(level));
+        viewModel.refresh();
+        viewModel.loadPage(currentPageNo, getPageSize( ));
     }
 
-    private int getPageSize(HanziLevel level) {
-        switch (level) {
-            case ONE:
-                return 195;//3500/18;
-            case TWO:
-                return 168;//3000/18;
-            case THREE:
-            default:
-                return 87;//1605/18;
-        }
+    private int getPageSize() {
+        return 493;//8105/18
     }
 
     @Override
@@ -125,7 +113,7 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     private void setupController() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MyViewModel.class);
 
-        viewModel.getLiveWords().observe(this, data -> {
+        viewModel.getLiveMyWords().observe(this, data -> {
             controller.setData(data);
         });
     }
@@ -163,8 +151,7 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (!recyclerView.canScrollVertically(-1)) {
                         Log.i(TAG, "callback.onScrollToTop() -1,viewModel.refresh()");
-                        HanziLevel level = HanziLevel.valueOf(getArguments().getString(Constants.HANZILEVEL));
-                        viewModel.refresh(level);
+                        viewModel.refresh();
                     }
                 }
             }
@@ -184,10 +171,8 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
 
     @Override
     public void onPageClicked(int pageno) {
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        viewModel.refresh(level);
-        viewModel.loadPage(level, pageno, getPageSize(level));
+        viewModel.refresh();
+        viewModel.loadPage(pageno, getPageSize( ));
         currentPageNo = pageno;
     }
 }

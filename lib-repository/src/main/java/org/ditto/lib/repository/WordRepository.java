@@ -243,17 +243,16 @@ public class WordRepository {
 
                     @Override
                     public void onMyWordReceived(MyWordResponse response) {
-                        Log.i(TAG, String.format("onMyWordReceived update to database, MyWordResponse=[%s]", gson.toJson(response)));
-
-                        roomFascade.daoWord.findFlowable(response.getWord())
+                        Log.i(TAG, String.format("onMyWordReceived MyWordResponse=[%s]", gson.toJson(response)));
+                        roomFascade.daoWord.findSingle(response.getWord())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe(word -> {
                                     word.memIdx = response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
                                     roomFascade.daoWord.save(word);
+                                    Log.i(TAG, String.format("onMyWordReceived save word=[%s]", gson.toJson(word)));
                                 });
-
                     }
 
                     @Override
