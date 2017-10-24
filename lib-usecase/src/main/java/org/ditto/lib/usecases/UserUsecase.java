@@ -3,7 +3,7 @@ package org.ditto.lib.usecases;
 import org.ditto.lib.dbroom.CommandStatus;
 import org.ditto.lib.dbroom.user.User;
 import org.ditto.lib.dbroom.user.UserCommand;
-import org.ditto.lib.dbroom.vo.VoLocation;
+import org.ditto.lib.dbroom.kv.VoLocation;
 import org.ditto.lib.repository.RepositoryFascade;
 
 import java.util.ArrayList;

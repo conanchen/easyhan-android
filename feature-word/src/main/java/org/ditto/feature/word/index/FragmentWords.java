@@ -93,19 +93,7 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
         Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
         HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
         viewModel.refresh(level);
-        viewModel.loadPage(level, currentPageNo, getPageSize(level));
-    }
-
-    private int getPageSize(HanziLevel level) {
-        switch (level) {
-            case ONE:
-                return 195;//3500/18;
-            case TWO:
-                return 168;//3000/18;
-            case THREE:
-            default:
-                return 87;//1605/18;
-        }
+        viewModel.loadPage(level, currentPageNo);
     }
 
     @Override
@@ -187,7 +175,7 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
         Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
         HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
         viewModel.refresh(level);
-        viewModel.loadPage(level, pageno, getPageSize(level));
+        viewModel.loadPage(level, pageno);
         currentPageNo = pageno;
     }
 }

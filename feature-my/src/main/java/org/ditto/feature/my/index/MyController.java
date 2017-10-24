@@ -9,6 +9,7 @@ import com.airbnb.epoxy.TypedEpoxyController;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 
+import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.feature.base.epoxymodels.ItemRefreshHeaderModel_;
 import org.ditto.feature.base.epoxymodels.ItemStatusNetworkModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemMyAccountModel_;
@@ -17,8 +18,7 @@ import org.ditto.feature.my.index.epoxymodels.ItemMyWordMemoryModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemMyWordModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemPageModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemPagetipModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemWordSortSettingModel;
-import org.ditto.feature.my.index.epoxymodels.ItemWordSortSettingModel_;
+import org.ditto.feature.my.index.epoxymodels.ItemWordSortTypeModel_;
 import org.ditto.lib.dbroom.index.Word;
 
 public class MyController extends TypedEpoxyController<PagedList<Word>> {
@@ -29,6 +29,7 @@ public class MyController extends TypedEpoxyController<PagedList<Word>> {
         void onWordItemClicked(Word word, int position);
 
         void onPageClicked(int pageno);
+        void onWordSortTypeChangedTo(VoWordSortType.WordSortType sortType);
     }
 
 
@@ -51,7 +52,7 @@ public class MyController extends TypedEpoxyController<PagedList<Word>> {
     ItemStatusNetworkModel_ itemStatusNetworkModel_;
 
     @AutoModel
-    ItemWordSortSettingModel_ itemWordSortSettingModel_;
+    ItemWordSortTypeModel_ itemWordSortTypeModel_;
 
     @AutoModel
     ItemPagetipModel_ footerModel_;
@@ -75,7 +76,7 @@ public class MyController extends TypedEpoxyController<PagedList<Word>> {
             add(new ItemMyWordMemoryModel_().id("memory_three" + i));
         }
 
-        itemWordSortSettingModel_.addTo(this);
+        itemWordSortTypeModel_.sortType(VoWordSortType.WordSortType.SEQUENCE).callbacks(callbacks).addTo(this);
 
 //        itemStatusNetworkModel_.addIf(status != null && Status.Code.END_ERROR.equals(status.code), this);
 

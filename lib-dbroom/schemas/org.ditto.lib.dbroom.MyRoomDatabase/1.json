@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e7e49303f3dbd8a5a7045eb085c73f47",
+    "identityHash": "30629372fbd09ddbabea61055aecdd74",
     "entities": [
       {
         "tableName": "Myprofile",
@@ -266,6 +266,44 @@
         "foreignKeys": []
       },
       {
+        "tableName": "KeyValue",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `value` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, PRIMARY KEY(`key`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "key"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
         "tableName": "IndexVisitor",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `type` TEXT, `weight` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `online` INTEGER NOT NULL, `icon` TEXT, `title` TEXT, `detail` TEXT, `unreadNumber` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
@@ -336,7 +374,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e7e49303f3dbd8a5a7045eb085c73f47\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"30629372fbd09ddbabea61055aecdd74\")"
     ]
   }
 }

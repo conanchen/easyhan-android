@@ -26,11 +26,11 @@ public interface DaoWord {
     @Delete
     void delete(Word word);
 
-    @Query("SELECT * FROM Word WHERE level = :level ORDER by idx ASC LIMIT :pageSize")
-    LiveData<List<Word>> listLiveWordsBy(String level, int pageSize);
-
     @Query("SELECT * FROM Word WHERE level = :level ORDER by idx ASC ")
-    public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsBy(String level);
+    public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByIdx(String level);
+
+    @Query("SELECT * FROM Word WHERE level = :level ORDER by memIdx DESC ")
+    public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByMemIdx(String level);
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     LiveData<Word> findLive(String word);
@@ -41,8 +41,11 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE level = :level ORDER BY lastUpdated DESC LIMIT 1")
     Word findLatestWord(String level);
 
+    @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by idx ASC ")
+    public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByIdx();
+
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by memIdx DESC ")
-    public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsBy();
+    public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByMemIdx();
 
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER BY memLastUpdated DESC LIMIT 1")
     Word findMyLatestWord();

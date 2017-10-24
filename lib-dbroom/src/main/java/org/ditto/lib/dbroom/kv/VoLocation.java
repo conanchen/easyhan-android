@@ -1,4 +1,4 @@
-package org.ditto.lib.dbroom.vo;
+package org.ditto.lib.dbroom.kv;
 
 /*
  * Copyright (c) 2016 Razeware LLC

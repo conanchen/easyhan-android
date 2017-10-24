@@ -9,8 +9,8 @@ import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
 
-import org.ditto.lib.dbroom.vo.VoNamecard;
-import org.ditto.lib.dbroom.vo.VoProfession;
+import org.ditto.lib.dbroom.kv.VoNamecard;
+import org.ditto.lib.dbroom.kv.VoProfession;
 
 import java.util.List;
 

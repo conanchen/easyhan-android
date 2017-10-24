@@ -1,4 +1,4 @@
-package org.ditto.lib.dbroom.vo;
+package org.ditto.lib.dbroom.kv;
 
 import android.arch.persistence.room.Ignore;
 import android.os.Parcel;

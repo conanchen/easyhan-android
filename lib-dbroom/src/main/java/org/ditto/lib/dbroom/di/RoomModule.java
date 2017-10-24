@@ -5,8 +5,9 @@ import android.content.Context;
 
 import org.ditto.lib.dbroom.MyRoomDatabase;
 import org.ditto.lib.dbroom.RoomFascade;
-import org.ditto.lib.dbroom.index.DaoWord;
 import org.ditto.lib.dbroom.index.DaoIndexVisitor;
+import org.ditto.lib.dbroom.index.DaoWord;
+import org.ditto.lib.dbroom.kv.DaoKeyValue;
 import org.ditto.lib.dbroom.user.DaoUser;
 
 import javax.inject.Singleton;
@@ -40,6 +41,12 @@ public class RoomModule {
     }
 
 
+    @Singleton
+    @Provides
+    DaoKeyValue provideKeyValueDao(MyRoomDatabase db) {
+        return db.daoKeyValue();
+    }
+
 
     @Singleton
     @Provides
@@ -54,13 +61,16 @@ public class RoomModule {
     }
 
 
-
     @Singleton
     @Provides
     public RoomFascade provideRoomFascade(DaoUser daoUser,
                                           DaoWord daoWord,
-                                          DaoIndexVisitor daoIndexVisitor
-    ) {
-        return new RoomFascade(daoUser, daoWord, daoIndexVisitor);
+                                          DaoKeyValue daoKeyValue,
+                                          DaoIndexVisitor daoIndexVisitor) {
+        return new RoomFascade(
+                daoUser,
+                daoWord,
+                daoKeyValue,
+                daoIndexVisitor);
     }
 }

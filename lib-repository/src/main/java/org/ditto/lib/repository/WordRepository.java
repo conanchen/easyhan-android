@@ -10,6 +10,7 @@ import org.ditto.lib.apigrpc.ApigrpcFascade;
 import org.ditto.lib.apigrpc.WordService;
 import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.index.Word;
+import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
 import org.ditto.lib.repository.model.Status;
@@ -98,14 +99,25 @@ public class WordRepository {
     }
 
     public LiveData<PagedList<Word>> listPagedWordsBy(WordLoadRequest wordLoadRequest) {
-        return roomFascade.daoWord.listLivePagedWordsBy(wordLoadRequest.level.name())
-                .create(wordLoadRequest.page * wordLoadRequest.pageSize,
-                        new PagedList.Config
-                                .Builder()
-                                .setPageSize(wordLoadRequest.pageSize)
-                                .setPrefetchDistance(wordLoadRequest.pageSize)
-                                .setEnablePlaceholders(true)
-                                .build());
+        if(VoWordSortType.WordSortType.MEMORY.equals(wordLoadRequest.sortType)) {
+            return roomFascade.daoWord.listLivePagedWordsOrderByMemIdx(wordLoadRequest.level.name())
+                    .create(wordLoadRequest.page * wordLoadRequest.pageSize,
+                            new PagedList.Config
+                                    .Builder()
+                                    .setPageSize(wordLoadRequest.pageSize)
+                                    .setPrefetchDistance(wordLoadRequest.pageSize)
+                                    .setEnablePlaceholders(true)
+                                    .build());
+        }else{
+            return roomFascade.daoWord.listLivePagedWordsOrderByIdx(wordLoadRequest.level.name())
+                    .create(wordLoadRequest.page * wordLoadRequest.pageSize,
+                            new PagedList.Config
+                                    .Builder()
+                                    .setPageSize(wordLoadRequest.pageSize)
+                                    .setPrefetchDistance(wordLoadRequest.pageSize)
+                                    .setEnablePlaceholders(true)
+                                    .build());
+        }
     }
 
     public long findMaxLastUpdated(HanziLevel imageType) {
@@ -211,14 +223,25 @@ public class WordRepository {
     }
 
     public LiveData<PagedList<Word>> listPagedMyWordsBy(MyWordLoadRequest request) {
-        return roomFascade.daoWord.listLivePagedMyWordsBy()
-                .create(request.page * request.pageSize,
-                        new PagedList.Config
-                                .Builder()
-                                .setPageSize(request.pageSize)
-                                .setPrefetchDistance(request.pageSize)
-                                .setEnablePlaceholders(true)
-                                .build());
+        if(VoWordSortType.WordSortType.MEMORY.equals(request.sortType)) {
+            return roomFascade.daoWord.listLivePagedMyWordsOrderByMemIdx()
+                    .create(request.page * request.pageSize,
+                            new PagedList.Config
+                                    .Builder()
+                                    .setPageSize(request.pageSize)
+                                    .setPrefetchDistance(request.pageSize)
+                                    .setEnablePlaceholders(true)
+                                    .build());
+        }else{
+            return roomFascade.daoWord.listLivePagedMyWordsOrderByIdx()
+                    .create(request.page * request.pageSize,
+                            new PagedList.Config
+                                    .Builder()
+                                    .setPageSize(request.pageSize)
+                                    .setPrefetchDistance(request.pageSize)
+                                    .setEnablePlaceholders(true)
+                                    .build());
+        }
     }
 
     public void refresh(MyWordRefreshRequest request) {

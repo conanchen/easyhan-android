@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseFragment;
 import org.ditto.feature.base.SampleItemAnimator;
+import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
@@ -89,13 +90,8 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     public void onResume() {
         super.onResume();
         viewModel.refresh();
-        viewModel.loadPage(currentPageNo, getPageSize( ));
+        viewModel.loadPage(currentPageNo);
     }
-
-    private int getPageSize() {
-        return 493;//8105/18
-    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -172,7 +168,13 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     @Override
     public void onPageClicked(int pageno) {
         viewModel.refresh();
-        viewModel.loadPage(pageno, getPageSize( ));
+        viewModel.loadPage(pageno);
         currentPageNo = pageno;
+    }
+
+    @Override
+    public void onWordSortTypeChangedTo(VoWordSortType.WordSortType sortType) {
+        Log.i(TAG, String.format("onWordSortTypeChangedTo sortType=%s",sortType.name()));
+        viewModel.changeWordSortType(sortType);
     }
 }

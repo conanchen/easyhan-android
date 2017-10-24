@@ -1,32 +1,32 @@
-package org.ditto.lib.dbroom.vo;
+package org.ditto.lib.dbroom.kv;
 
 import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class VoSellread implements Parcelable {
+public class VoUser implements Parcelable {
     private String uuid;
     private String title;
 
-    public VoSellread() {
+    public VoUser() {
     }
 
     @Ignore
-    public VoSellread(String uuid, String title) {
+    public VoUser(String uuid, String title) {
         this.uuid = uuid;
         this.title = title;
     }
 
 
-    public static final Creator<VoSellread> CREATOR = new Creator<VoSellread>() {
+    public static final Creator<VoUser> CREATOR = new Creator<VoUser>() {
         @Override
-        public VoSellread createFromParcel(Parcel in) {
-            return new VoSellread(in);
+        public VoUser createFromParcel(Parcel in) {
+            return new VoUser(in);
         }
 
         @Override
-        public VoSellread[] newArray(int size) {
-            return new VoSellread[size];
+        public VoUser[] newArray(int size) {
+            return new VoUser[size];
         }
     };
 
@@ -58,7 +58,7 @@ public class VoSellread implements Parcelable {
     }
 
     @Ignore
-    protected VoSellread(Parcel in) {
+    protected VoUser(Parcel in) {
         this.uuid = in.readString();
         this.title = in.readString();
     }

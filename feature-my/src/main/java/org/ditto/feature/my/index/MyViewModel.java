@@ -12,13 +12,18 @@ import com.google.gson.Gson;
 
 import org.ditto.lib.AbsentLiveData;
 import org.ditto.lib.dbroom.index.Word;
+import org.ditto.lib.dbroom.kv.KeyValue;
+import org.ditto.lib.dbroom.kv.Value;
+import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
 import org.ditto.lib.usecases.UsecaseFascade;
 
 import javax.inject.Inject;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class MyViewModel extends ViewModel {
@@ -63,13 +68,71 @@ public class MyViewModel extends ViewModel {
                 });
     }
 
-    public void loadPage(int page, int pageSize) {
-        MyWordLoadRequest wordLoadRequest = MyWordLoadRequest.builder()
-                .setPage(page)
-                .setPageSize(pageSize)
-                .build();
-        this.mutableLoadRequest.setValue(wordLoadRequest);
-        Log.i(TAG, String.format("loadPage.myWordRefreshRequest=%s", gson.toJson(wordLoadRequest)));
+    private int getPageSize() {
+        return 493;//8105/18
     }
 
+
+    public void loadPage(int page) {
+
+        Maybe<VoWordSortType.WordSortType> dbValue = usecaseFascade.repositoryFascade.keyValueRepository
+                .findMaybe(KeyValue.KEY.USER_SETTING_WORDSORTTYPE)
+                .filter(keyValue -> keyValue.value != null && keyValue.value.voWordSortType != null)
+                .map(keyValue -> keyValue.value.voWordSortType.sortType);
+
+        Maybe<VoWordSortType.WordSortType> reqValue = Maybe.just(mutableLoadRequest)
+                .filter(mutableLoadRequest ->
+                        mutableLoadRequest.getValue() != null && mutableLoadRequest.getValue().sortType != null)
+                .map(mutableLoadRequest -> mutableLoadRequest.getValue().sortType);
+
+        Maybe<VoWordSortType.WordSortType> defValue = Maybe.just(VoWordSortType.WordSortType.SEQUENCE);
+
+        Maybe.concat(dbValue, reqValue, defValue)
+                .firstElement()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(wordSortType -> {
+                    MyWordLoadRequest wordLoadRequest = MyWordLoadRequest.builder()
+                            .setSortType(wordSortType)
+                            .setPage(page)
+                            .setPageSize(getPageSize())
+                            .build();
+                    this.mutableLoadRequest.setValue(wordLoadRequest);
+                    Log.i(TAG, String.format("loadPage.MyWordLoadRequest=%s", gson.toJson(wordLoadRequest)));
+                }, throwable -> {
+                    Log.i(TAG, throwable.getMessage());
+                });
+
+    }
+
+    public void changeWordSortType(VoWordSortType.WordSortType sortType) {
+        KeyValue keyValue = KeyValue.builder()
+                .setKey(KeyValue.KEY.USER_SETTING_WORDSORTTYPE)
+                .setValue(Value
+                        .builder()
+                        .setVoWordSortType(VoWordSortType
+                                .builder()
+                                .setSortType(sortType)
+                                .build()
+                        )
+                        .build())
+                .build();
+
+        usecaseFascade.repositoryFascade.keyValueRepository.save(keyValue)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> {
+                    int page = 0;
+                    if (mutableLoadRequest.getValue() != null) {
+                        page = mutableLoadRequest.getValue().page;
+                    }
+                    MyWordLoadRequest loadRequest = MyWordLoadRequest.builder()
+                            .setSortType(sortType)
+                            .setPage(page)
+                            .setPageSize(getPageSize())
+                            .build();
+                    this.mutableLoadRequest.setValue(loadRequest);
+                    Log.i(TAG, String.format("loadPage.loadRequest=%s", gson.toJson(loadRequest)));
+
+                });
+    }
 }

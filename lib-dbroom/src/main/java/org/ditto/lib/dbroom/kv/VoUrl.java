@@ -1,32 +1,32 @@
-package org.ditto.lib.dbroom.vo;
+package org.ditto.lib.dbroom.kv;
 
 import android.arch.persistence.room.Ignore;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public   class VoPhone implements Parcelable {
+public   class VoUrl implements Parcelable {
         private String title;
         private String detail;
 
-        public VoPhone() {
+        public VoUrl() {
         }
 
         @Ignore
-        public VoPhone(String title, String detail) {
+        public VoUrl(String title, String detail) {
             this.title = title;
             this.detail = detail;
         }
 
 
-        public static final Creator<VoPhone> CREATOR = new Creator<VoPhone>() {
+        public static final Creator<VoUrl> CREATOR = new Creator<VoUrl>() {
             @Override
-            public VoPhone createFromParcel(Parcel in) {
-                return new VoPhone(in);
+            public VoUrl createFromParcel(Parcel in) {
+                return new VoUrl(in);
             }
 
             @Override
-            public VoPhone[] newArray(int size) {
-                return new VoPhone[size];
+            public VoUrl[] newArray(int size) {
+                return new VoUrl[size];
             }
         };
 
@@ -58,7 +58,7 @@ public   class VoPhone implements Parcelable {
         }
 
         @Ignore
-        protected VoPhone(Parcel in) {
+        protected VoUrl(Parcel in) {
             this.title = in.readString();
             this.detail = in.readString();
         }

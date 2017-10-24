@@ -1,8 +1,4 @@
-package org.ditto.lib.dbroom.vo;
-
-import android.arch.persistence.room.Ignore;
-import android.os.Parcel;
-import android.os.Parcelable;
+package org.ditto.lib.dbroom.kv;
 
 import com.google.common.base.Strings;
 

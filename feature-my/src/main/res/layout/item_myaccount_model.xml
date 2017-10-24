@@ -11,9 +11,9 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
 
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:src="@drawable/ic_avartar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -28,8 +28,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="4dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="昵称"
+        android:layout_marginTop="8dp"
+        android:text="昵称：多多米"
         app:layout_constraintLeft_toRightOf="@+id/image"
         app:layout_constraintRight_toLeftOf="@+id/qrcode"
         app:layout_constraintTop_toTopOf="@+id/image" />
