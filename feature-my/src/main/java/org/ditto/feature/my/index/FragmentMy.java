@@ -109,7 +109,7 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     private void setupController() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MyViewModel.class);
 
-        viewModel.getLiveMyWords().observe(this, data -> {
+        viewModel.getLiveMyData().observe(this, data -> {
             controller.setData(data);
         });
     }

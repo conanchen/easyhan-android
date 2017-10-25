@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tabs>
     <tab
+        icon="@drawable/ic_person_black_24dp"
         id="@+id/navigation_tab0"
-        icon="@drawable/ic_message_black_24dp"
         title="@string/title_my" />
 
     <tab
-        id="@+id/navigation_tab1"
         icon="@drawable/ic_my_location_black_24dp"
+        id="@+id/navigation_tab1"
         title="@string/title_one" />
 
     <tab
-        id="@+id/navigation_tab2"
+        barColorWhenSelected="#5D4037"
         icon="@drawable/ic_change"
-        title="@string/title_today"
-        barColorWhenSelected="#5D4037"/>
+        id="@+id/navigation_tab2"
+        title="@string/title_today" />
 
     <tab
-        id="@+id/navigation_tab3"
         icon="@drawable/ic_live_help_black_24dp"
+        id="@+id/navigation_tab3"
         title="@string/title_two" />
-   <tab
+    <tab
+        icon="@drawable/ic_message_black_24dp"
         id="@+id/navigation_tab4"
-        icon="@drawable/ic_person_black_24dp"
         title="@string/title_three" />
 
 </tabs>

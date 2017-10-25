@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">粉红字帖</string>
+    <string name="app_name">粉红汉字</string>
     <string name="title_one">一级</string>
-    <string name="title_two">二级字表</string>
-    <string name="title_today">今天</string>
-    <string name="title_three">三级字表</string>
+    <string name="title_two">二级</string>
+    <string name="title_today">天天向上</string>
+    <string name="title_three">三级</string>
     <string name="title_my">我的</string>
     <string name="title_activity_word">WordActivity</string>
     <string name="action_settings">Settings</string>

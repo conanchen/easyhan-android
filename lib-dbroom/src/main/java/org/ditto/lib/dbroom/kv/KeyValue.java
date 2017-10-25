@@ -33,6 +33,9 @@ import com.google.common.base.Strings;
 public class KeyValue  {
     public  interface KEY {
         public static final String USER_SETTING_WORDSORTTYPE = "USER.SETTING.WordSortType";
+        String USER_STATS_WORD_LEVEL1 = "USER.STATS.WORD.LEVEL1";
+        String USER_STATS_WORD_LEVEL2 = "USER.STATS.WORD.LEVEL2";
+        String USER_STATS_WORD_LEVEL3 = "USER.STATS.WORD.LEVEL3";
     }
     @PrimaryKey
     @NonNull

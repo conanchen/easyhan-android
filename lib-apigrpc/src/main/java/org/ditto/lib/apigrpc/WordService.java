@@ -4,9 +4,11 @@ package org.ditto.lib.apigrpc;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.instrumentation.stats.Stats;
 
 import org.easyhan.myword.grpc.MyWordGrpc;
 import org.easyhan.myword.grpc.MyWordResponse;
+import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertRequest;
 import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
@@ -46,6 +48,8 @@ public class WordService {
         void onMyWordUpserted(UpsertResponse image);
 
         void onMyWordReceived(MyWordResponse value);
+
+        void onMyStatsReceived(StatsResponse value);
     }
 
     public interface CommonApiCallback {
@@ -191,7 +195,7 @@ public class WordService {
         ManagedChannel channel = getManagedChannel();
 
         ConnectivityState connectivityState = channel.getState(true);
-        Log.i(TAG, String.format("listMyWords BuildConfig.GRPC_SERVER_HOST=%s, BuildConfig.GRPC_SERVER_PORT=%d,connectivityState = [%s]", BuildConfig.GRPC_SERVER_HOST, BuildConfig.GRPC_SERVER_PORT,gson.toJson(connectivityState)));
+        Log.i(TAG, String.format("listMyWords BuildConfig.GRPC_SERVER_HOST=%s, BuildConfig.GRPC_SERVER_PORT=%d,connectivityState = [%s]", BuildConfig.GRPC_SERVER_HOST, BuildConfig.GRPC_SERVER_PORT, gson.toJson(connectivityState)));
 
         HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
@@ -238,6 +242,63 @@ public class WordService {
                     @Override
                     public void onCompleted() {
                         Log.i(TAG, String.format("listMyWords healthStub.check onCompleted grpc service check health\n%s", ""));
+                        callback.onApiCompleted();
+                    }
+                });
+
+    }
+
+    public void listMyStats(MyWordCallback callback) {
+        callback.onApiReady();
+        ManagedChannel channel = getManagedChannel();
+
+        ConnectivityState connectivityState = channel.getState(true);
+        Log.i(TAG, String.format("listMyStats BuildConfig.GRPC_SERVER_HOST=%s, BuildConfig.GRPC_SERVER_PORT=%d,connectivityState = [%s]", BuildConfig.GRPC_SERVER_HOST, BuildConfig.GRPC_SERVER_PORT, gson.toJson(connectivityState)));
+
+        HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
+        MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
+
+
+        healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(myWordGrpcHealthCheckRequest,
+                new StreamObserver<HealthCheckResponse>() {
+                    @Override
+                    public void onNext(HealthCheckResponse value) {
+
+                        if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
+                            org.easyhan.myword.grpc.StatsRequest listRequest = org.easyhan.myword.grpc.StatsRequest.newBuilder()
+                                    .build();
+                            myWordStub.withWaitForReady().stats(listRequest, new StreamObserver<StatsResponse>() {
+                                @Override
+                                public void onNext(StatsResponse value) {
+                                    Log.i(TAG, String.format("listMyStats stats.onNext StatsResponse=%s", gson.toJson(value)));
+                                    callback.onMyStatsReceived(value);
+                                }
+
+                                @Override
+                                public void onError(Throwable t) {
+
+                                }
+
+                                @Override
+                                public void onCompleted() {
+
+                                }
+                            });
+                        } else {
+                            Log.i(TAG, String.format("listMyStats healthStub.check onNext NOT! ServingStatus.SERVING "));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.i(TAG, String.format("listMyStats healthStub.check onError grpc service check health\n%s", t.getMessage()));
+                        callback.onApiError();
+                        t.printStackTrace();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, String.format("listMyStats healthStub.check onCompleted grpc service check health\n%s", ""));
                         callback.onApiCompleted();
                     }
                 });

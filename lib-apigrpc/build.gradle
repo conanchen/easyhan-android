@@ -65,7 +65,8 @@ android {
             buildConfigField 'String', 'ENVIRONMENT', '"DEBUG"'
             buildConfigField "boolean", "USE_CRASHLYTICS", "true"
 //            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"' //本机公司
-            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.0.100"' //本机家里
+//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"10.9.37.37"' //本机公司
+            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.0.102"' //本机家里
 //            buildConfigField 'String', 'GRPC_SERVER_HOST', '"172.18.31.159"'  //PC公司
             buildConfigField 'Integer', 'GRPC_SERVER_PORT', '8980'
         }
@@ -75,7 +76,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.github.conanchen.easyhan-api:grpc-manage-javalite:master-SNAPSHOT'
+    compile 'com.github.conanchen.easyhan-api:grpc-public-javalite:master-SNAPSHOT'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

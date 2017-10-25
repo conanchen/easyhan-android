@@ -10,14 +10,19 @@ import org.ditto.lib.apigrpc.ApigrpcFascade;
 import org.ditto.lib.apigrpc.WordService;
 import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.index.Word;
+import org.ditto.lib.dbroom.kv.KeyValue;
+import org.ditto.lib.dbroom.kv.Value;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
+import org.ditto.lib.dbroom.kv.VoWordSummary;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
+import org.ditto.lib.repository.model.MyWordStatsRequest;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
 import org.easyhan.common.grpc.HanziLevel;
 import org.easyhan.myword.grpc.MyWordResponse;
+import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
@@ -99,7 +104,7 @@ public class WordRepository {
     }
 
     public LiveData<PagedList<Word>> listPagedWordsBy(WordLoadRequest wordLoadRequest) {
-        if(VoWordSortType.WordSortType.MEMORY.equals(wordLoadRequest.sortType)) {
+        if (VoWordSortType.WordSortType.MEMORY.equals(wordLoadRequest.sortType)) {
             return roomFascade.daoWord.listLivePagedWordsOrderByMemIdx(wordLoadRequest.level.name())
                     .create(wordLoadRequest.page * wordLoadRequest.pageSize,
                             new PagedList.Config
@@ -108,7 +113,7 @@ public class WordRepository {
                                     .setPrefetchDistance(wordLoadRequest.pageSize)
                                     .setEnablePlaceholders(true)
                                     .build());
-        }else{
+        } else {
             return roomFascade.daoWord.listLivePagedWordsOrderByIdx(wordLoadRequest.level.name())
                     .create(wordLoadRequest.page * wordLoadRequest.pageSize,
                             new PagedList.Config
@@ -204,6 +209,11 @@ public class WordRepository {
                             }
 
                             @Override
+                            public void onMyStatsReceived(StatsResponse value) {
+                                //Nothing to do for  onMyStatsReceived
+                            }
+
+                            @Override
                             public void onApiError() {
                                 postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
                             }
@@ -223,7 +233,7 @@ public class WordRepository {
     }
 
     public LiveData<PagedList<Word>> listPagedMyWordsBy(MyWordLoadRequest request) {
-        if(VoWordSortType.WordSortType.MEMORY.equals(request.sortType)) {
+        if (VoWordSortType.WordSortType.MEMORY.equals(request.sortType)) {
             return roomFascade.daoWord.listLivePagedMyWordsOrderByMemIdx()
                     .create(request.page * request.pageSize,
                             new PagedList.Config
@@ -232,7 +242,7 @@ public class WordRepository {
                                     .setPrefetchDistance(request.pageSize)
                                     .setEnablePlaceholders(true)
                                     .build());
-        }else{
+        } else {
             return roomFascade.daoWord.listLivePagedMyWordsOrderByIdx()
                     .create(request.page * request.pageSize,
                             new PagedList.Config
@@ -261,6 +271,11 @@ public class WordRepository {
 
                     @Override
                     public void onMyWordUpserted(UpsertResponse image) {
+                        //Nothing to do here
+                    }
+
+                    @Override
+                    public void onMyStatsReceived(StatsResponse value) {
                         //Nothing to do here
                     }
 
@@ -296,5 +311,74 @@ public class WordRepository {
                                 gson.toJson(status), gson.toJson(listRequest)));
                     }
                 });
+    }
+
+    public void refresh(MyWordStatsRequest request) {
+        apigrpcFascade.getWordService().listMyStats(new WordService.MyWordCallback() {
+            @Override
+            public void onMyWordUpserted(UpsertResponse image) {
+                // nothing to do here
+            }
+
+            @Override
+            public void onMyWordReceived(MyWordResponse value) {
+                // nothing to do here
+            }
+
+            @Override
+            public void onMyStatsReceived(StatsResponse response) {
+                Value value = Value
+                        .builder()
+                        .setVoWordSummary(VoWordSummary
+                                .builder()
+                                .setMemory0(response.getNumMemory0())
+                                .setMemory1(response.getNumMemory1())
+                                .setMemory2(response.getNumMemory2())
+                                .setMemory3(response.getNumMemory3())
+                                .setMemory4(response.getNumMemory4())
+                                .setMemory5(response.getNumMemory5())
+                                .setMemory6(response.getNumMemory6())
+                                .setMemory7(response.getNumMemory7())
+                                .build())
+                        .build();
+                switch (response.getLevel()) {
+                    case ONE:
+                        roomFascade.daoKeyValue.save(KeyValue.builder()
+                                .setKey(KeyValue.KEY.USER_STATS_WORD_LEVEL1)
+                                .setValue(value)
+                                .build());
+                        break;
+                    case TWO:
+                        roomFascade.daoKeyValue.save(KeyValue.builder()
+                                .setKey(KeyValue.KEY.USER_STATS_WORD_LEVEL2)
+                                .setValue(value)
+                                .build());
+                        break;
+                    case THREE:
+                        roomFascade.daoKeyValue.save(KeyValue.builder()
+                                .setKey(KeyValue.KEY.USER_STATS_WORD_LEVEL3)
+                                .setValue(value)
+                                .build());
+                        break;
+                    default:
+                        Log.i(TAG, String.format("onMyStatsReceived  unknown HanziLevel = %s", response.getLevel()));
+                }
+            }
+
+            @Override
+            public void onApiError() {
+                Log.i(TAG, String.format("onApiError  refresh(MyWordStatsRequest request)"));
+            }
+
+            @Override
+            public void onApiCompleted() {
+
+            }
+
+            @Override
+            public void onApiReady() {
+
+            }
+        });
     }
 }

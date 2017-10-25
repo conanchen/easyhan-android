@@ -8,7 +8,7 @@
     android:background="@color/cardview_light_background">
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/image"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="⑦"
@@ -31,7 +31,7 @@
         android:layout_marginTop="4dp"
         android:text="523"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/image"
+        app:layout_constraintLeft_toRightOf="@+id/title"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="8dp" />
 

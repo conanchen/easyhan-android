@@ -4,6 +4,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 
+import com.airbnb.epoxy.EpoxyAttribute;
 import com.airbnb.epoxy.EpoxyHolder;
 import com.airbnb.epoxy.EpoxyModelClass;
 import com.airbnb.epoxy.EpoxyModelWithHolder;
@@ -20,9 +21,12 @@ import butterknife.ButterKnife;
  */
 @EpoxyModelClass
 public abstract class ItemMyWordMemoryHeaderModel extends EpoxyModelWithHolder<ItemMyWordMemoryHeaderModel.Holder> {
+    @EpoxyAttribute
+    String title;
 
     @Override
     public void bind(Holder holder) {
+        holder.text.setText(title);
     }
 
     @Override
