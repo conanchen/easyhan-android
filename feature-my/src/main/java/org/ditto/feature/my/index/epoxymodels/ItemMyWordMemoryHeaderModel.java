@@ -34,10 +34,6 @@ public abstract class ItemMyWordMemoryHeaderModel extends EpoxyModelWithHolder<I
     }
 
     public static class Holder extends EpoxyHolder {
-
-        @BindView(R2.id.image)
-        AppCompatImageView image;
-
         @BindView(R2.id.text)
         AppCompatTextView text;
 

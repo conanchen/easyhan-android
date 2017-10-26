@@ -54,7 +54,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
             buildConfigField 'String', 'ENVIRONMENT', '"PRODUCTION"'
-            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
             buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"'
             buildConfigField 'Integer', 'GRPC_SERVER_PORT', '8980'
         }
@@ -63,10 +62,8 @@ android {
             signingConfig signingConfigs.debug
             buildConfigField 'String', 'AMAPKEY', '"4d83adc4a7dea5315096f8629a8c9a02"'
             buildConfigField 'String', 'ENVIRONMENT', '"DEBUG"'
-            buildConfigField "boolean", "USE_CRASHLYTICS", "true"
-//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"' //本机公司
-//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"10.9.37.37"' //本机公司
-            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.0.102"' //本机家里
+            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.1.102"' //本机公司
+//            buildConfigField 'String', 'GRPC_SERVER_HOST', '"192.168.0.102"' //本机家里
 //            buildConfigField 'String', 'GRPC_SERVER_HOST', '"172.18.31.159"'  //PC公司
             buildConfigField 'Integer', 'GRPC_SERVER_PORT', '8980'
         }
@@ -100,6 +97,6 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
 
-
+    compile 'com.google.android.gms:play-services:10.0.1'
     testCompile 'junit:junit:4.12'
 }

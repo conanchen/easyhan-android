@@ -114,7 +114,7 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
         if (myLiveDataHolder.myWordLevel1Stats != null
                 && myLiveDataHolder.myWordLevel1Stats.value != null
                 && myLiveDataHolder.myWordLevel1Stats.value.voWordSummary != null) {
-            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_one").title("一级字表3500识字进度统计"));
+            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_one").title("一级字表3500识字进度"));
             VoWordSummary voWordSummary = myLiveDataHolder.myWordLevel1Stats.value.voWordSummary;
             add(new ItemMyWordMemoryModel_().id("level_0_memory_7").title("⑦").number(voWordSummary.memory7).text("恨与卢君相识迟"));
             add(new ItemMyWordMemoryModel_().id("level_0_memory_6").title("⑥").number(voWordSummary.memory6).text("恨与卢君相识迟"));
@@ -128,7 +128,7 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
         if (myLiveDataHolder.myWordLevel2Stats != null
                 && myLiveDataHolder.myWordLevel2Stats.value != null
                 && myLiveDataHolder.myWordLevel2Stats.value.voWordSummary != null) {
-            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_two").title("二级字表3000识字进度统计"));
+            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_two").title("二级字表3000识字进度"));
             VoWordSummary voWordSummary = myLiveDataHolder.myWordLevel2Stats.value.voWordSummary;
             add(new ItemMyWordMemoryModel_().id("level_2_memory_7").title("⑦").number(voWordSummary.memory7).text("恨与卢君相识迟"));
             add(new ItemMyWordMemoryModel_().id("level_2_memory_6").title("⑥").number(voWordSummary.memory6).text("恨与卢君相识迟"));
@@ -142,7 +142,7 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
         if (myLiveDataHolder.myWordLevel3Stats != null
                 && myLiveDataHolder.myWordLevel3Stats.value != null
                 && myLiveDataHolder.myWordLevel3Stats.value.voWordSummary != null) {
-            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_three").title("三级字表1605识字进度统计"));
+            add(new ItemMyWordMemoryHeaderModel_().id("memoryheader_three").title("三级字表1605识字进度"));
             VoWordSummary voWordSummary = myLiveDataHolder.myWordLevel3Stats.value.voWordSummary;
             add(new ItemMyWordMemoryModel_().id("level_3_memory_7").title("⑦").number(voWordSummary.memory7).text("恨与卢君相识迟"));
             add(new ItemMyWordMemoryModel_().id("level_3_memory_6").title("⑥").number(voWordSummary.memory6).text("恨与卢君相识迟"));

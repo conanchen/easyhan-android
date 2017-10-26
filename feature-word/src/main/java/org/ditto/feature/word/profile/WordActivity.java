@@ -101,7 +101,7 @@ public class WordActivity extends BaseActivity {
                     if (mCollapsingToolbarLayoutState == CollapsingToolbarLayoutState.COLLAPSED) {
                         buttonBarLayout.setVisibility(View.GONE);//由折叠变为中间状态时隐藏播放按钮
                     }
-                    collapsingToolbarLayout.setTitle("粉红汉字");//设置title为INTERNEDIATE
+                    collapsingToolbarLayout.setTitle("粉红字帖");//设置title为INTERNEDIATE
                     mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
                 }
             }

@@ -15,8 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.alibaba.android.arouter.launcher.ARouter;
-import com.crashlytics.android.Crashlytics;
 import com.roughike.bottombar.BottomBar;
 import com.xdandroid.hellodaemon.IntentWrapper;
 
@@ -25,7 +23,6 @@ import org.ditto.feature.base.FragmentsPagerAdapter;
 import org.ditto.feature.my.index.FragmentMy;
 import org.ditto.feature.visitor.FragmentVisitorIndices;
 import org.ditto.feature.word.index.FragmentWords;
-import org.ditto.lib.Constants;
 import org.easyhan.common.grpc.HanziLevel;
 
 import java.util.ArrayList;
@@ -34,10 +31,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.fabric.sdk.android.Fabric;
 
 @Route(path = "/app/MainActivity")
 public class MainActivity extends BaseFragmentActivity {
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.view_pager)
     ViewPager viewPager;
@@ -67,7 +64,6 @@ public class MainActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setupToolbar();
