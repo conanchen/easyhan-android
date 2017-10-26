@@ -156,7 +156,7 @@ public class WordActivity extends BaseActivity {
 
     @OnClick(R2.id.fab)
     public void onFabupsertButtonClicked() {
-        if (false) {
+        if (true) {
             ARouter.getInstance().build("/feature_login/LoginActivity")
                     .navigation();
         } else {

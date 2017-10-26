@@ -117,7 +117,9 @@
             android:layout_marginTop="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button"
-            app:srcCompat="@drawable/ssdk_oks_classic_wechat" />
+            app:srcCompat="@drawable/ssdk_oks_classic_wechat"
+            android:clickable="false"
+            />
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/login_qq_button"
@@ -145,7 +147,9 @@
             android:layout_marginTop="8dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button"
-            app:srcCompat="@drawable/ssdk_oks_classic_sinaweibo" />
+            app:srcCompat="@drawable/ssdk_oks_classic_sinaweibo"
+            android:clickable="false"
+            />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textView2"
