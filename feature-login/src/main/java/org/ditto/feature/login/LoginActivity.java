@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity implements QQLogin.Callbacks {
         mViewModel.getLiveLoginedUser().observe(this, user -> {
             if (user != null) {
                 Toast.makeText(this,
-                        String.format("Login OK code=%s", user.code),
+                        String.format("登录系统成功 code=%s", user.code),
                         Toast.LENGTH_LONG)
                         .show();
                 Observable.just(true)
@@ -152,7 +152,7 @@ public class LoginActivity extends BaseActivity implements QQLogin.Callbacks {
                         });
             } else {
                 Toast.makeText(this,
-                        String.format("CAN NOT LOGIN TO TT, TRY LATER!"),
+                        String.format("登录系统失败，请稍后再试。"),
                         Toast.LENGTH_LONG)
                         .show();
             }
