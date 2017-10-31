@@ -70,7 +70,7 @@ public class WordRepository {
                     public void onWordReceived(WordResponse response) {
 //                        postValue(Status.builder().setCode(Status.Code.LOADING)
 //                                .build());
-                        Log.i(TAG, String.format("onWordReceived save to database, word=[%s]", gson.toJson(response)));
+                        Log.i(TAG, String.format("onSignined save to database, word=[%s]", gson.toJson(response)));
                         Word word = Word.builder()
                                 .setWord(response.getWord())
                                 .setIdx(response.getIdx())

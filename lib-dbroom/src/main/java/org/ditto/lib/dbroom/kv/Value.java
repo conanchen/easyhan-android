@@ -8,13 +8,18 @@ public class Value {
 
     public VoWordSummary voWordSummary;
     public VoWordSortType voWordSortType;
+    public VoAccessToken voAccessToken;
 
     public Value() {
     }
 
-    private Value(VoWordSummary voWordSummary, VoWordSortType voWordSortType) {
+    private Value(VoWordSummary voWordSummary,
+                  VoWordSortType voWordSortType,
+                  VoAccessToken voAccessToken
+                  ) {
         this.voWordSummary = voWordSummary;
         this.voWordSortType = voWordSortType;
+        this.voAccessToken = voAccessToken;
     }
 
     public static Builder builder() {
@@ -24,6 +29,7 @@ public class Value {
     public static final class Builder {
         private VoWordSummary voWordSummary;
         private VoWordSortType voWordSortType;
+        private VoAccessToken voAccessToken;
 
         Builder() {
         }
@@ -34,7 +40,7 @@ public class Value {
             if (voWordSummary == null && voWordSortType == null) {
                 missing += " voWordSummary|voWordSortType one must be set";
             }
-            return new Value(voWordSummary, voWordSortType);
+            return new Value(voWordSummary, voWordSortType,voAccessToken);
         }
 
         public Builder setVoWordSummary(VoWordSummary voWordSummary) {
@@ -44,6 +50,11 @@ public class Value {
 
         public Builder setVoWordSortType(VoWordSortType voWordSortType) {
             this.voWordSortType = voWordSortType;
+            return this;
+        }
+
+        public Builder setVoAccessToken(VoAccessToken voAccessToken) {
+            this.voAccessToken = voAccessToken;
             return this;
         }
     }

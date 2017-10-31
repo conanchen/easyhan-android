@@ -3,6 +3,7 @@ package org.ditto.lib.apigrpc.di;
 import android.util.Log;
 
 import org.ditto.lib.apigrpc.BuildConfig;
+import org.ditto.lib.apigrpc.SigninService;
 import org.ditto.lib.apigrpc.WordService;
 
 import javax.inject.Singleton;
@@ -37,6 +38,12 @@ public class ApigrpcModule {
     @Provides
     WordService provideWordService(final ManagedChannel channel) {
         return new WordService(channel);
+    }
+
+    @Singleton
+    @Provides
+    SigninService provideSigninService(final ManagedChannel channel) {
+        return new SigninService(channel);
     }
 
 }

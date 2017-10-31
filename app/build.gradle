@@ -76,7 +76,7 @@ android {
         }
 
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
             buildConfigField 'String', 'AMAPKEY', '"4d83adc4a7dea5315096f8629a8c9a02"'

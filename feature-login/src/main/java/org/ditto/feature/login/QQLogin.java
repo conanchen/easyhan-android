@@ -33,7 +33,7 @@ public class QQLogin {
     }
 
     public void login(QQLogin.Callbacks callbacks) {
-        if (!mTencentQQ.isSessionValid()) {
+//        if (!mTencentQQ.isSessionValid()) {
             mTencentQQ.login(mActivity, "all", new IUiListener() {
                 @Override
                 public void onComplete(Object response) {
@@ -66,7 +66,7 @@ public class QQLogin {
 
                 }
             });
-        }
+//        }
     }
 
     public void logout(Context context) {

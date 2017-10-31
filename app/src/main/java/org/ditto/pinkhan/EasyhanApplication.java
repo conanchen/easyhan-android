@@ -126,9 +126,4 @@ public class EasyhanApplication extends MultiDexApplication implements HasActivi
         return dispatchingServiceInjector;
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-        MultiDex.install(this);
-    }
 }

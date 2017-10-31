@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -27,17 +26,21 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
+import org.ditto.feature.base.BaseActivity;
 import org.ditto.feature.login.di.LoginViewModelFactory;
 import org.json.JSONObject;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
 
 @Route(path = "/feature_login/LoginActivity")
-public class LoginActivity extends AppCompatActivity implements QQLogin.Callbacks{
+public class LoginActivity extends BaseActivity implements QQLogin.Callbacks {
     private final static String TAG = "LoginActivity";
     Gson gson = new Gson();
 
@@ -57,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements QQLogin.Callback
 
     @BindView(R2.id.username_layout)
     TextInputLayout usernameLayout;
+
     @BindView(R2.id.username)
     EditText usernameEditText;
 
@@ -135,12 +139,23 @@ public class LoginActivity extends AppCompatActivity implements QQLogin.Callback
 
     private void setupViewModel() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
-        mViewModel.getLiveUpsertStatus().observe(this, status -> {
-            Log.i(TAG, String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message));
-            Toast.makeText(this,
-                    String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message),
-                    Toast.LENGTH_LONG)
-                    .show();
+        mViewModel.getLiveLoginedUser().observe(this, user -> {
+            if (user != null) {
+                Toast.makeText(this,
+                        String.format("Login OK code=%s", user.code),
+                        Toast.LENGTH_LONG)
+                        .show();
+                Observable.just(true)
+                        .delay(500, TimeUnit.MILLISECONDS)
+                        .subscribe(aBoolean -> {
+                            LoginActivity.this.finish();
+                        });
+            } else {
+                Toast.makeText(this,
+                        String.format("CAN NOT LOGIN TO TT, TRY LATER!"),
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
         });
 
     }
@@ -212,6 +227,6 @@ public class LoginActivity extends AppCompatActivity implements QQLogin.Callback
 
     @Override
     public void onQQLogined(String accessToken) {
-
+        mViewModel.loginWithQQAccessToken(accessToken);
     }
 }

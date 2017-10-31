@@ -4,11 +4,11 @@ import org.ditto.lib.apigrpc.ApigrpcFascade;
 import org.ditto.lib.apigrpc.di.ApigrpcModule;
 import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.di.RoomModule;
-import org.ditto.lib.repository.KeyValueRepository;
-import org.ditto.lib.repository.WordRepository;
 import org.ditto.lib.repository.IndexVisitorRepository;
+import org.ditto.lib.repository.KeyValueRepository;
 import org.ditto.lib.repository.RepositoryFascade;
 import org.ditto.lib.repository.UserRepository;
+import org.ditto.lib.repository.WordRepository;
 import org.ditto.lib.system.SystemService;
 import org.ditto.lib.system.di.SystemModule;
 
@@ -49,8 +49,9 @@ public class RepositoryModule {
     @Singleton
     @Provides
     public UserRepository provideUserRepository(
+            ApigrpcFascade apigrpcFascade,
             RoomFascade roomFascade) {
-        return new UserRepository( roomFascade);
+        return new UserRepository(apigrpcFascade, roomFascade);
     }
 
 

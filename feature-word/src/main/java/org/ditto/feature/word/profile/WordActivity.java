@@ -157,6 +157,7 @@ public class WordActivity extends BaseActivity {
     @OnClick(R2.id.fab)
     public void onFabupsertButtonClicked() {
         if (true) {
+            Log.i(TAG,"aaaaaaaaaaaaa");
             ARouter.getInstance().build("/feature_login/LoginActivity")
                     .navigation();
         } else {
