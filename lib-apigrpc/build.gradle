@@ -84,6 +84,9 @@ dependencies {
 
 
     //grpc
+    compile "com.google.auth:google-auth-library-oauth2-http:0.8.0"
+
+    compile "io.grpc:grpc-auth:$GRPC_VERSION"
     compile "io.grpc:grpc-okhttp:$GRPC_VERSION"
     compile "io.grpc:grpc-protobuf-lite:$GRPC_VERSION"
     compile "io.grpc:grpc-stub:$GRPC_VERSION"

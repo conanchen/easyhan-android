@@ -1,33 +1,41 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.register;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
 import org.ditto.feature.login.controllers.RegisterController;
 import org.ditto.feature.base.BaseFragment;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class RegisterPasswordFragment extends BaseFragment {
+public class RegisterUsernameFragment extends BaseFragment {
     private RegisterController.Callbacks callbacks;
 
-    public RegisterPasswordFragment() {
+    @BindView(R2.id.register_username)
+    AutoCompleteTextView mRegisterUsernameText;
+
+
+    public RegisterUsernameFragment() {
         // Required empty public constructor
     }
-    public static RegisterPasswordFragment create(String title) {
-        RegisterPasswordFragment fragment = new RegisterPasswordFragment();
+
+    public static RegisterUsernameFragment create(String title) {
+        RegisterUsernameFragment fragment = new RegisterUsernameFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
         fragment.setArguments(bundle);
         return fragment;
     }
-
 
 
 
@@ -40,9 +48,9 @@ public class RegisterPasswordFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.register_password_fragment, container, false);
-        ButterKnife.bind(this, view);
+        View view = inflater.inflate(R.layout.register_username_fragment, container, false);
 
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -69,9 +77,14 @@ public class RegisterPasswordFragment extends BaseFragment {
         callbacks = null;
     }
 
-    @OnClick(R2.id.changepassword_button)
-    public void onChangepasswordButtonClicked() {
-        callbacks.onPasswordDone("83812345678");
+    @OnClick(R2.id.register_button)
+    public void onRegisterButtonClicked() {
+        //TODO: call server api to register username+smsauthcode
+        boolean ok = true;
+        if (ok) {
+            callbacks.onUsernameDone(mRegisterUsernameText.getText().toString());
+        }
     }
+
 
 }

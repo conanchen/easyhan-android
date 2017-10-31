@@ -20,7 +20,7 @@ import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 import org.ditto.lib.dbroom.index.Word;
 import org.easyhan.common.grpc.HanziLevel;
 

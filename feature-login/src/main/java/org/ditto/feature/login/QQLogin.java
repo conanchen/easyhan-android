@@ -11,8 +11,7 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
-import org.ditto.feature.login.beans.User;
-import org.ditto.lib.apigrpc.LoginGrpcTask;
+import org.ditto.feature.login.beans.UserQQInfo;
 import org.json.JSONObject;
 
 public class QQLogin {
@@ -22,6 +21,9 @@ public class QQLogin {
     private UserInfo mUserInfo;
     private final String mHiaskAppidInQQ = "1106139510";
 
+    public interface Callbacks{
+        void onQQLogined(String accessToken);
+    }
 
     public QQLogin(Activity loginActivity) {
         this.mActivity = loginActivity;
@@ -30,7 +32,7 @@ public class QQLogin {
         }
     }
 
-    public void login() {
+    public void login(QQLogin.Callbacks callbacks) {
         if (!mTencentQQ.isSessionValid()) {
             mTencentQQ.login(mActivity, "all", new IUiListener() {
                 @Override
@@ -38,41 +40,16 @@ public class QQLogin {
                     JSONObject jsonResponse = (JSONObject) response;
                     Log.i(TAG, String.format("login callback jsonResponse=%s", jsonResponse.toString()));
                     try {
-                        String token = jsonResponse.getString(com.tencent.connect.common.Constants.PARAM_ACCESS_TOKEN);
+                        String accessToken = jsonResponse.getString(com.tencent.connect.common.Constants.PARAM_ACCESS_TOKEN);
                         String expires = jsonResponse.getString(com.tencent.connect.common.Constants.PARAM_EXPIRES_IN);
                         String openId = jsonResponse.getString(com.tencent.connect.common.Constants.PARAM_OPEN_ID);
-                        if (!android.text.TextUtils.isEmpty(token)
+                        if (!android.text.TextUtils.isEmpty(accessToken)
                                 && !android.text.TextUtils.isEmpty(expires)
                                 && !android.text.TextUtils.isEmpty(openId)) {
-                            mTencentQQ.setAccessToken(token, expires);
+                            mTencentQQ.setAccessToken(accessToken, expires);
                             mTencentQQ.setOpenId(openId);
 
-                            mUserInfo = new UserInfo(mActivity, mTencentQQ.getQQToken());
-                            mUserInfo.getUserInfo(new IUiListener() {
-                                @Override
-                                public void onComplete(Object response1) {
-                                    JSONObject response = (JSONObject) response1;
-                                    if (response.has("nickname")) {
-                                        Gson gson = new Gson();
-                                        User user = gson.fromJson(response.toString(), User.class);
-                                        if (user != null) {
-                                            Log.i(TAG, "昵称：" + user.getNickname() + "  性别:" + user.getGender() + "  地址：" + user.getProvince() + user.getCity());
-                                            Log.i(TAG, "头像路径：" + user.getFigureurl_qq_2());
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onError(UiError uiError) {
-
-                                }
-
-                                @Override
-                                public void onCancel() {
-
-                                }
-                            });
-
+                            callbacks.onQQLogined(accessToken);
                         }
                     } catch (Exception e) {
                     }
@@ -116,7 +93,6 @@ public class QQLogin {
             Log.i(TAG, "expires:" + expires);
             Log.i(TAG, "openId:" + openId);
 
-            new LoginGrpcTask(token).execute();
         } catch (Exception e) {
         }
     }
@@ -133,10 +109,10 @@ public class QQLogin {
                     JSONObject response = (JSONObject) response1;
                     if (response.has("nickname")) {
                         Gson gson = new Gson();
-                        User user = gson.fromJson(response.toString(), User.class);
-                        if (user != null) {
-                            Log.i("enyu", "昵称：" + user.getNickname() + "  性别:" + user.getGender() + "  地址：" + user.getProvince() + user.getCity());
-                            Log.i("enyu", "头像路径：" + user.getFigureurl_qq_2());
+                        UserQQInfo userQQInfo = gson.fromJson(response.toString(), UserQQInfo.class);
+                        if (userQQInfo != null) {
+                            Log.i("enyu", "昵称：" + userQQInfo.getNickname() + "  性别:" + userQQInfo.getGender() + "  地址：" + userQQInfo.getProvince() + userQQInfo.getCity());
+                            Log.i("enyu", "头像路径：" + userQQInfo.getFigureurl_qq_2());
                         }
                     }
                 }

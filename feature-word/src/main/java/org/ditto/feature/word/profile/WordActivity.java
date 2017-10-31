@@ -23,7 +23,7 @@ import org.ditto.feature.base.BaseActivity;
 import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 
 import javax.inject.Inject;
 

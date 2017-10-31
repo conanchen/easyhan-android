@@ -1,4 +1,4 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.forget;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,13 +11,15 @@ import android.widget.Button;
 import com.alibaba.android.arouter.launcher.ARouter;
 
 import org.ditto.feature.base.BaseFragment;
-import org.ditto.lib.Constants;
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
+import org.ditto.feature.base.Constants;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class RegisterOkFragment extends BaseFragment {
+public class ForgetpasswordOkFragment extends BaseFragment {
 
 
     /**
@@ -37,17 +39,17 @@ public class RegisterOkFragment extends BaseFragment {
     private Callbacks callbacks;
 
 
-    public RegisterOkFragment callbacks(Callbacks value) {
+    public ForgetpasswordOkFragment callbacks(Callbacks value) {
         this.callbacks = value;
         return this;
     }
 
-    public RegisterOkFragment() {
+    public ForgetpasswordOkFragment() {
         // Required empty public constructor
     }
 
-    public static RegisterOkFragment create(String title) {
-        RegisterOkFragment fragment = new RegisterOkFragment();
+    public static ForgetpasswordOkFragment create(String title) {
+        ForgetpasswordOkFragment fragment = new ForgetpasswordOkFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
         fragment.setArguments(bundle);
@@ -65,8 +67,7 @@ public class RegisterOkFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.register_ok_fragment, container, false);
-
+        View view = inflater.inflate(R.layout.forgetpassword_ok_fragment, container, false);
         ButterKnife.bind(this,view);
         return view;
     }
@@ -96,5 +97,6 @@ public class RegisterOkFragment extends BaseFragment {
                 .navigation();
     }
 
-    
+
+
 }

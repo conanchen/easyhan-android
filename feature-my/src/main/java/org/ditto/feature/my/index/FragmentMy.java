@@ -21,7 +21,7 @@ import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 import org.ditto.lib.dbroom.index.Word;
 import org.easyhan.common.grpc.HanziLevel;
 

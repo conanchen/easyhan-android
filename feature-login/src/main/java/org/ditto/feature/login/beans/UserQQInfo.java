@@ -4,7 +4,7 @@ package org.ditto.feature.login.beans;
  * Created by Administrator on 2017/3/24.
  */
 
-public class User {
+public class UserQQInfo {
 
 
     private int ret;

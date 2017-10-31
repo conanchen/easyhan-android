@@ -11,7 +11,7 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 
 public class WeiboLogin {
         private Activity mActivity;

@@ -1,6 +1,6 @@
 package org.ditto.feature.login;
 
-import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,35 +23,37 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.alibaba.android.arouter.utils.TextUtils;
 import com.google.gson.Gson;
-import com.sina.weibo.sdk.WbSdk;
-import com.sina.weibo.sdk.auth.AccessTokenKeeper;
-import com.sina.weibo.sdk.auth.AuthInfo;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
-import com.tencent.connect.UserInfo;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
-import org.ditto.feature.login.beans.User;
-import org.ditto.lib.Constants;
-import org.ditto.lib.apigrpc.LoginGrpcTask;
+import org.ditto.feature.login.di.LoginViewModelFactory;
 import org.json.JSONObject;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 @Route(path = "/feature_login/LoginActivity")
-public class LoginActivity extends AppCompatActivity {
-    private String TAG = "LoginActivity";
+public class LoginActivity extends AppCompatActivity implements QQLogin.Callbacks{
+    private final static String TAG = "LoginActivity";
+    Gson gson = new Gson();
 
     private static final String SDCARD_ROOT = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+    @Inject
+    LoginViewModelFactory mViewModelFactory;
+
+    private LoginViewModel mViewModel;
 
 
     @Autowired
     String username; //maybe passed from RegisterActivity、ForgetpasswordActivity
+
+    @BindView(R2.id.toolbar)
+    Toolbar toolbar;
 
     @BindView(R2.id.username_layout)
     TextInputLayout usernameLayout;
@@ -81,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R2.id.toolbar);
         setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ARouter.getInstance().inject(this);
@@ -128,6 +129,20 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setEnabled(false);
         loginWechatButton.setEnabled(false);
         loginWeiboButton.setEnabled(false);
+
+        setupViewModel();
+    }
+
+    private void setupViewModel() {
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(LoginViewModel.class);
+        mViewModel.getLiveUpsertStatus().observe(this, status -> {
+            Log.i(TAG, String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message));
+            Toast.makeText(this,
+                    String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message),
+                    Toast.LENGTH_LONG)
+                    .show();
+        });
+
     }
 
 
@@ -145,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R2.id.login_qq_button)
     public void loginQQOnClick(ImageButton button) {
         Log.e(TAG, "call loginQQOnClick ");
-        mQqLogin.login();
+        mQqLogin.login(this);
     }
 
     @OnClick(R2.id.login_weibo_button)
@@ -170,7 +185,6 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(Object response) {
                     //TODO: here won't be called ?
                     JSONObject jsonResponse = (JSONObject) response;
-                    Gson gson = new Gson();
 
                     Log.i(TAG, String.format("Tencent.onActivityResultData onComplete jsonResponse=%s", jsonResponse.toString()));
                 }
@@ -196,5 +210,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onQQLogined(String accessToken) {
 
+    }
 }

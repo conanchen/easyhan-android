@@ -1,4 +1,4 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.forget;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,28 +7,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 
-import org.ditto.feature.login.controllers.RegisterController;
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
+import org.ditto.feature.login.controllers.ForgetpasswordController;
 import org.ditto.feature.base.BaseFragment;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class RegisterUsernameFragment extends BaseFragment {
-    private RegisterController.Callbacks callbacks;
+public class ForgetpasswordUsernameFragment extends BaseFragment {
+    private ForgetpasswordController.Callbacks callbacks;
 
     @BindView(R2.id.register_username)
     AutoCompleteTextView mRegisterUsernameText;
 
 
-    public RegisterUsernameFragment() {
+    public ForgetpasswordUsernameFragment() {
         // Required empty public constructor
     }
 
-    public static RegisterUsernameFragment create(String title) {
-        RegisterUsernameFragment fragment = new RegisterUsernameFragment();
+    public static ForgetpasswordUsernameFragment create(String title) {
+        ForgetpasswordUsernameFragment fragment = new ForgetpasswordUsernameFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
         fragment.setArguments(bundle);
@@ -47,8 +49,8 @@ public class RegisterUsernameFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.register_username_fragment, container, false);
+        ButterKnife.bind(this,view);
 
-        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -61,11 +63,11 @@ public class RegisterUsernameFragment extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof RegisterController.Callbacks) {
-            callbacks = (RegisterController.Callbacks) context;
+        if (context instanceof ForgetpasswordController.Callbacks) {
+            callbacks = (ForgetpasswordController.Callbacks) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement RegisterController.ContentCallbacks");
+                    + " must implement ForgetpasswordController.ContentCallbacks");
         }
     }
 

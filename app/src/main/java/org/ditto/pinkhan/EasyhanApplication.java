@@ -2,8 +2,10 @@ package org.ditto.pinkhan;
 
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.StrictMode;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -14,7 +16,7 @@ import com.github.anrwatchdog.ANRWatchDog;
 import com.google.android.gms.security.ProviderInstaller;
 import com.xdandroid.hellodaemon.DaemonEnv;
 
-import org.ditto.lib.apigrpc.JcaUtils;
+//import org.ditto.lib.apigrpc.JcaUtils;
 import org.ditto.lib.repository.RepositoryFascade;
 import org.ditto.lib.usecases.AppServiceCommandSenderImpl;
 import org.ditto.lib.usecases.AppServiceKeepliveTraceImpl;
@@ -75,14 +77,14 @@ public class EasyhanApplication extends MultiDexApplication implements HasActivi
         } catch (Exception ignored) {
         }
 
-        ProviderInstaller.installIfNeededAsync(this, providerInstallListener);
-        List<Provider> providers = JcaUtils.getSecurityProviders();
-        for (Provider provider : providers) {
-            List<Provider.Service> services = JcaUtils.getSortedProviderServices(provider);
-            for (Provider.Service service : services) {
-                Log.i(TAG, String.format("Provider=%s,Algorithm=%s", provider.getName(), service.getAlgorithm()));
-            }
-        }
+//        ProviderInstaller.installIfNeededAsync(this, providerInstallListener);
+//        List<Provider> providers = JcaUtils.getSecurityProviders();
+//        for (Provider provider : providers) {
+//            List<Provider.Service> services = JcaUtils.getSortedProviderServices(provider);
+//            for (Provider.Service service : services) {
+//                Log.i(TAG, String.format("Provider=%s,Algorithm=%s", provider.getName(), service.getAlgorithm()));
+//            }
+//        }
     }
 
     private ProviderInstaller.ProviderInstallListener providerInstallListener =
@@ -122,5 +124,11 @@ public class EasyhanApplication extends MultiDexApplication implements HasActivi
     @Override
     public DispatchingAndroidInjector<Service> serviceInjector() {
         return dispatchingServiceInjector;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        MultiDex.install(this);
     }
 }

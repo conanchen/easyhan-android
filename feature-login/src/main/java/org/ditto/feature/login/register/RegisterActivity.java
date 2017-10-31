@@ -1,4 +1,4 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.register;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,13 +8,12 @@ import android.support.v7.widget.Toolbar;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
 import org.ditto.feature.login.controllers.RegisterController;
-import org.ditto.feature.base.BaseFragment;
 import org.ditto.feature.base.FragmentsPagerAdapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -27,12 +26,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterContr
     @BindView(R2.id.view_pager)
     ViewPager viewPager;
 
+    @BindView(R2.id.toolbar)
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R2.id.toolbar);
         setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

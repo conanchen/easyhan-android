@@ -1,4 +1,4 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.forget;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,13 +9,12 @@ import android.support.v7.widget.Toolbar;
 import com.alibaba.android.arouter.facade.annotation.Route;
 
 
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
 import org.ditto.feature.login.controllers.ForgetpasswordController;
-import org.ditto.feature.base.BaseFragment;
 import org.ditto.feature.base.FragmentsPagerAdapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;

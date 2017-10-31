@@ -2,6 +2,7 @@ package org.ditto.pinkhan.di;
 
 import android.app.Application;
 
+import org.ditto.feature.login.di.LoginModule;
 import org.ditto.feature.my.di.MyModule;
 import org.ditto.feature.word.di.WordModule;
 import org.ditto.feature.visitor.di.VisitorModule;
@@ -21,6 +22,7 @@ import dagger.android.AndroidInjectionModule;
         AppModule.class,
 
         MainActivityModule.class,
+        LoginModule.class,
         WordModule.class,
         MyModule.class,
         VisitorModule.class,

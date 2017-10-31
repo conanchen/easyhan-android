@@ -1,10 +1,12 @@
 package org.ditto.lib.apigrpc;
 
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.gson.Gson;
-import com.google.instrumentation.stats.Stats;
 
 import org.easyhan.myword.grpc.MyWordGrpc;
 import org.easyhan.myword.grpc.MyWordResponse;
@@ -15,14 +17,18 @@ import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordGrpc;
 import org.easyhan.word.grpc.WordResponse;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.grpc.CallCredentials;
 import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
+import io.grpc.auth.MoreCallCredentials;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
@@ -200,6 +206,7 @@ public class WordService {
         HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
 
+        CallCredentials callCredentials = getCallCredentials("allyourbase",77650);
 
         healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(myWordGrpcHealthCheckRequest,
                 new StreamObserver<HealthCheckResponse>() {
@@ -210,7 +217,9 @@ public class WordService {
                             Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%d]", requestLastUpdated));
                             org.easyhan.myword.grpc.ListRequest listRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
                                     .setLastUpdated(requestLastUpdated).build();
-                            myWordStub.withWaitForReady().list(listRequest, new StreamObserver<MyWordResponse>() {
+                            myWordStub.withWaitForReady()
+                                    .withCallCredentials(callCredentials)
+                                    .list(listRequest, new StreamObserver<MyWordResponse>() {
                                 @Override
                                 public void onNext(MyWordResponse value) {
                                     Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
@@ -246,6 +255,19 @@ public class WordService {
                     }
                 });
 
+    }
+
+    @NonNull
+    private CallCredentials getCallCredentials(String accessToken, long expires) {
+        final AccessToken token = new AccessToken(accessToken, new Date(expires));
+        final OAuth2Credentials oAuth2Credentials = new OAuth2Credentials() {
+            @Override
+            public AccessToken refreshAccessToken() throws IOException {
+                return token;
+            }
+        };
+
+        return MoreCallCredentials.from(oAuth2Credentials);
     }
 
     public void listMyStats(MyWordCallback callback) {

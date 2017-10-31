@@ -1,5 +1,7 @@
 package org.ditto.pinkhan.di;
 
+import org.ditto.feature.login.LoginActivity;
+import org.ditto.feature.login.di.FragmentLoginBuildersModule;
 import org.ditto.feature.my.di.FragmentMyBuildersModule;
 import org.ditto.feature.word.di.FragmentWordsBuildersModule;
 import org.ditto.feature.visitor.di.VisitorFragmentBuildersModule;
@@ -15,6 +17,7 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class MainActivityModule {
 
     @ContributesAndroidInjector(modules = {
+            FragmentLoginBuildersModule.class,
             FragmentWordsBuildersModule.class,
             FragmentMyBuildersModule.class,
             VisitorFragmentBuildersModule.class})
@@ -23,6 +26,9 @@ public abstract class MainActivityModule {
 
     @ContributesAndroidInjector
     abstract WordActivity contributeWordActivity();
+
+    @ContributesAndroidInjector
+    abstract LoginActivity contributeLoginActivity();
 
     @ContributesAndroidInjector
     abstract AppServiceKeepliveTraceImpl contributeAppServiceKeepliveTraceImpl();

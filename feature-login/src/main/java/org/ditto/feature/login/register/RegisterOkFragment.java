@@ -1,4 +1,4 @@
-package org.ditto.feature.login;
+package org.ditto.feature.login.register;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,13 +11,15 @@ import android.widget.Button;
 import com.alibaba.android.arouter.launcher.ARouter;
 
 import org.ditto.feature.base.BaseFragment;
-import org.ditto.lib.Constants;
+import org.ditto.feature.login.R;
+import org.ditto.feature.login.R2;
+import org.ditto.feature.base.Constants;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class ForgetpasswordOkFragment extends BaseFragment {
+public class RegisterOkFragment extends BaseFragment {
 
 
     /**
@@ -37,17 +39,17 @@ public class ForgetpasswordOkFragment extends BaseFragment {
     private Callbacks callbacks;
 
 
-    public ForgetpasswordOkFragment callbacks(Callbacks value) {
+    public RegisterOkFragment callbacks(Callbacks value) {
         this.callbacks = value;
         return this;
     }
 
-    public ForgetpasswordOkFragment() {
+    public RegisterOkFragment() {
         // Required empty public constructor
     }
 
-    public static ForgetpasswordOkFragment create(String title) {
-        ForgetpasswordOkFragment fragment = new ForgetpasswordOkFragment();
+    public static RegisterOkFragment create(String title) {
+        RegisterOkFragment fragment = new RegisterOkFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
         fragment.setArguments(bundle);
@@ -65,7 +67,8 @@ public class ForgetpasswordOkFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.forgetpassword_ok_fragment, container, false);
+        View view = inflater.inflate(R.layout.register_ok_fragment, container, false);
+
         ButterKnife.bind(this,view);
         return view;
     }
@@ -95,6 +98,5 @@ public class ForgetpasswordOkFragment extends BaseFragment {
                 .navigation();
     }
 
-
-
+    
 }

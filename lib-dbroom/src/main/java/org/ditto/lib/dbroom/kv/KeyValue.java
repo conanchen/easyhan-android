@@ -32,11 +32,13 @@ import com.google.common.base.Strings;
 @Entity
 public class KeyValue  {
     public  interface KEY {
-        public static final String USER_SETTING_WORDSORTTYPE = "USER.SETTING.WordSortType";
+        String USER_CURRENT_LOGIN = "USER.CURRENT.LOGIN";
+        String USER_SETTING_WORDSORTTYPE = "USER.SETTING.WORDSORTTYPE";
         String USER_STATS_WORD_LEVEL1 = "USER.STATS.WORD.LEVEL1";
         String USER_STATS_WORD_LEVEL2 = "USER.STATS.WORD.LEVEL2";
         String USER_STATS_WORD_LEVEL3 = "USER.STATS.WORD.LEVEL3";
     }
+
     @PrimaryKey
     @NonNull
     public String key;

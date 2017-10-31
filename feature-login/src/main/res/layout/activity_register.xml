@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.ditto.feature.login.RegisterActivity">
+    tools:context="org.ditto.feature.login.register.RegisterActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

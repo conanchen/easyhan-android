@@ -18,7 +18,7 @@ import org.ditto.feature.base.SampleItemAnimator;
 import org.ditto.feature.base.VerticalGridCardSpacingDecoration;
 import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.visitor.di.VisitorViewModelFactory;
-import org.ditto.lib.Constants;
+import org.ditto.feature.base.Constants;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.index.IndexVisitor;
 

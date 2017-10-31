@@ -44,16 +44,20 @@
         <!-- 保活服务和定期获取位置 -->
         <service android:name="org.ditto.lib.usecases.AppServiceKeepliveTraceImpl" />
         <service android:name="org.ditto.lib.usecases.AppServiceCommandSenderImpl" />
-
         <activity
-            android:name="org.ditto.pinkhan.MainActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="org.ditto.pinkhan.MainActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden">
         </activity>
 
         <meta-data
