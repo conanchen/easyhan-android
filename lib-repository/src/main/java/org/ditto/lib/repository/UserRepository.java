@@ -86,7 +86,7 @@ public class UserRepository {
                             @Override
                             public void onSignined(SigninResponse response) {
                                 KeyValue keyValue = KeyValue.builder()
-                                        .setKey(KeyValue.KEY.USER_CURRENT_LOGIN)
+                                        .setKey(KeyValue.KEY.USER_CURRENT_ACCESSTOKEN)
                                         .setValue(Value
                                                 .builder()
                                                 .setVoAccessToken(

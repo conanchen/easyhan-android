@@ -141,12 +141,12 @@ public class WordService {
                 .build();
     }
 
-    public void upsertMyWord(String requestWord, MyWordCallback callback) {
+    public void upsertMyWord(CallCredentials callCredentials,String requestWord, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
         ConnectivityState connectivityState = channel.getState(true);
-        Log.i(TAG, String.format("listWords connectivityState = [%s]", gson.toJson(connectivityState)));
+        Log.i(TAG, String.format("upsertMyWord connectivityState = [%s]", gson.toJson(connectivityState)));
 
         HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
@@ -160,7 +160,7 @@ public class WordService {
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
                             Log.i(TAG, String.format("upsertMyWord healthStub.check onNext requestWord = [%s]", gson.toJson(requestWord)));
                             UpsertRequest upsertRequest = UpsertRequest.newBuilder().setWord(requestWord).build();
-                            myWordStub.withWaitForReady().upsert(upsertRequest, new StreamObserver<UpsertResponse>() {
+                            myWordStub.withWaitForReady().withCallCredentials(callCredentials).upsert(upsertRequest, new StreamObserver<UpsertResponse>() {
                                 @Override
                                 public void onNext(UpsertResponse value) {
                                     Log.i(TAG, String.format("upsertMyWord upsert.onNext UpsertResponse=%s", gson.toJson(value)));
@@ -258,7 +258,7 @@ public class WordService {
     }
 
     @NonNull
-    private CallCredentials getCallCredentials(String accessToken, long expires) {
+    public CallCredentials getCallCredentials(String accessToken, long expires) {
         final AccessToken token = new AccessToken(accessToken, new Date(expires));
         final OAuth2Credentials oAuth2Credentials = new OAuth2Credentials() {
             @Override

@@ -10,7 +10,7 @@ public class Status {
         END_SUCCESS,
         END_ERROR,
         END_DISCONNECTED,
-        END_UNKNOWN
+        END_NOT_LOGIN, END_UNKNOWN
     }
 
     public Status() {

@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -20,10 +20,11 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseActivity;
+import org.ditto.feature.base.Constants;
 import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
-import org.ditto.feature.base.Constants;
+import org.ditto.lib.repository.model.Status;
 
 import javax.inject.Inject;
 
@@ -70,6 +71,8 @@ public class WordActivity extends BaseActivity {
 
     @BindView(R2.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R2.id.fabInside)
+    AppCompatTextView fabInside;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class WordActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        ARouter.getInstance().inject(this);
         setupX5WebView();
 
         setupViewModel();
@@ -111,7 +115,6 @@ public class WordActivity extends BaseActivity {
     }
 
     private void setupX5WebView() {
-        ARouter.getInstance().inject(this);
         //TODO: 使用http://x5.tencent.com/tbs/sdk.html代替android自带的webview
         WebSettings webSettings = x5webView.getSettings();
         webSettings.setAppCacheEnabled(true);
@@ -144,25 +147,60 @@ public class WordActivity extends BaseActivity {
 
     private void setupViewModel() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(WordViewModel.class);
-        mViewModel.getLiveUpsertStatus().observe(this, status -> {
-            Log.i(TAG, String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message));
-            Toast.makeText(WordActivity.this,
-                    String.format("getLiveUpsertStatus status.code=%s \nstatus.message=%s", status.code, status.message),
-                    Toast.LENGTH_LONG)
-                    .show();
+        mViewModel.setWord(mWord);
+        mViewModel.getLiveWord().observe(this, word -> {
+            fabInside.setText(String.format("%02d",word.memIdx));
         });
-
+        mViewModel.getLiveUpsertStatus().observe(this, status -> {
+            if (Status.Code.END_NOT_LOGIN.equals(status.code)) {
+                ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
+//                mViewModel.getLiveUpsertStatus().removeObservers(WordActivity.this);
+            } else {
+                Toast.makeText(WordActivity.this,
+                        String.format("onFabupsertButtonClicked status.code=%s \nstatus.message=%s", status.code, status.message),
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 
     @OnClick(R2.id.fab)
     public void onFabupsertButtonClicked() {
-        if (true) {
-            Log.i(TAG,"aaaaaaaaaaaaa");
-            ARouter.getInstance().build("/feature_login/LoginActivity")
-                    .navigation();
-        } else {
-            mViewModel.upsertMyWord(mWord);
-        }
+        mViewModel.updateMyWordProgress();
+
+
+//        ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
+//        mViewModel.upsert(mWord);
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//        .subscribe(new MaybeObserver<Status>() {
+//            @Override
+//            public void onSubscribe(Disposable d) {
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(Status status) {
+//                if (Status.Code.END_ERROR.equals(status.code)) {
+//                    ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
+//                } else {
+//                    Toast.makeText(WordActivity.this,
+//                            String.format("onFabupsertButtonClicked status.code=%s \nstatus.message=%s", status.code, status.message),
+//                            Toast.LENGTH_LONG)
+//                            .show();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//
+//            }
+//        });
     }
 
 }

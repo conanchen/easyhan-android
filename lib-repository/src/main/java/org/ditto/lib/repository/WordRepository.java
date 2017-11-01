@@ -12,6 +12,7 @@ import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.Value;
+import org.ditto.lib.dbroom.kv.VoAccessToken;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.dbroom.kv.VoWordSummary;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
@@ -30,6 +31,7 @@ import org.easyhan.word.grpc.WordResponse;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.grpc.CallCredentials;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -43,6 +45,12 @@ public class WordRepository {
     private final static Gson gson = new Gson();
     private ApigrpcFascade apigrpcFascade;
     private RoomFascade roomFascade;
+
+    public interface ProgressCallback {
+        void onSucess();
+
+        void onError();
+    }
 
     @Inject
     public WordRepository(ApigrpcFascade apigrpcFascade,
@@ -189,47 +197,51 @@ public class WordRepository {
 
     }
 
-    public LiveData<Status> upsertMyWord(String word) {
-        return new LiveData<Status>() {
-            @Override
-            protected void onActive() {
-                apigrpcFascade.getWordService().upsertMyWord(word,
-                        new WordService.MyWordCallback() {
-                            @Override
-                            public void onMyWordUpserted(UpsertResponse image) {
-                                postValue(Status.builder()
-                                        .setCode(Status.Code.LOADING)
-                                        .setMessage(gson.toJson(image))
-                                        .build());
-                            }
+    public void upsertMyWord(VoAccessToken voAccessToken, String word, ProgressCallback callback) {
+       CallCredentials callCredentials = apigrpcFascade.getWordService().getCallCredentials(voAccessToken.accessToken,Long.valueOf(voAccessToken.expiresIn));
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials,word,
+                new WordService.MyWordCallback() {
+                    @Override
+                    public void onMyWordUpserted(UpsertResponse response) {
+                        Log.i(TAG, String.format("onMyWordUpserted upsertResponse.getMemIdx()=%d", response.getMemIdx()));
+                        roomFascade.daoWord.findSingle(word)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
+                                .subscribe(word -> {
+                                    word.memIdx = response.getMemIdx();
+                                    roomFascade.daoWord.save(word);
+                                    Log.i(TAG, String.format("onMyWordUpserted save word=[%s]", gson.toJson(word)));
+                                });
 
-                            @Override
-                            public void onMyWordReceived(MyWordResponse value) {
-                                //Nothing to do for  upsertMyWord
-                            }
+                        callback.onSucess();
+                    }
 
-                            @Override
-                            public void onMyStatsReceived(StatsResponse value) {
-                                //Nothing to do for  onMyStatsReceived
-                            }
+                    @Override
+                    public void onMyWordReceived(MyWordResponse value) {
+                        //Nothing to do for  upsertMyWord
+                    }
 
-                            @Override
-                            public void onApiError() {
-                                postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
-                            }
+                    @Override
+                    public void onMyStatsReceived(StatsResponse value) {
+                        //Nothing to do for  onMyStatsReceived
+                    }
 
-                            @Override
-                            public void onApiCompleted() {
-                                postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
-                            }
+                    @Override
+                    public void onApiError() {
+                        Log.i(TAG, String.format("onApiError"));
+                        callback.onError();
+                    }
 
-                            @Override
-                            public void onApiReady() {
-                                postValue(Status.builder().setCode(Status.Code.START).build());
-                            }
-                        });
-            }
-        };
+                    @Override
+                    public void onApiCompleted() {
+                        Log.i(TAG, String.format("onApiCompleted"));
+                    }
+
+                    @Override
+                    public void onApiReady() {
+                        Log.i(TAG, String.format("onApiReady"));
+                    }
+                });
     }
 
     public LiveData<PagedList<Word>> listPagedMyWordsBy(MyWordLoadRequest request) {
@@ -381,4 +393,5 @@ public class WordRepository {
             }
         });
     }
+
 }
