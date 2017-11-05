@@ -86,7 +86,6 @@ public class WordsViewModel extends ViewModel {
 
         Maybe<VoWordSortType.WordSortType> dbValue = usecaseFascade.repositoryFascade.keyValueRepository
                 .findMaybe(KeyValue.KEY.USER_SETTING_WORDSORTTYPE)
-                .filter(keyValue -> keyValue.value != null && keyValue.value.voWordSortType != null)
                 .map(keyValue -> keyValue.value.voWordSortType.sortType);
 
         Maybe<VoWordSortType.WordSortType> reqValue = Maybe.just(mutableLoadRequest)
@@ -94,7 +93,7 @@ public class WordsViewModel extends ViewModel {
                         mutableLoadRequest.getValue() != null && mutableLoadRequest.getValue().sortType != null)
                 .map(mutableLoadRequest -> mutableLoadRequest.getValue().sortType);
 
-        Maybe<VoWordSortType.WordSortType> defValue = Maybe.just(VoWordSortType.WordSortType.SEQUENCE);
+        Maybe<VoWordSortType.WordSortType> defValue = Maybe.just(VoWordSortType.WordSortType.MEMORY);
 
         Maybe.concat(dbValue, reqValue, defValue)
                 .firstElement()

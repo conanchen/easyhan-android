@@ -10,6 +10,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
@@ -48,7 +49,7 @@ public interface DaoWord {
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByMemIdx();
 
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER BY memLastUpdated DESC LIMIT 1")
-    Word findMyLatestWord();
+    Maybe<Word> findMyLatestWord();
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     Word findOne(String word);

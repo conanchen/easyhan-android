@@ -49,7 +49,7 @@ public class WordViewModel extends ViewModel {
     @Inject
     public WordViewModel() {
         liveWord = Transformations.switchMap(mutableRequestWord, (String requestWord) -> {
-            return  usecaseFascade.repositoryFascade.wordRepository.find(requestWord);
+            return usecaseFascade.repositoryFascade.wordRepository.find(requestWord);
         });
 
         liveUpsertStatus = Transformations.switchMap(mutableRequestUpsertMyWord, (Long time) -> {
@@ -76,20 +76,27 @@ public class WordViewModel extends ViewModel {
                                     //found accesstoken
                                     Log.i(TAG, String.format("onSuccess voAccessToken=%s", gson.toJson(voAccessToken)));
                                     hasValue = true;
-                                    Observable.just(true).observeOn(Schedulers.io()).subscribe(aBoolean -> {
-                                        usecaseFascade.repositoryFascade.wordRepository.upsertMyWord(voAccessToken,mutableRequestWord.getValue(), new WordRepository.ProgressCallback(){
-                                            @Override
-                                            public void onSucess() {
+                                    Observable
+                                            .just(true)
+                                            .observeOn(Schedulers.io())
+                                            .subscribe(aBoolean -> {
+                                                usecaseFascade
+                                                        .repositoryFascade
+                                                        .wordRepository
+                                                        .upsertMyWord(voAccessToken, mutableRequestWord.getValue(),
+                                                                new WordRepository.ProgressCallback() {
+                                                                    @Override
+                                                                    public void onSucess() {
 
-                                                postValue(Status.builder().setCode(Status.Code.END_SUCCESS).setMessage("api sucess").build());
-                                            }
+                                                                        postValue(Status.builder().setCode(Status.Code.END_SUCCESS).setMessage("api sucess").build());
+                                                                    }
 
-                                            @Override
-                                            public void onError() {
-                                                postValue(Status.builder().setCode(Status.Code.END_ERROR).setMessage("api error").build());
-                                            }
-                                        });
-                                    });
+                                                                    @Override
+                                                                    public void onError() {
+                                                                        postValue(Status.builder().setCode(Status.Code.END_ERROR).setMessage("api error").build());
+                                                                    }
+                                                                });
+                                            });
                                 }
 
                                 @Override
@@ -111,9 +118,10 @@ public class WordViewModel extends ViewModel {
 
     }
 
-    public void setWord(String word){
+    public void setWord(String word) {
         mutableRequestWord.setValue(word);
     }
+
     public void updateMyWordProgress() {
         mutableRequestUpsertMyWord.setValue(System.currentTimeMillis());
     }

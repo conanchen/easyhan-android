@@ -39,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dp_32"
-            android:checked="true"
             android:text="按字表序号" />
 
         <RadioButton
@@ -47,6 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dp_32"
+            android:checked="true"
             android:text="按识字进度" />
 
         <RadioButton

@@ -15,17 +15,19 @@ import org.ditto.lib.AbsentLiveData;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.Value;
+import org.ditto.lib.dbroom.kv.VoAccessToken;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
-import org.ditto.lib.repository.model.MyWordStatsRequest;
+import org.ditto.lib.repository.model.MyWordStatsRefreshRequest;
 import org.ditto.lib.usecases.UsecaseFascade;
 
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
+import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MyViewModel extends ViewModel {
@@ -105,16 +107,55 @@ public class MyViewModel extends ViewModel {
     }
 
     public void refresh() {
-        Log.i(TAG, String.format("refresh()"));
-        Observable.fromCallable(() -> usecaseFascade.repositoryFascade.wordRepository.findMyWordMaxLastUpdated())
+        usecaseFascade.repositoryFascade.keyValueRepository
+                .findMaybe(KeyValue.KEY.USER_CURRENT_ACCESSTOKEN)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(maxLastUpdated -> {
-                    usecaseFascade.repositoryFascade.wordRepository.refresh(MyWordRefreshRequest.builder().setLastUpdated(maxLastUpdated).build());
-                });
-        Observable.just(true).subscribeOn(Schedulers.computation()).observeOn(Schedulers.io())
-                .subscribe(aBoolean -> {
-                    usecaseFascade.repositoryFascade.wordRepository.refresh(MyWordStatsRequest.builder().build());
+                .map(keyValue -> keyValue.value.voAccessToken)
+                .subscribe(new MaybeObserver<VoAccessToken>() {
+                    boolean hasValue = false;
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.i(TAG, "onSubscribe");
+                    }
+
+                    @Override
+                    public void onSuccess(VoAccessToken voAccessToken) {
+                        //found accesstoken
+                        Log.i(TAG, String.format("onSuccess voAccessToken=%s", gson.toJson(voAccessToken)));
+                        hasValue = true;
+
+                        usecaseFascade.repositoryFascade.wordRepository.findMyWordMaxLastUpdated()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io())
+                                .subscribe(word -> {
+                                    MyWordRefreshRequest myWordRefreshRequest = MyWordRefreshRequest
+                                            .builder()
+                                            .setVoAccessToken(voAccessToken)
+                                            .setLastUpdated(word.lastUpdated)
+                                            .build();
+                                    usecaseFascade.repositoryFascade.wordRepository
+                                            .refresh(myWordRefreshRequest);
+                                    MyWordStatsRefreshRequest myWordStatsRefreshRequest = MyWordStatsRefreshRequest
+                                            .builder()
+                                            .setVoAccessToken(voAccessToken)
+                                            .build();
+                                    usecaseFascade.repositoryFascade.wordRepository.refresh(myWordStatsRefreshRequest);
+                                });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //access database error
+                        Log.i(TAG, String.format("onError Throwable=%s", e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        //not found accesstoken
+                        Log.i(TAG, String.format("onComplete hasValue=%b,Not Logined! No accesstoken,please login.", hasValue));
+                    }
                 });
     }
 
@@ -145,15 +186,13 @@ public class MyViewModel extends ViewModel {
     private Maybe<VoWordSortType.WordSortType> getMyWordSortType() {
         Maybe<VoWordSortType.WordSortType> dbValue = usecaseFascade.repositoryFascade.keyValueRepository
                 .findMaybe(KeyValue.KEY.USER_SETTING_WORDSORTTYPE)
-                .filter(keyValue -> keyValue.value != null && keyValue.value.voWordSortType != null)
                 .map(keyValue -> keyValue.value.voWordSortType.sortType);
-
         Maybe<VoWordSortType.WordSortType> reqValue = Maybe.just(mutableLoadRequest)
                 .filter(mutableLoadRequest ->
                         mutableLoadRequest.getValue() != null && mutableLoadRequest.getValue().sortType != null)
                 .map(mutableLoadRequest -> mutableLoadRequest.getValue().sortType);
 
-        Maybe<VoWordSortType.WordSortType> defValue = Maybe.just(VoWordSortType.WordSortType.SEQUENCE);
+        Maybe<VoWordSortType.WordSortType> defValue = Maybe.just(VoWordSortType.WordSortType.MEMORY);
 
         return Maybe.concat(dbValue, reqValue, defValue)
                 .firstElement();

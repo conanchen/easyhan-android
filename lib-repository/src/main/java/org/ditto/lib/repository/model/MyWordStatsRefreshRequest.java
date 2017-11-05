@@ -3,13 +3,11 @@ package org.ditto.lib.repository.model;
 
 import org.ditto.lib.dbroom.kv.VoAccessToken;
 
-public class MyWordRefreshRequest {
+public class MyWordStatsRefreshRequest {
     public VoAccessToken voAccessToken;
-    public long lastUpdated;
 
-    public MyWordRefreshRequest(VoAccessToken voAccessToken, long lastUpdated) {
+    public MyWordStatsRefreshRequest(VoAccessToken voAccessToken) {
         this.voAccessToken = voAccessToken;
-        this.lastUpdated = lastUpdated;
     }
 
     public static Builder builder() {
@@ -18,12 +16,11 @@ public class MyWordRefreshRequest {
 
     public static final class Builder {
         private VoAccessToken voAccessToken;
-        private long lastUpdated;
 
         Builder() {
         }
 
-        public MyWordRefreshRequest build() {
+        public MyWordStatsRefreshRequest build() {
             String missing = "";
 
 
@@ -31,27 +28,16 @@ public class MyWordRefreshRequest {
                 missing += " voAccessToken";
             }
 
-            if (lastUpdated < 0) {
-                missing += " lastUpdated";
-            }
-
             if (!missing.isEmpty()) {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
 
-            return new MyWordRefreshRequest(voAccessToken, lastUpdated);
+            return new MyWordStatsRefreshRequest(voAccessToken);
         }
 
         public Builder setVoAccessToken(VoAccessToken voAccessToken) {
             this.voAccessToken = voAccessToken;
             return this;
         }
-
-        public Builder setLastUpdated(long lastUpdated) {
-            this.lastUpdated = lastUpdated;
-            return this;
-        }
     }
-
-
 }

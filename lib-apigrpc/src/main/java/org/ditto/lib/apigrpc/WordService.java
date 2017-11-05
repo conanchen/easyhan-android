@@ -141,7 +141,7 @@ public class WordService {
                 .build();
     }
 
-    public void upsertMyWord(CallCredentials callCredentials,String requestWord, MyWordCallback callback) {
+    public void upsertMyWord(CallCredentials callCredentials, String requestWord, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -196,7 +196,7 @@ public class WordService {
                 });
     }
 
-    public void listMyWords(long requestLastUpdated, MyWordCallback callback) {
+    public void listMyWords(CallCredentials callCredentials, org.easyhan.myword.grpc.ListRequest listRequest, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -206,7 +206,6 @@ public class WordService {
         HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
 
-        CallCredentials callCredentials = getCallCredentials("allyourbase",77650);
 
         healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(myWordGrpcHealthCheckRequest,
                 new StreamObserver<HealthCheckResponse>() {
@@ -214,30 +213,30 @@ public class WordService {
                     public void onNext(HealthCheckResponse value) {
 
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
-                            Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%d]", requestLastUpdated));
-                            org.easyhan.myword.grpc.ListRequest listRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
-                                    .setLastUpdated(requestLastUpdated).build();
-                            myWordStub.withWaitForReady()
+                            Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%s]", gson.toJson(listRequest)));
+
+                            myWordStub
+                                    .withWaitForReady()
                                     .withCallCredentials(callCredentials)
                                     .list(listRequest, new StreamObserver<MyWordResponse>() {
-                                @Override
-                                public void onNext(MyWordResponse value) {
-                                    Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
-                                    callback.onMyWordReceived(value);
-                                }
+                                        @Override
+                                        public void onNext(MyWordResponse value) {
+                                            Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
+                                            callback.onMyWordReceived(value);
+                                        }
 
-                                @Override
-                                public void onError(Throwable t) {
+                                        @Override
+                                        public void onError(Throwable t) {
 
-                                }
+                                        }
 
-                                @Override
-                                public void onCompleted() {
+                                        @Override
+                                        public void onCompleted() {
 
-                                }
-                            });
+                                        }
+                                    });
                         } else {
-                            Log.i(TAG, String.format("listMyWords healthStub.check onNext NOT! ServingStatus.SERVING requestLastUpdated = [%l]", requestLastUpdated));
+                            Log.i(TAG, String.format("listMyWords healthStub.check onNext NOT! ServingStatus.SERVING listRequest = [%s]", gson.toJson(listRequest)));
                         }
                     }
 
@@ -270,7 +269,7 @@ public class WordService {
         return MoreCallCredentials.from(oAuth2Credentials);
     }
 
-    public void listMyStats(MyWordCallback callback) {
+    public void listMyStats(CallCredentials callCredentials, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -289,23 +288,26 @@ public class WordService {
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
                             org.easyhan.myword.grpc.StatsRequest listRequest = org.easyhan.myword.grpc.StatsRequest.newBuilder()
                                     .build();
-                            myWordStub.withWaitForReady().stats(listRequest, new StreamObserver<StatsResponse>() {
-                                @Override
-                                public void onNext(StatsResponse value) {
-                                    Log.i(TAG, String.format("listMyStats stats.onNext StatsResponse=%s", gson.toJson(value)));
-                                    callback.onMyStatsReceived(value);
-                                }
+                            myWordStub
+                                    .withWaitForReady()
+                                    .withCallCredentials(callCredentials)
+                                    .stats(listRequest, new StreamObserver<StatsResponse>() {
+                                        @Override
+                                        public void onNext(StatsResponse value) {
+                                            Log.i(TAG, String.format("listMyStats stats.onNext StatsResponse=%s", gson.toJson(value)));
+                                            callback.onMyStatsReceived(value);
+                                        }
 
-                                @Override
-                                public void onError(Throwable t) {
+                                        @Override
+                                        public void onError(Throwable t) {
 
-                                }
+                                        }
 
-                                @Override
-                                public void onCompleted() {
+                                        @Override
+                                        public void onCompleted() {
 
-                                }
-                            });
+                                        }
+                                    });
                         } else {
                             Log.i(TAG, String.format("listMyStats healthStub.check onNext NOT! ServingStatus.SERVING "));
                         }

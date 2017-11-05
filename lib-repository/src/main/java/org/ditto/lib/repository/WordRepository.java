@@ -17,7 +17,7 @@ import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.dbroom.kv.VoWordSummary;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
-import org.ditto.lib.repository.model.MyWordStatsRequest;
+import org.ditto.lib.repository.model.MyWordStatsRefreshRequest;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.grpc.CallCredentials;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -142,13 +143,8 @@ public class WordRepository {
         return result;
     }
 
-    public long findMyWordMaxLastUpdated() {
-        long result = 0l;
-        Word word = roomFascade.daoWord.findMyLatestWord();
-        if (word != null) {
-            result = word.memLastUpdated;
-        }
-        return result;
+    public Maybe<Word> findMyWordMaxLastUpdated() {
+        return roomFascade.daoWord.findMyLatestWord();
     }
 
 
@@ -198,8 +194,10 @@ public class WordRepository {
     }
 
     public void upsertMyWord(VoAccessToken voAccessToken, String word, ProgressCallback callback) {
-       CallCredentials callCredentials = apigrpcFascade.getWordService().getCallCredentials(voAccessToken.accessToken,Long.valueOf(voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().upsertMyWord(callCredentials,word,
+        CallCredentials callCredentials = apigrpcFascade.getWordService()
+                .getCallCredentials(voAccessToken.accessToken,
+                        Long.valueOf(voAccessToken.expiresIn));
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word,
                 new WordService.MyWordCallback() {
                     @Override
                     public void onMyWordUpserted(UpsertResponse response) {
@@ -267,10 +265,13 @@ public class WordRepository {
     }
 
     public void refresh(MyWordRefreshRequest request) {
-        ListRequest listRequest = ListRequest.newBuilder()
+        CallCredentials callCredentials = apigrpcFascade.getWordService()
+                .getCallCredentials(request.voAccessToken.accessToken,
+                        Long.valueOf(request.voAccessToken.expiresIn));
+        org.easyhan.myword.grpc.ListRequest listRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
                 .setLastUpdated(request.lastUpdated).build();
 
-        apigrpcFascade.getWordService().listMyWords(request.lastUpdated,
+        apigrpcFascade.getWordService().listMyWords(callCredentials, listRequest,
                 new WordService.MyWordCallback() {
                     @Override
                     public void onApiReady() {
@@ -325,8 +326,10 @@ public class WordRepository {
                 });
     }
 
-    public void refresh(MyWordStatsRequest request) {
-        apigrpcFascade.getWordService().listMyStats(new WordService.MyWordCallback() {
+    public void refresh(MyWordStatsRefreshRequest request) {
+        CallCredentials callCredentials = apigrpcFascade.getWordService().getCallCredentials(request.voAccessToken.accessToken,
+                Long.valueOf(request.voAccessToken.expiresIn));
+        apigrpcFascade.getWordService().listMyStats(callCredentials,new WordService.MyWordCallback() {
             @Override
             public void onMyWordUpserted(UpsertResponse image) {
                 // nothing to do here
@@ -379,7 +382,7 @@ public class WordRepository {
 
             @Override
             public void onApiError() {
-                Log.i(TAG, String.format("onApiError  refresh(MyWordStatsRequest request)"));
+                Log.i(TAG, String.format("onApiError  refresh(MyWordStatsRefreshRequest request)"));
             }
 
             @Override
