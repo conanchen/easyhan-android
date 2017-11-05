@@ -3,8 +3,6 @@ package org.ditto.lib.dbroom.index;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Strings;
@@ -14,9 +12,10 @@ import com.google.common.base.Strings;
  */
 @Entity(indices = {
         @Index(value = {"level", "idx"}),
+        @Index(value = {"level", "memIdxIsOverThreshold","memIdx","idx"}),
         @Index(value = {"level", "lastUpdated"})
 })
-public class Word  {
+public class Word {
 
     @PrimaryKey
     @NonNull
@@ -28,12 +27,13 @@ public class Word  {
     public long lastUpdated;
     public int visitCount;
     public int memIdx;
+    public int memIdxIsOverThreshold;
     public long memLastUpdated;
 
     public Word() {
     }
 
-    private Word(@NonNull String word, int idx, String pinyin, String level, long created, long lastUpdated, int visitCount, int memIdx, long memLastUpdated) {
+    private Word(@NonNull String word, int idx, String pinyin, String level, long created, long lastUpdated, int visitCount, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
         this.word = word;
         this.idx = idx;
         this.pinyin = pinyin;
@@ -42,6 +42,7 @@ public class Word  {
         this.lastUpdated = lastUpdated;
         this.visitCount = visitCount;
         this.memIdx = memIdx;
+        this.memIdxIsOverThreshold = memIdxIsOverThreshold;
         this.memLastUpdated = memLastUpdated;
     }
 
@@ -58,6 +59,7 @@ public class Word  {
         private long lastUpdated;
         private int visitCount;
         private int memIdx;
+        private int memIdxIsOverThreshold;
         private long memLastUpdated;
 
         Builder() {
@@ -77,7 +79,7 @@ public class Word  {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
 
-            Word wordObj = new Word(word, idx, pinyin, level, created, lastUpdated, visitCount,memIdx,memLastUpdated);
+            Word wordObj = new Word(word, idx, pinyin, level, created, lastUpdated, visitCount, memIdx, memIdxIsOverThreshold, memLastUpdated);
             return wordObj;
         }
 
@@ -119,6 +121,11 @@ public class Word  {
 
         public Builder setMemIdx(int memIdx) {
             this.memIdx = memIdx;
+            return this;
+        }
+
+        public Builder setMemIdxIsOverThreshold(int memIdxIsOverThreshold) {
+            this.memIdxIsOverThreshold = memIdxIsOverThreshold;
             return this;
         }
 

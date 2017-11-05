@@ -202,10 +202,13 @@ public class WordRepository {
                     @Override
                     public void onMyWordUpserted(UpsertResponse response) {
                         Log.i(TAG, String.format("onMyWordUpserted upsertResponse.getMemIdx()=%d", response.getMemIdx()));
-                        roomFascade.daoWord.findSingle(word)
+                        roomFascade.daoWord.findMaybe(word)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe(word -> {
+                                    if (response.getMemIdx() > 7) {
+                                        word.memIdxIsOverThreshold = 1;
+                                    }
                                     word.memIdx = response.getMemIdx();
                                     roomFascade.daoWord.save(word);
                                     Log.i(TAG, String.format("onMyWordUpserted save word=[%s]", gson.toJson(word)));
@@ -295,10 +298,13 @@ public class WordRepository {
                     @Override
                     public void onMyWordReceived(MyWordResponse response) {
                         Log.i(TAG, String.format("onMyWordReceived MyWordResponse=[%s]", gson.toJson(response)));
-                        roomFascade.daoWord.findSingle(response.getWord())
+                        roomFascade.daoWord.findMaybe(response.getWord())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe(word -> {
+                                    if (response.getMemIdx() > 7) {
+                                        word.memIdxIsOverThreshold = 1;
+                                    }
                                     word.memIdx = response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
                                     roomFascade.daoWord.save(word);
@@ -329,7 +335,7 @@ public class WordRepository {
     public void refresh(MyWordStatsRefreshRequest request) {
         CallCredentials callCredentials = apigrpcFascade.getWordService().getCallCredentials(request.voAccessToken.accessToken,
                 Long.valueOf(request.voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().listMyStats(callCredentials,new WordService.MyWordCallback() {
+        apigrpcFascade.getWordService().listMyStats(callCredentials, new WordService.MyWordCallback() {
             @Override
             public void onMyWordUpserted(UpsertResponse image) {
                 // nothing to do here

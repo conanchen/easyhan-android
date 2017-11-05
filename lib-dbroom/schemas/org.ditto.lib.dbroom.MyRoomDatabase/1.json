@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "30629372fbd09ddbabea61055aecdd74",
+    "identityHash": "d17c565c9f5b0b4995eba9ec137c62bb",
     "entities": [
       {
         "tableName": "Myprofile",
@@ -180,7 +180,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `idx` INTEGER NOT NULL, `pinyin` TEXT, `level` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `memIdx` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `idx` INTEGER NOT NULL, `pinyin` TEXT, `level` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
         "fields": [
           {
             "fieldPath": "word",
@@ -231,6 +231,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "memIdxIsOverThreshold",
+            "columnName": "memIdxIsOverThreshold",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "memLastUpdated",
             "columnName": "memLastUpdated",
             "affinity": "INTEGER",
@@ -252,6 +258,17 @@
               "idx"
             ],
             "createSql": "CREATE  INDEX `index_Word_level_idx` ON `${TABLE_NAME}` (`level`, `idx`)"
+          },
+          {
+            "name": "index_Word_level_memIdxIsOverThreshold_memIdx_idx",
+            "unique": false,
+            "columnNames": [
+              "level",
+              "memIdxIsOverThreshold",
+              "memIdx",
+              "idx"
+            ],
+            "createSql": "CREATE  INDEX `index_Word_level_memIdxIsOverThreshold_memIdx_idx` ON `${TABLE_NAME}` (`level`, `memIdxIsOverThreshold`, `memIdx`, `idx`)"
           },
           {
             "name": "index_Word_level_lastUpdated",
@@ -374,7 +391,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"30629372fbd09ddbabea61055aecdd74\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d17c565c9f5b0b4995eba9ec137c62bb\")"
     ]
   }
 }

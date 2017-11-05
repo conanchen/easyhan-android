@@ -30,14 +30,14 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE level = :level ORDER by idx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByIdx(String level);
 
-    @Query("SELECT * FROM Word WHERE level = :level ORDER by memIdx DESC ")
+    @Query("SELECT * FROM Word WHERE level = :level ORDER by memIdxIsOverThreshold ASC, memIdx DESC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByMemIdx(String level);
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     LiveData<Word> findLive(String word);
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
-    Single<Word> findSingle(String word);
+    Maybe<Word> findMaybe(String word);
 
     @Query("SELECT * FROM Word WHERE level = :level ORDER BY lastUpdated DESC LIMIT 1")
     Word findLatestWord(String level);
@@ -45,7 +45,7 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by idx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByIdx();
 
-    @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by memIdx DESC ")
+    @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by memIdxIsOverThreshold ASC, memIdx DESC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByMemIdx();
 
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER BY memLastUpdated DESC LIMIT 1")

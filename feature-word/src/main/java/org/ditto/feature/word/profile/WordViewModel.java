@@ -49,6 +49,7 @@ public class WordViewModel extends ViewModel {
     @Inject
     public WordViewModel() {
         liveWord = Transformations.switchMap(mutableRequestWord, (String requestWord) -> {
+            Log.i(TAG,String.format("mutableRequestWord.value=%s",mutableRequestWord.getValue()));
             return usecaseFascade.repositoryFascade.wordRepository.find(requestWord);
         });
 
