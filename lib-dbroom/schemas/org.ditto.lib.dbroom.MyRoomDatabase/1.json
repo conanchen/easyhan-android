@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d17c565c9f5b0b4995eba9ec137c62bb",
+    "identityHash": "d9d463b76ce5199c685659fe343f3d6c",
     "entities": [
       {
         "tableName": "Myprofile",
@@ -271,6 +271,16 @@
             "createSql": "CREATE  INDEX `index_Word_level_memIdxIsOverThreshold_memIdx_idx` ON `${TABLE_NAME}` (`level`, `memIdxIsOverThreshold`, `memIdx`, `idx`)"
           },
           {
+            "name": "index_Word_memIdxIsOverThreshold_memIdx_idx",
+            "unique": false,
+            "columnNames": [
+              "memIdxIsOverThreshold",
+              "memIdx",
+              "idx"
+            ],
+            "createSql": "CREATE  INDEX `index_Word_memIdxIsOverThreshold_memIdx_idx` ON `${TABLE_NAME}` (`memIdxIsOverThreshold`, `memIdx`, `idx`)"
+          },
+          {
             "name": "index_Word_level_lastUpdated",
             "unique": false,
             "columnNames": [
@@ -391,7 +401,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d17c565c9f5b0b4995eba9ec137c62bb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d9d463b76ce5199c685659fe343f3d6c\")"
     ]
   }
 }

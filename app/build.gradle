@@ -169,9 +169,9 @@ dependencies {
     debugCompile project(path: ':feature-my', configuration: 'debug')
     releaseCompile project(path: ':feature-my', configuration: 'release')
 
-    debugCompile project(path: ':feature-visitor', configuration: 'debug')
-    releaseCompile project(path: ':feature-visitor', configuration: 'release')
-
+//    debugCompile project(path: ':feature-visitor', configuration: 'debug')
+//    releaseCompile project(path: ':feature-visitor', configuration: 'release')
+//
     //Stetho : A debug bridge for Android applications
     
 

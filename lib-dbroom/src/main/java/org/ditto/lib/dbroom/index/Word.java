@@ -12,7 +12,8 @@ import com.google.common.base.Strings;
  */
 @Entity(indices = {
         @Index(value = {"level", "idx"}),
-        @Index(value = {"level", "memIdxIsOverThreshold","memIdx","idx"}),
+        @Index(value = {"level", "memIdxIsOverThreshold", "memIdx", "idx"}),
+        @Index(value = {"memIdxIsOverThreshold", "memIdx", "idx"}),
         @Index(value = {"level", "lastUpdated"})
 })
 public class Word {

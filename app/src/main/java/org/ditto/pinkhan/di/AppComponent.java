@@ -5,9 +5,8 @@ import android.app.Application;
 import org.ditto.feature.login.di.LoginModule;
 import org.ditto.feature.my.di.MyModule;
 import org.ditto.feature.word.di.WordModule;
-import org.ditto.feature.visitor.di.VisitorModule;
-import org.ditto.pinkhan.EasyhanApplication;
 import org.ditto.lib.usecases.di.UsecaseModule;
+import org.ditto.pinkhan.EasyhanApplication;
 
 import javax.inject.Singleton;
 
@@ -25,7 +24,7 @@ import dagger.android.AndroidInjectionModule;
         LoginModule.class,
         WordModule.class,
         MyModule.class,
-        VisitorModule.class,
+//        VisitorModule.class,
 
         UsecaseModule.class
 })

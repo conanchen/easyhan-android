@@ -7,6 +7,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -132,6 +133,7 @@ public class WordActivity extends BaseActivity {
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         webSettings.setSupportZoom(true);
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
         x5webView.loadUrl("http://hanyu.baidu.com/zici/s?wd=" + mWord);
         x5webView.setWebViewClient(new WebViewClient() {
@@ -144,6 +146,16 @@ public class WordActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && x5webView.canGoBack()) {
+            // 返回上一页面
+            x5webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+            x5webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     private void setupViewModel() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(WordViewModel.class);

@@ -17,8 +17,6 @@ public interface MyViewModelSubComponent {
 
     MyViewModel createMyViewModel();
 
-
-
     @Subcomponent.Builder
     interface Builder {
         MyViewModelSubComponent build();

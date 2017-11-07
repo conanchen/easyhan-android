@@ -21,7 +21,7 @@ import com.xdandroid.hellodaemon.IntentWrapper;
 import org.ditto.feature.base.BaseFragmentActivity;
 import org.ditto.feature.base.FragmentsPagerAdapter;
 import org.ditto.feature.my.index.FragmentMy;
-import org.ditto.feature.visitor.FragmentVisitorIndices;
+import org.ditto.feature.my.index.FragmentMyWords;
 import org.ditto.feature.word.index.FragmentWords;
 import org.easyhan.common.grpc.HanziLevel;
 
@@ -112,12 +112,12 @@ public class MainActivity extends BaseFragmentActivity {
         int fmIdx = 0;
         Map<Integer, Fragment> fmList = new HashMap<>();
         mBottombarTab0Fragment0 = fmList.size();
-        fmList.put(fmIdx++, FragmentMy.create("我的资料", HanziLevel.THREE));
+        fmList.put(fmIdx++, FragmentMy.create("我的资料"));
         mBottombarTab1Fragment0 = fmList.size();
         fmList.put(fmIdx++, FragmentWords.create("一级字表", HanziLevel.ONE));
 
         mBottombarTab2Fragment0 = fmList.size();
-        fmList.put(fmIdx++, FragmentVisitorIndices.create("好好学习"));
+        fmList.put(fmIdx++, FragmentMyWords.create("好好学习"));
         mBottombarTab3Fragment0 = fmList.size();
         fmList.put(fmIdx++, FragmentWords.create("二级字表", HanziLevel.TWO));
         mBottombarTab4Fragment0 = fmList.size();

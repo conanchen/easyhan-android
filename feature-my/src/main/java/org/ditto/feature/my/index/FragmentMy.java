@@ -61,12 +61,11 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     }
 
 
-    public static FragmentMy create(String title, HanziLevel level) {
+    public static FragmentMy create(String title) {
         Preconditions.checkNotNull(title);
         FragmentMy fragment = new FragmentMy();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
-        bundle.putString(Constants.HANZILEVEL, level.name());
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -157,20 +156,6 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
         return recyclerView;
     }
 
-
-    @Override
-    public void onWordItemClicked(Word word, int position) {
-        ARouter.getInstance().build("/feature_word/WordActivity")
-                .withString(Constants.ROUTE_WORD, word.word)
-                .navigation();
-    }
-
-    @Override
-    public void onPageClicked(int pageno) {
-        viewModel.refresh();
-        viewModel.loadPage(pageno);
-        currentPageNo = pageno;
-    }
 
     @Override
     public void onWordSortTypeChangedTo(VoWordSortType.WordSortType sortType) {

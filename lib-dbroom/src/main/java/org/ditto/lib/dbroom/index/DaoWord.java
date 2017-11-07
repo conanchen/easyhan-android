@@ -45,7 +45,7 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by idx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByIdx();
 
-    @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by memIdxIsOverThreshold ASC, memIdx DESC ")
+    @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, idx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByMemIdx();
 
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER BY memLastUpdated DESC LIMIT 1")

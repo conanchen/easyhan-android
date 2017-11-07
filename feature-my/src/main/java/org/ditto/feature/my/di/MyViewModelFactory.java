@@ -15,11 +15,8 @@ public class MyViewModelFactory extends BaseViewModelFactory {
         // we cannot inject view models directly because they won't be bound to the owner's
         // view model scope.
 
-
         super.creators.put(MyViewModel.class,
                 () -> viewModelSubComponent.createMyViewModel());
-
-
     }
 
 }

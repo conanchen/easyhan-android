@@ -41,10 +41,11 @@ public class MyViewModel extends ViewModel {
 
     private final LiveData<PagedList<Word>> liveMyWords;
     private final LiveData<VoWordSortType.WordSortType> liveMyWordSortType;
-    private final LiveData<MyLiveDataHolder> liveMyData;
     private final LiveData<KeyValue> liveMyWordLevel1Stats;
     private final LiveData<KeyValue> liveMyWordLevel2Stats;
     private final LiveData<KeyValue> liveMyWordLevel3Stats;
+    private final LiveData<MyLiveDataHolder> liveMyData;
+    private final LiveData<MyLiveWordsHolder> liveMyWordsHolder;
 
 
     @Inject
@@ -83,20 +84,23 @@ public class MyViewModel extends ViewModel {
 
         liveMyData = new MediatorLiveData<MyLiveDataHolder>() {
             {
-                addSource(liveMyWords, data -> setValue(MyLiveDataHolder.create(data, liveMyWordSortType.getValue()
+                addSource(liveMyWordSortType, sortType -> setValue(MyLiveDataHolder.create(sortType
                         , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordSortType, sortType -> setValue(MyLiveDataHolder.create(liveMyWords.getValue(), sortType
-                        , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
-
-                addSource(liveMyWordLevel1Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWords.getValue(), liveMyWordSortType.getValue()
+                addSource(liveMyWordLevel1Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
                         , stats, liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordLevel2Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWords.getValue(), liveMyWordSortType.getValue()
+                addSource(liveMyWordLevel2Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
                         , liveMyWordLevel1Stats.getValue(), stats, liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordLevel3Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWords.getValue(), liveMyWordSortType.getValue()
+                addSource(liveMyWordLevel3Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
                         , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), stats)));
+            }
+        };
+        liveMyWordsHolder = new MediatorLiveData<MyLiveWordsHolder>() {
+            {
+                addSource(liveMyWords, words -> setValue(MyLiveWordsHolder.create(words, mutableLoadRequest.getValue())));
+                addSource(mutableLoadRequest, request -> setValue(MyLiveWordsHolder.create(liveMyWords.getValue(), request)));
             }
         };
     }
@@ -104,6 +108,10 @@ public class MyViewModel extends ViewModel {
 
     public LiveData<MyLiveDataHolder> getLiveMyData() {
         return liveMyData;
+    }
+
+    public LiveData<MyLiveWordsHolder> getLiveMyWordsHolder() {
+        return liveMyWordsHolder;
     }
 
     public void refresh() {
