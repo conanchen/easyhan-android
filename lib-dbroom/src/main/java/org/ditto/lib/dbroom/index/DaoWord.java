@@ -53,4 +53,7 @@ public interface DaoWord {
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     Word findOne(String word);
+
+    @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, idx ASC LIMIT :size")
+    LiveData<List<Word>> getLiveMyExamWords(Integer size);
 }

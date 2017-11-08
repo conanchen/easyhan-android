@@ -6,7 +6,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,13 +21,16 @@ import org.ditto.feature.base.Constants;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
+import org.ditto.lib.dbroom.index.Word;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import nl.fampennings.keyboard.PinyinKeyboard;
@@ -44,6 +47,7 @@ public class WordExamActivity extends BaseActivity {
     String mWord;
 
     private String mImageTitle = "";
+    private Word mCurrentExamWord;
 
     private enum CollapsingToolbarLayoutState {
         EXPANDED,
@@ -62,7 +66,7 @@ public class WordExamActivity extends BaseActivity {
     AppBarLayout app_bar;
 
     @BindView(R2.id.backdrop)
-    AppCompatImageView image;
+    AppCompatTextView image;
 
     @BindView(R2.id.toolbar_button_layout)
     ButtonBarLayout buttonBarLayout;
@@ -126,47 +130,12 @@ public class WordExamActivity extends BaseActivity {
 
         });
 
-        pinyin1.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                Observable
-                        .just(true)
-                        .delay(5000, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aBoolean -> {
-                            app_bar.setExpanded(false, true);
-                        });
-            }
-        });
-
-        pinyin2.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                Observable
-                        .just(true)
-                        .delay(5000, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aBoolean -> {
-                            app_bar.setExpanded(false, true);
-                        });
-            }
-        });
-
-        strokes.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                Observable
-                        .just(true)
-                        .delay(5000, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aBoolean -> {
-                            app_bar.setExpanded(false, true);
-                        });
-            }
-        });
 
         broken.setOnFocusChangeListener((view, b) -> {
             if (b) {
                 Observable
                         .just(true)
-                        .delay(5000, TimeUnit.MILLISECONDS)
+                        .delay(500, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(aBoolean -> {
                             app_bar.setExpanded(false, true);
@@ -183,9 +152,28 @@ public class WordExamActivity extends BaseActivity {
         mPinyinKeyboard = new PinyinKeyboard(this, R.id.keyboardview, R.xml.pinyinkbd);
         mStrokeKeyboard = new StrokeKeyboard(this, R.id.keyboardview, R.xml.strokekbd);
 
-        mPinyinKeyboard.registerEditText(R.id.pinyin1);
-        mPinyinKeyboard.registerEditText(R.id.pinyin2);
-        mStrokeKeyboard.registerEditText(R.id.strokes);
+        mPinyinKeyboard.registerEditText(R.id.pinyin1, () -> Observable
+                .just(true)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    app_bar.setExpanded(false, true);
+                }));
+        mPinyinKeyboard.registerEditText(R.id.pinyin2, () -> Observable
+                .just(true)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    app_bar.setExpanded(false, true);
+                }));
+        mStrokeKeyboard.registerEditText(R.id.strokes, () -> Observable
+                .just(true)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    app_bar.setExpanded(false, true);
+                })
+        );
 
     }
 
@@ -202,5 +190,26 @@ public class WordExamActivity extends BaseActivity {
 
     private void setupViewModel() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyWordsViewModel.class);
+
+        nextExamWord();
+    }
+
+    private void nextExamWord() {
+        mViewModel.getLiveExamWords().observe(this, words -> {
+            if (words != null && words.size() > 0) {
+                Random random = new Random();
+                mCurrentExamWord = words.get(random.nextInt(words.size()));
+                mViewModel.removeObserver(WordExamActivity.this);
+
+                image.setText(mCurrentExamWord.word);
+            }
+        });
+
+        mViewModel.nextExamWord();
+    }
+
+    @OnClick(R2.id.ok)
+    void onOKButtonClicked() {
+        nextExamWord();
     }
 }

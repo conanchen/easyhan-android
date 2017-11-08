@@ -23,13 +23,16 @@
             app:statusBarScrim="@android:color/transparent">
 
             <!--封面图片-->
-            <ImageView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_avartar"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="稳"
+                android:textSize="@dimen/dp_200"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7" />
 
@@ -205,7 +208,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_8"
             android:layout_marginRight="@dimen/dp_8"
-            android:text="确定识字进度升级到③"
+            android:text="[德]识字进度升级到③"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

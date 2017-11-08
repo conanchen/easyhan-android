@@ -28,6 +28,8 @@ import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -46,6 +48,10 @@ public class WordRepository {
     private final static Gson gson = new Gson();
     private ApigrpcFascade apigrpcFascade;
     private RoomFascade roomFascade;
+
+    public   LiveData<List<Word>> findMyExamWord(Integer size) {
+        return roomFascade.daoWord.getLiveMyExamWords(size);
+    }
 
     public interface ProgressCallback {
         void onSucess();
@@ -83,7 +89,9 @@ public class WordRepository {
                         Word word = Word.builder()
                                 .setWord(response.getWord())
                                 .setIdx(response.getIdx())
-                                .setPinyin(response.getPinyin())
+                                .setPinyin1(response.getPinyin1())
+                                .setPinyin2(response.getPinyin2())
+                                .setStrokes(response.getStrokes())
                                 .setLevel(response.getLevel().name())
                                 .setCreated(response.getCreated())
                                 .setLastUpdated(response.getLastUpdated())
@@ -162,7 +170,9 @@ public class WordRepository {
                                 Word.builder()
                                         .setWord(String.format("一"))
                                         .setIdx(1)
-                                        .setPinyin("yì")
+                                        .setPinyin1("yī")
+                                        .setPinyin2("yī")
+                                        .setStrokes("-")
                                         .setLevel(HanziLevel.ONE.name())
                                         .setLastUpdated(now + 1)
                                         .build());
@@ -173,7 +183,9 @@ public class WordRepository {
                                 Word.builder()
                                         .setWord(String.format("乂"))
                                         .setIdx(3501)
-                                        .setPinyin("yì")
+                                        .setPinyin1("yì")
+                                        .setPinyin2("yì")
+                                        .setStrokes("-")
                                         .setLevel(HanziLevel.TWO.name())
                                         .setLastUpdated(now + 1)
                                         .build());
@@ -183,7 +195,9 @@ public class WordRepository {
                                 Word.builder()
                                         .setWord(String.format("亍"))
                                         .setIdx(6501)
-                                        .setPinyin("chù")
+                                        .setPinyin1("chù")
+                                        .setPinyin2("chù")
+                                        .setStrokes("-")
                                         .setLevel(HanziLevel.THREE.name())
                                         .setLastUpdated(now + 1)
                                         .build()

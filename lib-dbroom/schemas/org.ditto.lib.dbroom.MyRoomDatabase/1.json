@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d9d463b76ce5199c685659fe343f3d6c",
+    "identityHash": "617e7871de67f67ec2810e3a9f3d0860",
     "entities": [
       {
         "tableName": "Myprofile",
@@ -180,7 +180,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `idx` INTEGER NOT NULL, `pinyin` TEXT, `level` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `idx` INTEGER NOT NULL, `pinyin1` TEXT, `pinyin2` TEXT, `strokes` TEXT, `level` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
         "fields": [
           {
             "fieldPath": "word",
@@ -195,8 +195,20 @@
             "notNull": true
           },
           {
-            "fieldPath": "pinyin",
-            "columnName": "pinyin",
+            "fieldPath": "pinyin1",
+            "columnName": "pinyin1",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pinyin2",
+            "columnName": "pinyin2",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "strokes",
+            "columnName": "strokes",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -401,7 +413,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d9d463b76ce5199c685659fe343f3d6c\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"617e7871de67f67ec2810e3a9f3d0860\")"
     ]
   }
 }

@@ -22,7 +22,9 @@ public class Word {
     @NonNull
     public String word;
     public int idx;
-    public String pinyin;
+    public String pinyin1;
+    public String pinyin2;
+    public String strokes;
     public String level;
     public long created;
     public long lastUpdated;
@@ -34,10 +36,12 @@ public class Word {
     public Word() {
     }
 
-    private Word(@NonNull String word, int idx, String pinyin, String level, long created, long lastUpdated, int visitCount, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
+    private Word(@NonNull String word, int idx, String pinyin1, String pinyin2, String strokes, String level, long created, long lastUpdated, int visitCount, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
         this.word = word;
         this.idx = idx;
-        this.pinyin = pinyin;
+        this.pinyin1 = pinyin1;
+        this.pinyin2 = pinyin2;
+        this.strokes = strokes;
         this.level = level;
         this.created = created;
         this.lastUpdated = lastUpdated;
@@ -54,7 +58,9 @@ public class Word {
     public static final class Builder {
         private String word;
         private int idx;
-        private String pinyin;
+        private String pinyin1;
+        private String pinyin2;
+        private String strokes;
         private String level;
         private long created;
         private long lastUpdated;
@@ -80,7 +86,7 @@ public class Word {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
 
-            Word wordObj = new Word(word, idx, pinyin, level, created, lastUpdated, visitCount, memIdx, memIdxIsOverThreshold, memLastUpdated);
+            Word wordObj = new Word(word, idx, pinyin1, pinyin2,strokes, level, created, lastUpdated, visitCount, memIdx, memIdxIsOverThreshold, memLastUpdated);
             return wordObj;
         }
 
@@ -94,11 +100,21 @@ public class Word {
             return this;
         }
 
-        public Builder setPinyin(String pinyin) {
-            this.pinyin = pinyin;
+
+        public Builder setPinyin1(String pinyin1) {
+            this.pinyin1 = pinyin1;
             return this;
         }
 
+        public Builder setPinyin2(String pinyin2) {
+            this.pinyin2 = pinyin2;
+            return this;
+        }
+
+        public Builder setStrokes(String strokes) {
+            this.strokes = strokes;
+            return this;
+        }
 
         public Builder setLevel(String level) {
             this.level = level;

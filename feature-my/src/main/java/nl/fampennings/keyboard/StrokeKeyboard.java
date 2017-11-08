@@ -35,6 +35,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.android.gms.cast.CastRemoteDisplayLocalService;
+
 /**
  * When an activity hosts a keyboardView, this class allows several EditText's to register for it.
  *
@@ -42,6 +44,9 @@ import android.widget.EditText;
  * @date 2012 December 23
  */
 public class StrokeKeyboard {
+    public interface Callbacks {
+        void onFocus();
+    }
 
     /**
      * A link to the KeyboardView that is used to render this PinyinKeyboard.
@@ -137,7 +142,7 @@ public class StrokeKeyboard {
      * and load the keyboard layout from xml file <var>layoutid</var> (see {@link Keyboard} for description).
      * Note that the <var>host</var> activity must have a <var>KeyboardView</var> in its layout (typically aligned with the bottom of the activity).
      * Note that the keyboard layout xml file may include key codes for navigation; see the constants in this class for their values.
-     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int)}.
+     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int,Callbacks)}.
      *
      * @param host     The hosting activity.
      * @param viewid   The id of the KeyboardView.
@@ -185,7 +190,7 @@ public class StrokeKeyboard {
      *
      * @param resid The resource id of the EditText that registers to the custom keyboard.
      */
-    public void registerEditText(int resid) {
+    public void registerEditText(int resid, StrokeKeyboard.Callbacks callbacks) {
         // Find the EditText 'resid'
         EditText edittext = (EditText) mHostActivity.findViewById(resid);
         // Make the custom keyboard appear
@@ -193,7 +198,10 @@ public class StrokeKeyboard {
             // NOTE By setting the on focus listener, we can show the custom keyboard when the edit box gets focus, but also hide it when the edit box loses focus
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) showCustomKeyboard(v);
+                if (hasFocus){
+                    showCustomKeyboard(v);
+                    callbacks.onFocus();
+                }
                 else hideCustomKeyboard();
             }
         });
@@ -238,6 +246,7 @@ public class StrokeKeyboard {
                 am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
         }
     }
+
 }
 
 

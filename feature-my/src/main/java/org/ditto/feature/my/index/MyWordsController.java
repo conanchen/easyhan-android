@@ -64,7 +64,7 @@ public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
                     add(new ItemMyWordDetailModel_()
                             .id(word.word)
                             .word(word.word)
-                            .pinyin(word.pinyin)
+                            .pinyin(word.pinyin1)
                             .memIdx(word.memIdx)
                             .clickListener((model, parentView, clickedView, position) -> {
                                 // A model click listener is used instead of a normal click listener so that we can get

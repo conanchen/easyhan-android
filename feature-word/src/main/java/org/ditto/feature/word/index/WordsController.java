@@ -60,7 +60,7 @@ public class WordsController extends TypedEpoxyController<PagedList<Word>> {
                     add(new ItemWordModel_()
                             .id(word.word)
                             .word(word.word)
-                            .pinyin(word.pinyin)
+                            .pinyin(word.pinyin1)
                             .idx(word.idx)
                             .memIdx(word.memIdx)
                             .clickListener((model, parentView, clickedView, position) -> {

@@ -16,7 +16,7 @@
         <Key android:codes="102"    android:keyLabel="f"/>
         <Key android:codes="100"    android:keyLabel="d"/>
         <Key android:codes="116"    android:keyLabel="t"/>
-        <Key android:codes="111"    android:keyLabel="n"/>
+        <Key android:codes="110"    android:keyLabel="n"/>
         <Key android:codes="108"    android:keyLabel="l"/>
         <Key android:codes="103"    android:keyLabel="g"/>
     </Row>

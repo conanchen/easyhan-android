@@ -42,6 +42,10 @@ import android.widget.EditText;
  * @date 2012 December 23
  */
 public class PinyinKeyboard {
+    public interface Callbacks {
+        void onFocus();
+    }
+
 
     /**
      * A link to the KeyboardView that is used to render this PinyinKeyboard.
@@ -185,7 +189,7 @@ public class PinyinKeyboard {
      *
      * @param resid The resource id of the EditText that registers to the custom keyboard.
      */
-    public void registerEditText(int resid) {
+    public void registerEditText(int resid,Callbacks callbacks) {
         // Find the EditText 'resid'
         EditText edittext = (EditText) mHostActivity.findViewById(resid);
         // Make the custom keyboard appear
@@ -193,7 +197,10 @@ public class PinyinKeyboard {
             // NOTE By setting the on focus listener, we can show the custom keyboard when the edit box gets focus, but also hide it when the edit box loses focus
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) showCustomKeyboard(v);
+                if (hasFocus) {
+                    showCustomKeyboard(v);
+                    callbacks.onFocus();
+                }
                 else hideCustomKeyboard();
             }
         });
