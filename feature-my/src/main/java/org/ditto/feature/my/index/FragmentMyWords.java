@@ -43,14 +43,14 @@ public class FragmentMyWords extends BaseFragment implements Injectable, MyWords
     @Inject
     MyViewModelFactory viewModelFactory;
 
-    private MyViewModel viewModel;
+    private MyWordsViewModel viewModel;
 
     private static final int SPAN_COUNT = 6;
 
     private final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     private final MyWordsController controller = new MyWordsController(this, recycledViewPool);
 
-    private final GridLayoutManager gridLayoutManager = new GridLayoutManager(this.getContext(), SPAN_COUNT);
+    private   GridLayoutManager gridLayoutManager ;
 
 
     @BindView(R2.id.itemlist)
@@ -112,7 +112,8 @@ public class FragmentMyWords extends BaseFragment implements Injectable, MyWords
 
 
     private void setupController() {
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MyViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(MyWordsViewModel.class);
 
         viewModel.getLiveMyWordsHolder().observe(this, data -> {
             controller.setData(data);
@@ -143,6 +144,7 @@ public class FragmentMyWords extends BaseFragment implements Injectable, MyWords
         // to set our span count on the controller and then get the span size lookup object from
         // the controller. This look up object will delegate span size lookups to each model.
         controller.setSpanCount(SPAN_COUNT);
+        gridLayoutManager = new GridLayoutManager(this.getContext(), SPAN_COUNT);
         gridLayoutManager.setSpanSizeLookup(controller.getSpanSizeLookup());
         recyclerView.setLayoutManager(gridLayoutManager);
 

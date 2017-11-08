@@ -3,6 +3,7 @@ package org.ditto.pinkhan.di;
 import org.ditto.feature.login.LoginActivity;
 import org.ditto.feature.login.di.FragmentLoginBuildersModule;
 import org.ditto.feature.my.di.FragmentMyBuildersModule;
+import org.ditto.feature.my.index.WordExamActivity;
 import org.ditto.feature.word.di.FragmentWordsBuildersModule;
 import org.ditto.feature.word.profile.WordActivity;
 import org.ditto.lib.usecases.AppServiceCommandSenderImpl;
@@ -24,6 +25,9 @@ public abstract class MainActivityModule {
 
     @ContributesAndroidInjector
     abstract WordActivity contributeWordActivity();
+
+    @ContributesAndroidInjector
+    abstract WordExamActivity contributeWordExamActivity();
 
     @ContributesAndroidInjector
     abstract LoginActivity contributeLoginActivity();

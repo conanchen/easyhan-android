@@ -73,6 +73,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ditto.pinkhan.MainActivity" />
         </activity>
+        <activity
+            android:name="org.ditto.feature.my.index.WordExamActivity"
+            android:label="@string/title_activity_word_exam"
+            android:parentActivityName="org.ditto.pinkhan.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.ditto.pinkhan.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

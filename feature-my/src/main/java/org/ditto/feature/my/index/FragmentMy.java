@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 
@@ -22,8 +21,6 @@ import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
 import org.ditto.feature.base.Constants;
-import org.ditto.lib.dbroom.index.Word;
-import org.easyhan.common.grpc.HanziLevel;
 
 import javax.inject.Inject;
 
@@ -89,7 +86,6 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     public void onResume() {
         super.onResume();
         viewModel.refresh();
-        viewModel.loadPage(currentPageNo);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

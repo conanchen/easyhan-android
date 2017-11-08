@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.roughike.bottombar.BottomBar;
 import com.xdandroid.hellodaemon.IntentWrapper;
 
@@ -205,11 +206,12 @@ public class MainActivity extends BaseFragmentActivity {
         bottomBar.setOnTabReselectListener((@IdRes int tabId) -> {
             switch (tabId) {
                 case R.id.navigation_tab0:
-//                    ARouter.getInstance().build("/feature_image/UpsertActivity")
-//                            .withString(Constants.HANZILEVEL, HanziLevel.ONE.name())
-//                            .navigation();
                     break;
                 case R.id.navigation_tab1:
+                    break;
+                case R.id.navigation_tab2:
+                    ARouter.getInstance().build("/feature_my/WordExamActivity")
+                            .navigation();
                     break;
                 case R.id.navigation_tab3:
                     break;

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="12.50%p"
+    android:keyHeight="10%p">
+    <!--
+        android:horizontalGap="0.50%p"
+        android:verticalGap="0.50%p"
+        NOTE When we add a horizontalGap in pixels, this interferes with keyWidth in percentages adding up to 100%
+        NOTE When we have a horizontalGap (on Keyboard level) of 0, this make the horizontalGap (on Key level) to move from after the key to before the key... (I consider this a bug)
+        31CO &#x31CO;
+     -->
+
+    <Row>
+        <Key android:codes="12736"    android:keyLabel="\u31C0" android:keyEdgeFlags="left" />
+        <Key android:codes="12737"    android:keyLabel="\u31C1"/>
+        <Key android:codes="12738"    android:keyLabel="\u31C2"/>
+        <Key android:codes="12739"    android:keyLabel="\u31C3"/>
+        <Key android:codes="12740"    android:keyLabel="\u31C4"/>
+        <Key android:codes="12741"    android:keyLabel="\u31C5"/>
+        <Key android:codes="12742"    android:keyLabel="\u31C6"/>
+        <Key android:codes="12743"    android:keyLabel="\u31C7"/>
+        <Key android:codes="12744"    android:keyLabel="\u31C8"/>
+    </Row>
+    <Row>
+        <Key android:codes="12745"    android:keyLabel="\u31C9" android:keyEdgeFlags="left" />
+        <Key android:codes="12746"    android:keyLabel="\u31CA"/>
+        <Key android:codes="12747"    android:keyLabel="\u31CB"/>
+        <Key android:codes="12748"    android:keyLabel="\u31CC"/>
+        <Key android:codes="12749"    android:keyLabel="\u31CD"/>
+        <Key android:codes="12750"    android:keyLabel="\u31CE"/>
+        <Key android:codes="12751"    android:keyLabel="\u31CF"/>
+        <Key android:codes="12752"    android:keyLabel="\u31D0"/>
+        <Key android:codes="12753"    android:keyLabel="\u31D1"/>
+    </Row>
+    <Row>
+        <Key android:codes="12754"    android:keyLabel="\u31D2" android:keyEdgeFlags="left" />
+        <Key android:codes="12755"    android:keyLabel="\u31D3" />
+        <Key android:codes="12756"    android:keyLabel="\u31D4" />
+        <Key android:codes="12757"    android:keyLabel="\u31D5" />
+        <Key android:codes="12758"    android:keyLabel="\u31D6" />
+        <Key android:codes="12759"    android:keyLabel="\u31D7" />
+        <Key android:codes="12760"    android:keyLabel="\u31D8" />
+        <Key android:codes="12761"    android:keyLabel="\u31D9" />
+        <Key android:codes="12762"    android:keyLabel="\u31DA" />
+    </Row>
+    <Row>
+        <Key android:codes="12763"    android:keyLabel="\u31DB" android:keyEdgeFlags="left" />
+        <Key android:codes="12764"    android:keyLabel="\u31DC" />
+        <Key android:codes="12765"    android:keyLabel="\u31DD" />
+        <Key android:codes="12766"    android:keyLabel="\u31DE" />
+        <Key android:codes="12767"    android:keyLabel="\u31DF" />
+        <Key android:codes="12768"    android:keyLabel="\u31E0" />
+        <Key android:codes="12769"    android:keyLabel="\u31E1" />
+        <Key android:codes="12770"    android:keyLabel="\u31E2" />
+        <Key android:codes="-5"    android:keyIcon="@drawable/ic_backspace_black_24dp" android:isRepeatable="true" />
+    </Row>
+
+</Keyboard>
