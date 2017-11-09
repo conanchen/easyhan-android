@@ -13,6 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
@@ -275,29 +276,37 @@ public class WordExamActivity extends BaseActivity {
         });
 
         nextExamWord();
+
+        mViewModel.getLiveUpsertStatus().observe(this, status -> {
+            if (Status.Code.END_NOT_LOGIN.equals(status.code)) {
+                ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
+//                mViewModel.getLiveUpsertStatus().removeObservers(WordActivity.this);
+            } else if (Status.Code.END_SUCCESS.equals(status.code)) {
+                nextExamWord();
+            } else {
+                Toast.makeText(WordExamActivity.this,
+                        String.format("升级识字进度服务器返回错误，请稍后再试。 错误代码=%s \n错误信息=%s", status.code, status.message),
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+
+        });
+
     }
 
     private void nextExamWord() {
-
-        Observable
-                .just(true)
-                .delay(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    pinyin1.clearFocus();
-                    pinyin1.setText("");
-                    pinyin2.clearFocus();
-                    pinyin2.setText("");
-                    strokes.clearFocus();
-                    strokes.setText("");
-                    app_bar.setExpanded(true, true);
-                });
         mViewModel.nextExamWord();
-
+        pinyin1.clearFocus();
+        pinyin1.setText("");
+        pinyin2.clearFocus();
+        pinyin2.setText("");
+        strokes.clearFocus();
+        strokes.setText("");
+        app_bar.setExpanded(true, true);
     }
 
     @OnClick(R2.id.ok)
     void onOKButtonClicked() {
-        nextExamWord();
+        mViewModel.updateMyWordProgress();
     }
 }

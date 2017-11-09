@@ -13,11 +13,16 @@ public class ApigrpcFascade {
 
     WordService wordService;
     SigninService signinService;
+    MyProfileService myProfileService;
 
     @Inject
-    public ApigrpcFascade(WordService wordService,SigninService signinService) {
+    public ApigrpcFascade(WordService wordService,
+                          SigninService signinService,
+                          MyProfileService myProfileService
+    ) {
         this.wordService = wordService;
         this.signinService = signinService;
+        this.myProfileService = myProfileService;
         System.out.println(strAmir);
 
     }
@@ -33,5 +38,9 @@ public class ApigrpcFascade {
 
     public SigninService getSigninService() {
         return signinService;
+    }
+
+    public MyProfileService getMyProfileService() {
+        return myProfileService;
     }
 }

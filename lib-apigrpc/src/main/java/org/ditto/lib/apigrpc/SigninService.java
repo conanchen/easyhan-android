@@ -49,13 +49,6 @@ public class SigninService {
     public interface SigninCallback extends CommonApiCallback {
         void onSignined(SigninResponse image);
     }
-    public interface CommonApiCallback {
-        void onApiError();
-
-        void onApiCompleted();
-
-        void onApiReady();
-    }
 
     private static final Gson gson = new Gson();
 
@@ -145,21 +138,6 @@ public class SigninService {
                         callback.onApiCompleted();
                     }
                 });
-    }
-
-
-
-    @NonNull
-    private CallCredentials getCallCredentials(String accessToken, long expires) {
-        final AccessToken token = new AccessToken(accessToken, new Date(expires));
-        final OAuth2Credentials oAuth2Credentials = new OAuth2Credentials() {
-            @Override
-            public AccessToken refreshAccessToken() throws IOException {
-                return token;
-            }
-        };
-
-        return MoreCallCredentials.from(oAuth2Credentials);
     }
 
 

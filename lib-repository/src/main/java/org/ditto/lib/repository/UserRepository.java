@@ -1,31 +1,34 @@
 package org.ditto.lib.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
 import org.ditto.lib.apigrpc.ApigrpcFascade;
+import org.ditto.lib.apigrpc.JcaUtils;
+import org.ditto.lib.apigrpc.MyProfileService;
 import org.ditto.lib.apigrpc.SigninService;
 import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.Value;
 import org.ditto.lib.dbroom.kv.VoAccessToken;
-import org.ditto.lib.dbroom.user.Myprofile;
-import org.ditto.lib.dbroom.user.User;
-import org.ditto.lib.dbroom.user.UserCommand;
+import org.ditto.lib.dbroom.user.MyProfile;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.sigin.grpc.SigninResponse;
-
-import java.util.List;
+import org.easyhan.myprofile.grpc.MyProfileResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
+import io.grpc.CallCredentials;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Repository that handles User objects.
+ * Repository that handles MyProfile objects.
  */
 @Singleton
 public class UserRepository {
@@ -42,23 +45,15 @@ public class UserRepository {
         this.apigrpcFascade = apigrpcFascade;
     }
 
+//
+//    public Observable<Long> save(UserCommand command) {
+//        return Observable.fromCallable(
+//                () -> roomFascade.daoUser.save(command)
+//        ).subscribeOn(Schedulers.io());
+//    }
 
-    public LiveData<User> findUserByLogin(String login) {
-        return roomFascade.daoUser.load(login);
-    }
-
-    public Observable<Long> save(UserCommand command) {
-        return Observable.fromCallable(
-                () -> roomFascade.daoUser.save(command)
-        ).subscribeOn(Schedulers.io());
-    }
-
-    public LiveData<Myprofile> loadProfile(String type, int size) {
-        return roomFascade.daoUser.loadProfile(type, size);
-    }
-
-    public LiveData<List<Myprofile>> loadAllProfiles() {
-        return roomFascade.daoUser.loadAllProfiles();
+    public LiveData<MyProfile> loadProfile(String accessToken) {
+        return roomFascade.daoUser.load(accessToken);
     }
 
     public LiveData<Status> loginWithQQAccessToken(String accessToken) {
@@ -104,5 +99,83 @@ public class UserRepository {
                         });
             }
         };
+    }
+
+    public Maybe<MyProfile> findMyProfile(String accessToken) {
+        return roomFascade.daoUser.findMaybe(accessToken);
+    }
+
+    public Maybe<VoAccessToken> findMyAccessToken() {
+        return roomFascade.daoKeyValue
+                .loadMaybe(KeyValue.KEY.USER_CURRENT_ACCESSTOKEN)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(keyValue -> keyValue.value.voAccessToken);
+    }
+
+    public void refreshMyProfile() {
+        roomFascade.daoKeyValue
+                .loadMaybe(KeyValue.KEY.USER_CURRENT_ACCESSTOKEN)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(keyValue -> keyValue.value.voAccessToken)
+                .subscribe(new MaybeObserver<VoAccessToken>() {
+
+                    @Override
+                    public void onSubscribe(Disposable disposable) {
+                        Log.i(TAG, "onSubscribe");
+                    }
+
+                    @Override
+                    public void onSuccess(VoAccessToken voAccessToken) {
+                        Log.i(TAG, String.format("onSuccess voAccessToken=%s", gson.toJson(voAccessToken)));
+                        CallCredentials callCredentials = JcaUtils.getCallCredentials(voAccessToken.accessToken,
+                                Long.valueOf(voAccessToken.expiresIn));
+
+                        apigrpcFascade.getMyProfileService().getMyProfile(callCredentials, "", new MyProfileService.MyProfileCallback() {
+                            @Override
+                            public void onMyProfileReceived(MyProfileResponse response) {
+                                MyProfile myProfile = MyProfile
+                                        .builder()
+                                        .setAccessToken(voAccessToken.accessToken)
+                                        .setAvatarUrl(response.getAvartarUrl())
+                                        .setName(response.getNickName())
+                                        .setLastUpdated(response.getLastUpdated())
+                                        .setUserNo(response.getUserNo())
+                                        .build();
+                                roomFascade.daoUser.save(myProfile);
+                                Log.i(TAG, String.format("onMyProfileReceived save myProfile=[%s]", gson.toJson(myProfile)));
+
+                            }
+
+                            @Override
+                            public void onApiError() {
+
+                            }
+
+                            @Override
+                            public void onApiCompleted() {
+
+                            }
+
+                            @Override
+                            public void onApiReady() {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //access database error
+                        Log.i(TAG, String.format("onError Throwable=%s", e.getMessage()));
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        //not found accesstoken
+                        Log.i(TAG, String.format("onComplete Not Logined! No accesstoken,please login."));
+                    }
+                });
     }
 }

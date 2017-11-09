@@ -1,14 +1,23 @@
 package org.ditto.lib.apigrpc;
 
+import android.support.annotation.NonNull;
+
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.common.collect.Ordering;
 
+import java.io.IOException;
 import java.security.Provider;
 import java.security.Security;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import io.grpc.CallCredentials;
+import io.grpc.auth.MoreCallCredentials;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -97,4 +106,19 @@ public class JcaUtils {
         checkNotNull(provider);
         return df.format(provider.getVersion());
     }
+
+
+    @NonNull
+    public static CallCredentials getCallCredentials(String accessToken, long expires) {
+        final AccessToken token = new AccessToken(accessToken, new Date(expires));
+        final OAuth2Credentials oAuth2Credentials = new OAuth2Credentials() {
+            @Override
+            public AccessToken refreshAccessToken() throws IOException {
+                return token;
+            }
+        };
+
+        return MoreCallCredentials.from(oAuth2Credentials);
+    }
+
 }

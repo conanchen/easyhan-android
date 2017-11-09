@@ -1,11 +1,8 @@
 package org.ditto.lib.apigrpc;
 
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.auth.oauth2.AccessToken;
-import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.gson.Gson;
 
 import org.easyhan.myword.grpc.MyWordGrpc;
@@ -17,8 +14,6 @@ import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordGrpc;
 import org.easyhan.word.grpc.WordResponse;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -28,7 +23,6 @@ import javax.inject.Singleton;
 import io.grpc.CallCredentials;
 import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
-import io.grpc.auth.MoreCallCredentials;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
@@ -58,13 +52,6 @@ public class WordService {
         void onMyStatsReceived(StatsResponse value);
     }
 
-    public interface CommonApiCallback {
-        void onApiError();
-
-        void onApiCompleted();
-
-        void onApiReady();
-    }
 
     private static final Gson gson = new Gson();
 
@@ -254,19 +241,6 @@ public class WordService {
                     }
                 });
 
-    }
-
-    @NonNull
-    public CallCredentials getCallCredentials(String accessToken, long expires) {
-        final AccessToken token = new AccessToken(accessToken, new Date(expires));
-        final OAuth2Credentials oAuth2Credentials = new OAuth2Credentials() {
-            @Override
-            public AccessToken refreshAccessToken() throws IOException {
-                return token;
-            }
-        };
-
-        return MoreCallCredentials.from(oAuth2Credentials);
     }
 
     public void listMyStats(CallCredentials callCredentials, MyWordCallback callback) {

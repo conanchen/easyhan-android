@@ -72,8 +72,7 @@ public class WordActivity extends BaseActivity {
 
     @BindView(R2.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
-    @BindView(R2.id.fabInside)
-    AppCompatTextView fabInside;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,58 +160,7 @@ public class WordActivity extends BaseActivity {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(WordViewModel.class);
         mViewModel.setWord(mWord);
         mViewModel.getLiveWord().observe(this, word -> {
-            fabInside.setText(String.format("%02d",word.memIdx));
         });
-        mViewModel.getLiveUpsertStatus().observe(this, status -> {
-            if (Status.Code.END_NOT_LOGIN.equals(status.code)) {
-                ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
-//                mViewModel.getLiveUpsertStatus().removeObservers(WordActivity.this);
-            } else {
-                Toast.makeText(WordActivity.this,
-                        String.format("onFabupsertButtonClicked status.code=%s \nstatus.message=%s", status.code, status.message),
-                        Toast.LENGTH_LONG)
-                        .show();
-            }
-        });
-    }
-
-    @OnClick(R2.id.fab)
-    public void onFabupsertButtonClicked() {
-        mViewModel.updateMyWordProgress();
-
-
-//        ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
-//        mViewModel.upsert(mWord);
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//        .subscribe(new MaybeObserver<Status>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(Status status) {
-//                if (Status.Code.END_ERROR.equals(status.code)) {
-//                    ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
-//                } else {
-//                    Toast.makeText(WordActivity.this,
-//                            String.format("onFabupsertButtonClicked status.code=%s \nstatus.message=%s", status.code, status.message),
-//                            Toast.LENGTH_LONG)
-//                            .show();
-//                }
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//
-//            }
-//        });
     }
 
 }

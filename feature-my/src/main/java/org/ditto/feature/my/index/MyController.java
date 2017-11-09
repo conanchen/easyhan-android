@@ -54,7 +54,7 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
 
 
 //        headerModel_.addTo(this);
-        accountModel_.addTo(this);
+        setupMyAccount(myLiveDataHolder);
         setupMyWordStats(myLiveDataHolder);
         if (myLiveDataHolder.wordSortType != null) {
             itemWordSortTypeModel_
@@ -66,6 +66,16 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
 //        itemStatusNetworkModel_.addIf(status != null && Status.Code.END_ERROR.equals(status.code), this);
     }
 
+    private void setupMyAccount(MyLiveDataHolder myLiveDataHolder){
+        if(myLiveDataHolder.myProfile!=null){
+            accountModel_
+                    .name(myLiveDataHolder.myProfile.name)
+                    .idno(myLiveDataHolder.myProfile.userNo)
+                    .addTo(this);
+        }else{
+            accountModel_.addTo(this);
+        }
+    }
     private void setupMyWordStats(MyLiveDataHolder myLiveDataHolder) {
         if (myLiveDataHolder.myWordLevel1Stats != null
                 && myLiveDataHolder.myWordLevel1Stats.value != null

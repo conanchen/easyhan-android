@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.ditto.feature.word.profile.UpsertActivity">
+    tools:context="org.ditto.feature.word.profile.WordActivity">
 
 
     <android.support.design.widget.AppBarLayout
@@ -75,24 +75,5 @@
 
     </WebView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        android:visibility="visible" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/fabInside"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="6dp"
-        android:text="上午"
-        android:textColor="#fff"
-        android:textSize="@dimen/sp_18"
-        app:layout_anchor="@id/fab"
-        app:layout_anchorGravity="center" />
 
 </android.support.design.widget.CoordinatorLayout>

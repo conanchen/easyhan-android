@@ -11,13 +11,17 @@ import com.google.gson.Gson;
 
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.Value;
+import org.ditto.lib.dbroom.kv.VoAccessToken;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
+import org.ditto.lib.dbroom.user.MyProfile;
 import org.ditto.lib.usecases.UsecaseFascade;
 
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MyViewModel extends ViewModel {
@@ -30,6 +34,7 @@ public class MyViewModel extends ViewModel {
     final MutableLiveData<Long> mutableRefreshRequest = new MutableLiveData<>();
 
 
+    private final LiveData<MyProfile> liveMyProfile;
     private final LiveData<VoWordSortType.WordSortType> liveMyWordSortType;
     private final LiveData<KeyValue> liveMyWordLevel1Stats;
     private final LiveData<KeyValue> liveMyWordLevel2Stats;
@@ -43,6 +48,42 @@ public class MyViewModel extends ViewModel {
     @SuppressWarnings("unchecked")
     @Inject
     public MyViewModel() {
+        liveMyProfile = new LiveData<MyProfile>() {
+            @Override
+            protected void onActive() {
+                usecaseFascade.repositoryFascade.userRepository.findMyAccessToken()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribe(new MaybeObserver<VoAccessToken>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onSuccess(VoAccessToken voAccessToken) {
+                                usecaseFascade.repositoryFascade.userRepository
+                                        .findMyProfile(voAccessToken.accessToken)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(myProfile -> {
+                                            postValue(myProfile);
+                                        });
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        };
         liveMyWordSortType = new LiveData<VoWordSortType.WordSortType>() {
             @Override
             protected void onActive() {
@@ -65,16 +106,19 @@ public class MyViewModel extends ViewModel {
 
         liveMyData = new MediatorLiveData<MyLiveDataHolder>() {
             {
-                addSource(liveMyWordSortType, sortType -> setValue(MyLiveDataHolder.create(sortType
+                addSource(liveMyProfile, myProfile -> setValue(MyLiveDataHolder.create(myProfile,liveMyWordSortType.getValue()
                         , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordLevel1Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
+                addSource(liveMyWordSortType, sortType -> setValue(MyLiveDataHolder.create(liveMyProfile.getValue(),sortType
+                        , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
+
+                addSource(liveMyWordLevel1Stats, stats -> setValue(MyLiveDataHolder.create(liveMyProfile.getValue(),liveMyWordSortType.getValue()
                         , stats, liveMyWordLevel2Stats.getValue(), liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordLevel2Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
+                addSource(liveMyWordLevel2Stats, stats -> setValue(MyLiveDataHolder.create(liveMyProfile.getValue(),liveMyWordSortType.getValue()
                         , liveMyWordLevel1Stats.getValue(), stats, liveMyWordLevel3Stats.getValue())));
 
-                addSource(liveMyWordLevel3Stats, stats -> setValue(MyLiveDataHolder.create(liveMyWordSortType.getValue()
+                addSource(liveMyWordLevel3Stats, stats -> setValue(MyLiveDataHolder.create(liveMyProfile.getValue(),liveMyWordSortType.getValue()
                         , liveMyWordLevel1Stats.getValue(), liveMyWordLevel2Stats.getValue(), stats)));
             }
         };
@@ -88,6 +132,7 @@ public class MyViewModel extends ViewModel {
 
     public void refresh() {
         mutableRefreshRequest.setValue(System.currentTimeMillis());
+        usecaseFascade.repositoryFascade.userRepository.refreshMyProfile();
     }
 
     private Maybe<VoWordSortType.WordSortType> getMyWordSortType() {

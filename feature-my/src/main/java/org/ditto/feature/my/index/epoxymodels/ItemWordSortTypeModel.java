@@ -41,9 +41,9 @@ public abstract class ItemWordSortTypeModel extends EpoxyModelWithHolder<ItemWor
             case MEMORY:
                 holder.radio_memory.setChecked(true);
                 break;
-            case USAGE:
-                holder.radio_usage.setChecked(true);
-                break;
+//            case USAGE:
+//                holder.radio_usage.setChecked(true);
+//                break;
             case SEQUENCE:
             default:
                 holder.radio_seq.setChecked(true);
@@ -57,9 +57,10 @@ public abstract class ItemWordSortTypeModel extends EpoxyModelWithHolder<ItemWor
                    callbacks.onWordSortTypeChangedTo(VoWordSortType.WordSortType.SEQUENCE);
                }else if(rid == R.id.radio_memory) {
                    callbacks.onWordSortTypeChangedTo(VoWordSortType.WordSortType.MEMORY);
-               }else if(rid == R.id.radio_usage) {
-                   callbacks.onWordSortTypeChangedTo(VoWordSortType.WordSortType.USAGE);
                }
+//               else if(rid == R.id.radio_usage) {
+//                   callbacks.onWordSortTypeChangedTo(VoWordSortType.WordSortType.USAGE);
+//               }
             }
         });
     }
@@ -79,9 +80,9 @@ public abstract class ItemWordSortTypeModel extends EpoxyModelWithHolder<ItemWor
         @BindView(R2.id.radio_memory)
         RadioButton radio_memory;
 
-        @BindView(R2.id.radio_usage)
-        RadioButton radio_usage;
-
+//        @BindView(R2.id.radio_usage)
+//        RadioButton radio_usage;
+//
         View view;
 
         @Override

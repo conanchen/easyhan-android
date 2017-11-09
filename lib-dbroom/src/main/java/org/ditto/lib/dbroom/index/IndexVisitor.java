@@ -14,7 +14,7 @@ import com.google.common.base.Strings;
 @Entity
 public class IndexVisitor implements Parcelable {
 
-    //uuid is the id of type: Advert/User/Ugroup/Shop/...
+    //uuid is the id of type: Advert/MyProfile/Ugroup/Shop/...
     @PrimaryKey
     @NonNull
     public String uuid;

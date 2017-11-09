@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="@+id/image" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/text"
+        android:id="@+id/idno"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"

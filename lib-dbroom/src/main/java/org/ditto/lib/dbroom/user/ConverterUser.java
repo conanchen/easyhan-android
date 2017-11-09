@@ -32,25 +32,5 @@ public class ConverterUser {
     //---------------
 
 
-    //---------------
-    @TypeConverter
-    public static String myprofileContent2GsonString(Myprofile.Content content) {
-
-        if (content == null)
-            return null;
-
-        return gson.toJson(content, Myprofile.Content.class);
-    }
-
-    @TypeConverter
-    public static Myprofile.Content gsonString2MyprofileContent(String gsonString) {
-
-        if (Strings.isNullOrEmpty(gsonString))
-            return null;
-
-
-        return gson.fromJson(gsonString, Myprofile.Content.class);
-    }
-    //---------------
 
 }

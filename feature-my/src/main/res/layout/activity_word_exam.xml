@@ -31,7 +31,7 @@
                 android:scaleType="centerCrop"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="稳"
+                android:text="龍"
                 android:textSize="@dimen/dp_200"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7" />

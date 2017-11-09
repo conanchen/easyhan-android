@@ -10,17 +10,10 @@ import com.google.gson.Gson;
 
 import org.ditto.feature.base.epoxymodels.ItemRefreshHeaderModel_;
 import org.ditto.feature.base.epoxymodels.ItemStatusNetworkModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemMyAccountModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemMyWordDetailModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemMyWordMemoryHeaderModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemMyWordMemoryModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemMyWordModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemPageModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemPagetipModel_;
-import org.ditto.feature.my.index.epoxymodels.ItemWordSortTypeModel_;
 import org.ditto.lib.dbroom.index.Word;
-import org.ditto.lib.dbroom.kv.VoWordSortType;
-import org.ditto.lib.dbroom.kv.VoWordSummary;
 
 public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
     private final static String TAG = MyWordsController.class.getSimpleName();
@@ -61,10 +54,14 @@ public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
             Log.i(TAG, String.format(" build %d Word", myLiveDataHolder.words.size()));
             for (Word word : myLiveDataHolder.words) {
                 if (word != null && !Strings.isNullOrEmpty(word.word)) {
+                    String pinyin = String.format("%s", word.pinyin1);
+                    if (word.pinyin2 != null && word.pinyin2.trim().compareTo("") != 0) {
+                        pinyin = String.format("%s - %s", word.pinyin1, word.pinyin2);
+                    }
                     add(new ItemMyWordDetailModel_()
                             .id(word.word)
                             .word(word.word)
-                            .pinyin(word.pinyin1)
+                            .pinyin(pinyin)
                             .memIdx(word.memIdx)
                             .clickListener((model, parentView, clickedView, position) -> {
                                 // A model click listener is used instead of a normal click listener so that we can get

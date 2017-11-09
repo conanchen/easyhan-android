@@ -12,15 +12,13 @@ import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.ValueConverters;
 import org.ditto.lib.dbroom.user.ConverterUser;
 import org.ditto.lib.dbroom.user.DaoUser;
-import org.ditto.lib.dbroom.user.Myprofile;
-import org.ditto.lib.dbroom.user.User;
+import org.ditto.lib.dbroom.user.MyProfile;
 import org.ditto.lib.dbroom.user.UserCommand;
 
 
 @Database(entities =
         {
-                Myprofile.class,
-                User.class,
+                MyProfile.class,
                 UserCommand.class,
                 Word.class,
                 KeyValue.class,

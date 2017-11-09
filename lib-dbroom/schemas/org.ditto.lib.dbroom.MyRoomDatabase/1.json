@@ -2,65 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "617e7871de67f67ec2810e3a9f3d0860",
+    "identityHash": "f0886afd3a12c58d17636a32f6aa9ce6",
     "entities": [
       {
-        "tableName": "Myprofile",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `sequence` INTEGER NOT NULL, `type` TEXT, `content` TEXT, `created` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
+        "tableName": "MyProfile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`accessToken` TEXT NOT NULL, `userNo` TEXT, `avatarUrl` TEXT, `name` TEXT, `url` TEXT, `company` TEXT, `reposUrl` TEXT, `blog` TEXT, `visible` INTEGER NOT NULL, `latestMessage` TEXT, `latestLocation` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, PRIMARY KEY(`accessToken`))",
         "fields": [
           {
-            "fieldPath": "uuid",
-            "columnName": "uuid",
+            "fieldPath": "accessToken",
+            "columnName": "accessToken",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "sequence",
-            "columnName": "sequence",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "type",
-            "columnName": "type",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "content",
-            "columnName": "content",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "created",
-            "columnName": "created",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "uuid"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `login` TEXT, `avatarUrl` TEXT, `name` TEXT, `url` TEXT, `company` TEXT, `reposUrl` TEXT, `blog` TEXT, `visible` INTEGER NOT NULL, `created` INTEGER NOT NULL, `latestMessage` TEXT, `latestLocation` TEXT, PRIMARY KEY(`uuid`))",
-        "fields": [
-          {
-            "fieldPath": "uuid",
-            "columnName": "uuid",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "login",
-            "columnName": "login",
+            "fieldPath": "userNo",
+            "columnName": "userNo",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -107,12 +63,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "created",
-            "columnName": "created",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "latestMessage",
             "columnName": "latestMessage",
             "affinity": "TEXT",
@@ -123,11 +73,23 @@
             "columnName": "latestLocation",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "created",
+            "columnName": "created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "uuid"
+            "accessToken"
           ],
           "autoGenerate": false
         },
@@ -413,7 +375,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"617e7871de67f67ec2810e3a9f3d0860\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f0886afd3a12c58d17636a32f6aa9ce6\")"
     ]
   }
 }

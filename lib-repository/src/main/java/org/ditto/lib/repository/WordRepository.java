@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.ditto.lib.apigrpc.ApigrpcFascade;
+import org.ditto.lib.apigrpc.JcaUtils;
 import org.ditto.lib.apigrpc.WordService;
 import org.ditto.lib.dbroom.RoomFascade;
 import org.ditto.lib.dbroom.index.Word;
@@ -55,9 +56,9 @@ public class WordRepository {
     public Flowable<Word> findMyExamWord() {
         Random random = new Random();
         return roomFascade.daoWord
-                .getLiveMyExamWords(10)
+                .getLiveMyExamWords(20)
                 .flatMapIterable(x->x)
-                .skip(random.nextInt(10))
+                .skip(random.nextInt(20))
                 .take(1);
     }
 
@@ -93,7 +94,7 @@ public class WordRepository {
                     public void onWordReceived(WordResponse response) {
 //                        postValue(Status.builder().setCode(Status.Code.LOADING)
 //                                .build());
-                        Log.i(TAG, String.format("onSignined save to database, word=[%s]", gson.toJson(response)));
+                        Log.i(TAG, String.format("onWordReceived save to database, word=[%s]", gson.toJson(response)));
                         Word word = Word.builder()
                                 .setWord(response.getWord())
                                 .setIdx(response.getIdx())
@@ -216,7 +217,7 @@ public class WordRepository {
     }
 
     public void upsertMyWord(VoAccessToken voAccessToken, String word, ProgressCallback callback) {
-        CallCredentials callCredentials = apigrpcFascade.getWordService()
+        CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(voAccessToken.accessToken,
                         Long.valueOf(voAccessToken.expiresIn));
         apigrpcFascade.getWordService().upsertMyWord(callCredentials, word,
@@ -290,7 +291,7 @@ public class WordRepository {
     }
 
     public void refresh(MyWordRefreshRequest request) {
-        CallCredentials callCredentials = apigrpcFascade.getWordService()
+        CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(request.voAccessToken.accessToken,
                         Long.valueOf(request.voAccessToken.expiresIn));
         org.easyhan.myword.grpc.ListRequest listRequest = org.easyhan.myword.grpc.ListRequest.newBuilder()
@@ -319,7 +320,7 @@ public class WordRepository {
 
                     @Override
                     public void onMyWordReceived(MyWordResponse response) {
-                        Log.i(TAG, String.format("onMyWordReceived MyWordResponse=[%s]", gson.toJson(response)));
+                        Log.i(TAG, String.format("onMyProfileReceived MyWordResponse=[%s]", gson.toJson(response)));
                         roomFascade.daoWord.findMaybe(response.getWord())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
@@ -330,7 +331,7 @@ public class WordRepository {
                                     word.memIdx = response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
                                     roomFascade.daoWord.save(word);
-                                    Log.i(TAG, String.format("onMyWordReceived save word=[%s]", gson.toJson(word)));
+                                    Log.i(TAG, String.format("onMyProfileReceived save word=[%s]", gson.toJson(word)));
                                 });
                     }
 
@@ -355,7 +356,7 @@ public class WordRepository {
     }
 
     public void refresh(MyWordStatsRefreshRequest request) {
-        CallCredentials callCredentials = apigrpcFascade.getWordService().getCallCredentials(request.voAccessToken.accessToken,
+        CallCredentials callCredentials = JcaUtils.getCallCredentials(request.voAccessToken.accessToken,
                 Long.valueOf(request.voAccessToken.expiresIn));
         apigrpcFascade.getWordService().listMyStats(callCredentials, new WordService.MyWordCallback() {
             @Override
