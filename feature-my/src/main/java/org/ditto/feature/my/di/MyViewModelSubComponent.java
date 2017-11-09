@@ -3,6 +3,7 @@ package org.ditto.feature.my.di;
 
 
 import org.ditto.feature.my.index.MyViewModel;
+import org.ditto.feature.my.index.MyWordViewModel;
 import org.ditto.feature.my.index.MyWordsViewModel;
 
 import dagger.Subcomponent;
@@ -18,6 +19,7 @@ public interface MyViewModelSubComponent {
 
     MyViewModel createMyViewModel();
     MyWordsViewModel createMyWordsViewModel();
+    MyWordViewModel createMyWordViewModel();
 
     @Subcomponent.Builder
     interface Builder {

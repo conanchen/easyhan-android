@@ -2,6 +2,7 @@ package org.ditto.feature.my.di;
 
 import org.ditto.feature.base.di.BaseViewModelFactory;
 import org.ditto.feature.my.index.MyViewModel;
+import org.ditto.feature.my.index.MyWordViewModel;
 import org.ditto.feature.my.index.MyWordsViewModel;
 
 import javax.inject.Inject;
@@ -21,6 +22,9 @@ public class MyViewModelFactory extends BaseViewModelFactory {
 
         super.creators.put(MyWordsViewModel.class,
                 () -> viewModelSubComponent.createMyWordsViewModel());
+
+        super.creators.put(MyWordViewModel.class,
+                () -> viewModelSubComponent.createMyWordViewModel());
     }
 
 }

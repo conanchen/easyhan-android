@@ -19,10 +19,8 @@ import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.repository.model.MyWordLoadRequest;
 import org.ditto.lib.repository.model.MyWordRefreshRequest;
 import org.ditto.lib.repository.model.MyWordStatsRefreshRequest;
+import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.usecases.UsecaseFascade;
-
-import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -41,12 +39,9 @@ public class MyWordsViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<MyWordLoadRequest> mutableLoadRequest = new MutableLiveData<>();
 
-    @VisibleForTesting
-    final MutableLiveData<Integer> mutableExamRequest = new MutableLiveData<>();
 
     private final LiveData<PagedList<Word>> liveMyWords;
     private final LiveData<MyLiveWordsHolder> liveMyWordsHolder;
-    private final LiveData<List<Word>> liveExamWords;
 
 
     @Inject
@@ -69,15 +64,6 @@ public class MyWordsViewModel extends ViewModel {
                 addSource(mutableLoadRequest, request -> setValue(MyLiveWordsHolder.create(liveMyWords.getValue(), request)));
             }
         };
-
-        liveExamWords = Transformations.switchMap(mutableExamRequest, login -> {
-            if (login == null) {
-                return AbsentLiveData.create();
-            } else {
-                return usecaseFascade.repositoryFascade.wordRepository
-                        .findMyExamWord(mutableExamRequest.getValue());
-            }
-        });
 
     }
 
@@ -178,16 +164,4 @@ public class MyWordsViewModel extends ViewModel {
                 .firstElement();
     }
 
-    public LiveData<List<Word>> getLiveExamWords() {
-        return liveExamWords;
-    }
-
-    public void nextExamWord() {
-        mutableExamRequest.setValue(10);
-    }
-
-    public void removeObserver(WordExamActivity wordExamActivity) {
-        liveExamWords.removeObservers(wordExamActivity);
-
-    }
 }

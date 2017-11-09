@@ -6,24 +6,24 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseActivity;
-import org.ditto.feature.base.Constants;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
-import org.ditto.lib.dbroom.index.Word;
+import org.ditto.lib.repository.model.Status;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -42,12 +42,7 @@ public class WordExamActivity extends BaseActivity {
     private final static String TAG = WordExamActivity.class.getSimpleName();
     private final static Gson gson = new Gson();
 
-
-    @Autowired(name = Constants.ROUTE_WORD)
-    String mWord;
-
     private String mImageTitle = "";
-    private Word mCurrentExamWord;
 
     private enum CollapsingToolbarLayoutState {
         EXPANDED,
@@ -60,7 +55,7 @@ public class WordExamActivity extends BaseActivity {
     @Inject
     MyViewModelFactory mViewModelFactory;
 
-    private MyWordsViewModel mViewModel;
+    private MyWordViewModel mViewModel;
 
     @BindView(R2.id.app_bar)
     AppBarLayout app_bar;
@@ -77,11 +72,20 @@ public class WordExamActivity extends BaseActivity {
     @BindView(R2.id.pinyin1)
     TextInputEditText pinyin1;
 
+    @BindView(R2.id.pinyin1_indicator)
+    AppCompatImageView pinyin1_indicator;
+
     @BindView(R2.id.pinyin2)
     TextInputEditText pinyin2;
 
+    @BindView(R2.id.pinyin2_indicator)
+    AppCompatImageView pinyin2_indicator;
+
     @BindView(R2.id.strokes)
     TextInputEditText strokes;
+
+    @BindView(R2.id.strokes_indicator)
+    AppCompatImageView strokes_indicator;
 
     @BindView(R2.id.broken)
     TextInputEditText broken;
@@ -142,7 +146,54 @@ public class WordExamActivity extends BaseActivity {
                         });
             }
         });
+        pinyin1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mViewModel.checkPinyin1(editable.toString());
+            }
+        });
+        pinyin2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mViewModel.checkPinyin2(editable.toString());
+            }
+        });
+        strokes.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mViewModel.checkStrokes(editable.toString());
+            }
+        });
         ookButton.setFocusable(true);
 
         setupExamKeyboard();
@@ -189,23 +240,60 @@ public class WordExamActivity extends BaseActivity {
     }
 
     private void setupViewModel() {
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyWordsViewModel.class);
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyWordViewModel.class);
+        mViewModel.getLiveExamWordHolder().observe(this, examWordHolder -> {
+            boolean pinyin1Passed = false, pinyin2Passed = false, strokesPassed = false;
+            if (examWordHolder.examWord != null) {
+                image.setText(examWordHolder.examWord.word);
+            }
+            if (examWordHolder.checkPinyin1Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin1Status.code)) {
+                pinyin1Passed = true;
+                pinyin1_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            } else {
+                pinyin1_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+            }
+            if (examWordHolder.checkPinyin2Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin2Status.code)) {
+                pinyin2Passed = true;
+                pinyin2_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            } else {
+                pinyin2_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+            }
+            if (examWordHolder.checkStrokesStatus != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkStrokesStatus.code)) {
+                strokesPassed = true;
+                strokes_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            } else {
+                strokes_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+            }
+
+            if (pinyin1Passed && pinyin2Passed && strokesPassed) {
+                ookButton.setEnabled(true);
+                ookButton.setText(String.format("[%s]识字进度升级到%s", examWordHolder.examWord.word, WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
+            } else {
+                ookButton.setText(String.format("[%s]识字进度升级到%s", "?", WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
+                ookButton.setEnabled(false);
+            }
+        });
 
         nextExamWord();
     }
 
     private void nextExamWord() {
-        mViewModel.getLiveExamWords().observe(this, words -> {
-            if (words != null && words.size() > 0) {
-                Random random = new Random();
-                mCurrentExamWord = words.get(random.nextInt(words.size()));
-                mViewModel.removeObserver(WordExamActivity.this);
 
-                image.setText(mCurrentExamWord.word);
-            }
-        });
-
+        Observable
+                .just(true)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    pinyin1.clearFocus();
+                    pinyin1.setText("");
+                    pinyin2.clearFocus();
+                    pinyin2.setText("");
+                    strokes.clearFocus();
+                    strokes.setText("");
+                    app_bar.setExpanded(true, true);
+                });
         mViewModel.nextExamWord();
+
     }
 
     @OnClick(R2.id.ok)

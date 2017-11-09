@@ -29,13 +29,16 @@ import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.grpc.CallCredentials;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -49,8 +52,13 @@ public class WordRepository {
     private ApigrpcFascade apigrpcFascade;
     private RoomFascade roomFascade;
 
-    public   LiveData<List<Word>> findMyExamWord(Integer size) {
-        return roomFascade.daoWord.getLiveMyExamWords(size);
+    public Flowable<Word> findMyExamWord() {
+        Random random = new Random();
+        return roomFascade.daoWord
+                .getLiveMyExamWords(10)
+                .flatMapIterable(x->x)
+                .skip(random.nextInt(10))
+                .take(1);
     }
 
     public interface ProgressCallback {

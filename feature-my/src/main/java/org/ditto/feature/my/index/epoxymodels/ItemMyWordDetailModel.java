@@ -10,6 +10,7 @@ import com.airbnb.epoxy.EpoxyModelWithHolder;
 
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
+import org.ditto.feature.my.index.WordUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,19 +41,9 @@ public abstract class ItemMyWordDetailModel extends EpoxyModelWithHolder<ItemMyW
     public void bind(Holder holder) {
         holder.word.setText(word);
         holder.pinyin.setText(pinyin);
-        holder.title.setText(getTitleByMemIdx(memIdx));
+        holder.title.setText(WordUtils.getTitleByMemIdx(memIdx));
 //        holder.detail.setText(detaill);
         holder.view.setOnClickListener(clickListener);
-    }
-
-    private static String[] ms = new String[]{"〇", "①", "②", "③", "④", "⑤", "⑥", "⑦"};
-
-    private String getTitleByMemIdx(int memIdx) {
-        if (memIdx < 7) {
-            return ms[memIdx];
-        } else {
-            return ms[7];
-        }
     }
 
     @Override
