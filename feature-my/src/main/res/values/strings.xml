@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">feature-my</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="flight_progress_title">直升识字进度</string>
+    <string name="flight_progress_message">这个字我已经牢记在心，无需再次学习，请把识字进度直接升级到⑦</string>
 </resources>

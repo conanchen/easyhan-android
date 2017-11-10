@@ -216,11 +216,11 @@ public class WordRepository {
 
     }
 
-    public void upsertMyWord(VoAccessToken voAccessToken, String word, ProgressCallback callback) {
+    public void upsertMyWord(VoAccessToken voAccessToken, String word, Boolean isFlight, ProgressCallback callback) {
         CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(voAccessToken.accessToken,
                         Long.valueOf(voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word,
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word,isFlight,
                 new WordService.MyWordCallback() {
                     @Override
                     public void onMyWordUpserted(UpsertResponse response) {

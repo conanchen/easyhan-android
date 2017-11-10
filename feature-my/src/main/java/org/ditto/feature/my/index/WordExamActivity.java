@@ -1,9 +1,12 @@
 package org.ditto.feature.my.index;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageView;
@@ -24,6 +27,7 @@ import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
 import org.ditto.lib.repository.model.Status;
+import org.easyhan.common.grpc.HanziLevel;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import nl.fampennings.keyboard.PinyinKeyboard;
 import nl.fampennings.keyboard.StrokeKeyboard;
 
@@ -93,6 +98,9 @@ public class WordExamActivity extends BaseActivity {
 
     @BindView(R2.id.ok)
     AppCompatButton ookButton;
+
+    @BindView(R2.id.fab)
+    FloatingActionButton fabButton;
 
     PinyinKeyboard mPinyinKeyboard;
     StrokeKeyboard mStrokeKeyboard;
@@ -246,6 +254,13 @@ public class WordExamActivity extends BaseActivity {
             boolean pinyin1Passed = false, pinyin2Passed = false, strokesPassed = false;
             if (examWordHolder.examWord != null) {
                 image.setText(examWordHolder.examWord.word);
+                if (HanziLevel.ONE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 1
+                        || HanziLevel.TWO.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 3
+                        || HanziLevel.THREE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 5) {
+                    fabButton.setVisibility(View.VISIBLE);
+                } else {
+                    fabButton.setVisibility(View.GONE);
+                }
             }
             if (examWordHolder.checkPinyin1Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin1Status.code)) {
                 pinyin1Passed = true;
@@ -282,6 +297,7 @@ public class WordExamActivity extends BaseActivity {
                 ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
 //                mViewModel.getLiveUpsertStatus().removeObservers(WordActivity.this);
             } else if (Status.Code.END_SUCCESS.equals(status.code)) {
+                Toast.makeText(WordExamActivity.this, "识字进度升级成功，准备下一个字", Toast.LENGTH_SHORT).show();
                 nextExamWord();
             } else {
                 Toast.makeText(WordExamActivity.this,
@@ -307,6 +323,38 @@ public class WordExamActivity extends BaseActivity {
 
     @OnClick(R2.id.ok)
     void onOKButtonClicked() {
-        mViewModel.updateMyWordProgress();
+        mViewModel.updateMyWordProgress(Boolean.FALSE);
+    }
+
+    AlertDialog flightProgressDialog = null;
+
+    @OnClick(R2.id.fab)
+    void onFabButtonClicked() {
+        if (flightProgressDialog == null) {
+            flightProgressDialog = new AlertDialog.Builder(this)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            Observable
+                                    .just(true)
+                                    .delay(500, TimeUnit.MILLISECONDS)
+                                    .subscribeOn(Schedulers.computation())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(aBoolean -> {
+                                        mViewModel.updateMyWordProgress(Boolean.TRUE);
+                                    });
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the flightProgressDialog
+                        }
+                    })
+                    .setIcon(R.drawable.ic_flight_black_24dp)
+                    .setTitle(R.string.flight_progress_title)
+                    .setMessage(R.string.flight_progress_message)
+                    .create();
+        }
+        flightProgressDialog.show();
     }
 }

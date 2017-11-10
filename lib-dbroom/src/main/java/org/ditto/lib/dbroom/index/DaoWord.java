@@ -43,7 +43,7 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE level = :level ORDER BY lastUpdated DESC LIMIT 1")
     Word findLatestWord(String level);
 
-    @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER by idx ASC ")
+    @Query("SELECT * FROM Word ORDER by idx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByIdx();
 
     @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, idx ASC ")

@@ -43,15 +43,16 @@ public class MyWordViewModel extends ViewModel {
     @VisibleForTesting
     final MutableLiveData<String> mutableCheckStrokesRequest = new MutableLiveData<>();
 
+    @VisibleForTesting
+    final MutableLiveData<Boolean> mutableRequestUpsertMyWord = new MutableLiveData<Boolean>();
+
+
     private final LiveData<Word> liveExamWord;
     private final LiveData<Status> liveCheckPinyin1Status;
     private final LiveData<Status> liveCheckPinyin2Status;
     private final LiveData<Status> liveCheckStrokesStatus;
 
     private final LiveData<MyLiveExamWordHolder> liveExamWordHolder;
-
-    @VisibleForTesting
-    final MutableLiveData<Long> mutableRequestUpsertMyWord = new MutableLiveData<Long>();
 
     private final LiveData<Status> liveUpsertStatus;
     public LiveData<Status> getLiveUpsertStatus() {
@@ -129,7 +130,7 @@ public class MyWordViewModel extends ViewModel {
         };
 
 
-        liveUpsertStatus = Transformations.switchMap(mutableRequestUpsertMyWord, (Long time) -> {
+        liveUpsertStatus = Transformations.switchMap(mutableRequestUpsertMyWord, (Boolean isFlight) -> {
 
             return new LiveData<Status>() {
                 @Override
@@ -160,7 +161,7 @@ public class MyWordViewModel extends ViewModel {
                                                 usecaseFascade
                                                         .repositoryFascade
                                                         .wordRepository
-                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word,
+                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word,isFlight,
                                                                 new WordRepository.ProgressCallback() {
                                                                     @Override
                                                                     public void onSucess() {
@@ -217,8 +218,7 @@ public class MyWordViewModel extends ViewModel {
         mutableCheckStrokesRequest.setValue(s);
     }
 
-    public void updateMyWordProgress() {
-        mutableRequestUpsertMyWord.setValue(System.currentTimeMillis());
+    public void updateMyWordProgress(Boolean isFlight) {
+        mutableRequestUpsertMyWord.setValue(isFlight);
     }
-
 }

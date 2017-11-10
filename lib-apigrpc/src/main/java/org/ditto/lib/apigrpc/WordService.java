@@ -128,7 +128,7 @@ public class WordService {
                 .build();
     }
 
-    public void upsertMyWord(CallCredentials callCredentials, String requestWord, MyWordCallback callback) {
+    public void upsertMyWord(CallCredentials callCredentials, String requestWord, Boolean isFlight, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -146,24 +146,32 @@ public class WordService {
 
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
                             Log.i(TAG, String.format("upsertMyWord healthStub.check onNext requestWord = [%s]", gson.toJson(requestWord)));
-                            UpsertRequest upsertRequest = UpsertRequest.newBuilder().setWord(requestWord).build();
-                            myWordStub.withWaitForReady().withCallCredentials(callCredentials).upsert(upsertRequest, new StreamObserver<UpsertResponse>() {
-                                @Override
-                                public void onNext(UpsertResponse value) {
-                                    Log.i(TAG, String.format("upsertMyWord upsert.onNext UpsertResponse=%s", gson.toJson(value)));
-                                    callback.onMyWordUpserted(value);
-                                }
+                            UpsertRequest upsertRequest = UpsertRequest
+                                    .newBuilder()
+                                    .setWord(requestWord)
+                                    .setProgressStep(isFlight ? 8 : 1)
+                                    .build();
 
-                                @Override
-                                public void onError(Throwable t) {
+                            myWordStub
+                                    .withWaitForReady()
+                                    .withCallCredentials(callCredentials)
+                                    .upsert(upsertRequest, new StreamObserver<UpsertResponse>() {
+                                        @Override
+                                        public void onNext(UpsertResponse value) {
+                                            Log.i(TAG, String.format("upsertMyWord upsert.onNext UpsertResponse=%s", gson.toJson(value)));
+                                            callback.onMyWordUpserted(value);
+                                        }
 
-                                }
+                                        @Override
+                                        public void onError(Throwable t) {
 
-                                @Override
-                                public void onCompleted() {
+                                        }
 
-                                }
-                            });
+                                        @Override
+                                        public void onCompleted() {
+
+                                        }
+                                    });
                         } else {
                             Log.i(TAG, String.format("upsertMyWord healthStub.check onNext NOT! ServingStatus.SERVING requestWord = [%s]", gson.toJson(requestWord)));
                         }
@@ -194,52 +202,53 @@ public class WordService {
         MyWordGrpc.MyWordStub myWordStub = MyWordGrpc.newStub(channel);
 
 
-        healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(myWordGrpcHealthCheckRequest,
-                new StreamObserver<HealthCheckResponse>() {
-                    @Override
-                    public void onNext(HealthCheckResponse value) {
+        healthStub.withDeadlineAfter(60, TimeUnit.SECONDS)
+                .check(myWordGrpcHealthCheckRequest,
+                        new StreamObserver<HealthCheckResponse>() {
+                            @Override
+                            public void onNext(HealthCheckResponse value) {
 
-                        if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
-                            Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%s]", gson.toJson(listRequest)));
+                                if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
+                                    Log.i(TAG, String.format("listMyWords healthStub.check onNext requestLastUpdated = [%s]", gson.toJson(listRequest)));
 
-                            myWordStub
-                                    .withWaitForReady()
-                                    .withCallCredentials(callCredentials)
-                                    .list(listRequest, new StreamObserver<MyWordResponse>() {
-                                        @Override
-                                        public void onNext(MyWordResponse value) {
-                                            Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
-                                            callback.onMyWordReceived(value);
-                                        }
+                                    myWordStub
+                                            .withWaitForReady()
+                                            .withCallCredentials(callCredentials)
+                                            .list(listRequest, new StreamObserver<MyWordResponse>() {
+                                                @Override
+                                                public void onNext(MyWordResponse value) {
+                                                    Log.i(TAG, String.format("listMyWords list.onNext MyWordResponse=%s", gson.toJson(value)));
+                                                    callback.onMyWordReceived(value);
+                                                }
 
-                                        @Override
-                                        public void onError(Throwable t) {
+                                                @Override
+                                                public void onError(Throwable t) {
 
-                                        }
+                                                }
 
-                                        @Override
-                                        public void onCompleted() {
+                                                @Override
+                                                public void onCompleted() {
 
-                                        }
-                                    });
-                        } else {
-                            Log.i(TAG, String.format("listMyWords healthStub.check onNext NOT! ServingStatus.SERVING listRequest = [%s]", gson.toJson(listRequest)));
-                        }
-                    }
+                                                }
+                                            });
+                                } else {
+                                    Log.i(TAG, String.format("listMyWords healthStub.check onNext NOT! ServingStatus.SERVING listRequest = [%s]", gson.toJson(listRequest)));
+                                }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.i(TAG, String.format("listMyWords healthStub.check onError grpc service check health\n%s", t.getMessage()));
-                        callback.onApiError();
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.i(TAG, String.format("listMyWords healthStub.check onError grpc service check health\n%s", t.getMessage()));
+                                callback.onApiError();
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, String.format("listMyWords healthStub.check onCompleted grpc service check health\n%s", ""));
-                        callback.onApiCompleted();
-                    }
-                });
+                            @Override
+                            public void onCompleted() {
+                                Log.i(TAG, String.format("listMyWords healthStub.check onCompleted grpc service check health\n%s", ""));
+                                callback.onApiCompleted();
+                            }
+                        });
 
     }
 
