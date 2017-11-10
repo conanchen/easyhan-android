@@ -57,6 +57,7 @@ public class StrokeKeyboard {
      */
     private Activity mHostActivity;
     private Keyboard keyboard;
+    private AudioManager am;
     /**
      * The key (code) handler.
      */
@@ -156,6 +157,7 @@ public class StrokeKeyboard {
         mKeyboardView.setOnKeyboardActionListener(mOnKeyboardActionListener);
         // Hide the standard keyboard initially
         mHostActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+          am = (AudioManager) mHostActivity.getSystemService(Context.AUDIO_SERVICE);
     }
 
 
@@ -230,20 +232,20 @@ public class StrokeKeyboard {
     }
 
     private void playClick(int keyCode) {
-        AudioManager am = (AudioManager) mHostActivity.getSystemService(Context.AUDIO_SERVICE);
+        float vol = 0.5f; //This will be half of the default system sound
         switch (keyCode) {
             case 32:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR,vol);
                 break;
             case Keyboard.KEYCODE_DONE:
             case 10:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN,vol);
                 break;
             case Keyboard.KEYCODE_DELETE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE,vol);
                 break;
             default:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,vol);
         }
     }
 

@@ -51,6 +51,7 @@
                     android:visibility="visible">
 
                     <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/toolbar_title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/dp_16"

@@ -141,7 +141,7 @@ public class PinyinKeyboard {
      * and load the keyboard layout from xml file <var>layoutid</var> (see {@link Keyboard} for description).
      * Note that the <var>host</var> activity must have a <var>KeyboardView</var> in its layout (typically aligned with the bottom of the activity).
      * Note that the keyboard layout xml file may include key codes for navigation; see the constants in this class for their values.
-     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int)}.
+     * Note that to enable EditText's to use this custom keyboard, call the {@link #registerEditText(int,Callbacks)}.
      *
      * @param host     The hosting activity.
      * @param viewid   The id of the KeyboardView.
@@ -230,19 +230,20 @@ public class PinyinKeyboard {
 
     private void playClick(int keyCode) {
         AudioManager am = (AudioManager) mHostActivity.getSystemService(Context.AUDIO_SERVICE);
+        float vol = 0.5f; //This will be half of the default system sound
         switch (keyCode) {
             case 32:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_SPACEBAR,vol);
                 break;
             case Keyboard.KEYCODE_DONE:
             case 10:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_RETURN,vol);
                 break;
             case Keyboard.KEYCODE_DELETE:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_DELETE,vol);
                 break;
             default:
-                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD);
+                am.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,vol);
         }
     }
 }

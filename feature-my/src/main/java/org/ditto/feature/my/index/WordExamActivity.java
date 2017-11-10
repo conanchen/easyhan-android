@@ -23,6 +23,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseActivity;
+import org.ditto.feature.base.WordUtils;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;

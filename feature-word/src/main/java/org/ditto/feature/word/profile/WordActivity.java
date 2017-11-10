@@ -7,13 +7,15 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -22,16 +24,15 @@ import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseActivity;
 import org.ditto.feature.base.Constants;
+import org.ditto.feature.base.WordUtils;
 import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
-import org.ditto.lib.repository.model.Status;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 @Route(path = "/feature_word/WordActivity")
@@ -69,6 +70,9 @@ public class WordActivity extends BaseActivity {
 
     @BindView(R2.id.toolbar_button_layout)
     ButtonBarLayout buttonBarLayout;
+
+    @BindView(R2.id.toolbar_title)
+    AppCompatTextView toolbar_title;
 
     @BindView(R2.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -133,6 +137,7 @@ public class WordActivity extends BaseActivity {
         webSettings.setSupportZoom(true);
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        x5webView.addJavascriptInterface(new MyJavaScriptInterface( ), "INTERFACE");
 
         x5webView.loadUrl("http://hanyu.baidu.com/zici/s?wd=" + mWord);
         x5webView.setWebViewClient(new WebViewClient() {
@@ -141,8 +146,41 @@ public class WordActivity extends BaseActivity {
                 view.loadUrl(url);
                 return true;
             }
+            @Override
+            public void onPageFinished(WebView view, String url)
+            {
+                view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].innerText);");
+            }
         });
+    }
 
+    /* An instance of this class will be registered as a JavaScript interface */
+    class MyJavaScriptInterface {
+
+        public MyJavaScriptInterface() {
+        }
+
+        @SuppressWarnings("unused")
+
+        @JavascriptInterface
+        public void processContent(String aContent) {
+            final String content = aContent;
+            Log.i(TAG, content);
+            Log.i(TAG, toUNICODE(content));
+        }
+    }
+    public static String toUNICODE(String s)
+    {
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<s.length();i++)
+        {
+            if(s.charAt(i) == '\n'){
+                sb.append("\n");
+            }else {
+                sb.append(" U+" + Integer.toHexString(s.charAt(i)));
+            }
+        }
+        return sb.toString();
     }
 
     @Override
@@ -160,6 +198,7 @@ public class WordActivity extends BaseActivity {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(WordViewModel.class);
         mViewModel.setWord(mWord);
         mViewModel.getLiveWord().observe(this, word -> {
+            toolbar_title.setText(String.format("%s %s", WordUtils.getTitleByMemIdx(word.memIdx), WordUtils.getDescByMemIdx(word.memIdx)));
         });
     }
 

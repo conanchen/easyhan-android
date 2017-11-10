@@ -10,7 +10,7 @@ import com.airbnb.epoxy.EpoxyModelWithHolder;
 
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
-import org.ditto.feature.my.index.WordUtils;
+import org.ditto.feature.base.WordUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

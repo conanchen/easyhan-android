@@ -4,7 +4,7 @@ hiask-android-sexyimage
 $ gradle --refresh-dependencies clean build
 
 #http://www.unicode.org/charts/PDF/U31C0.pdf
-
+#http://baby.sina.com.cn/wemedia/edu/2017-10-23/doc-ifymzqpq2919279.shtml
 #http://www.qqxiuzi.cn/bianma/zifuji.php
 ā
 GB2312编码：43169BIG5编码：没有GBK编码：43169GB18030编码：43169Unicode编码：257 1
