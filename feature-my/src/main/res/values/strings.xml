@@ -4,4 +4,6 @@
     <string name="cancel">取消</string>
     <string name="flight_progress_title">直升识字进度</string>
     <string name="flight_progress_message">这个字我已经牢记在心，无需再次学习，请把识字进度直接升级到⑦</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 </resources>

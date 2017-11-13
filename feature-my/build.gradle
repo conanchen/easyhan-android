@@ -92,4 +92,10 @@ dependencies {
     annotationProcessor "com.airbnb.android:epoxy-processor:$AIRBNB_EPOXY_LIBS_VERSION"
     compile "com.airbnb.android:lottie:$LOTTIE_VERSION"
     testCompile 'junit:junit:4.12'
+
+    compile ("com.github.worker8:tourguide:$tourguide_version") {
+        transitive=true
+    }
+
+
 }

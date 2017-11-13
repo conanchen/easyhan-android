@@ -45,6 +45,17 @@
             </android.support.v7.widget.Toolbar>
 
 
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/ads"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_gravity="center_vertical|end"
+                android:layout_margin="@dimen/dp_8"
+                android:text="[粉红汉字]APP助你快速牢记并正确书写汉字！国家正式出台笔顺正确写法,很全面！\n你是否经常会写错笔画的顺序？\n点击立即查看>>>"
+                android:textAlignment="textEnd"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"  />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"

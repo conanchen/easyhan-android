@@ -22,7 +22,7 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
-        android:name="org.ditto.pinkhan.EasyhanApplication"
+        android:name=".EasyhanApplication"
         android:allowBackup="true"
         android:icon="@drawable/ask28"
         android:label="@string/app_name"
@@ -44,6 +44,7 @@
         <!-- 保活服务和定期获取位置 -->
         <service android:name="org.ditto.lib.usecases.AppServiceKeepliveTraceImpl" />
         <service android:name="org.ditto.lib.usecases.AppServiceCommandSenderImpl" />
+
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"
@@ -55,10 +56,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.ditto.pinkhan.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden">
-        </activity>
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"></activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -67,7 +67,7 @@
         <activity
             android:name="org.ditto.feature.word.profile.WordActivity"
             android:label="@string/title_activity_word"
-            android:parentActivityName="org.ditto.pinkhan.MainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -76,13 +76,18 @@
         <activity
             android:name="org.ditto.feature.my.index.WordExamActivity"
             android:label="@string/title_activity_word_exam"
-            android:parentActivityName="org.ditto.pinkhan.MainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.ditto.pinkhan.MainActivity" />
         </activity>
+        <activity
+            android:name=".AdsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_ads"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

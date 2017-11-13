@@ -2,7 +2,11 @@ package org.ditto.feature.my.index;
 
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -14,8 +18,11 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.ButtonBarLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -42,6 +49,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import nl.fampennings.keyboard.PinyinKeyboard;
 import nl.fampennings.keyboard.StrokeKeyboard;
+import tourguide.tourguide.ChainTourGuide;
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Sequence;
+import tourguide.tourguide.ToolTip;
 
 
 @Route(path = "/feature_my/WordExamActivity")
@@ -50,6 +61,8 @@ public class WordExamActivity extends BaseActivity {
     private final static Gson gson = new Gson();
 
     private String mImageTitle = "";
+    private org.ditto.feature.base.CollapsingToolbarLayoutState state;
+    private ChainTourGuide mTourGuideHandler;
 
     private enum CollapsingToolbarLayoutState {
         EXPANDED,
@@ -100,16 +113,29 @@ public class WordExamActivity extends BaseActivity {
     @BindView(R2.id.ok)
     AppCompatButton ookButton;
 
+    @BindView(R2.id.keyboardview)
+    KeyboardView keyboardView;
+
     @BindView(R2.id.fab)
     FloatingActionButton fabButton;
 
     PinyinKeyboard mPinyinKeyboard;
     StrokeKeyboard mStrokeKeyboard;
 
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    private String canPopupTourGuideKey = WordExamActivity.TAG + "canPopupTourGuide";
+    private Boolean canPopupTourGuide = Boolean.TRUE;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        canPopupTourGuide = sharedpreferences.getBoolean(canPopupTourGuideKey, Boolean.TRUE);
+
+        Log.i(TAG, String.format("canPopupTourGuide=%b", canPopupTourGuide));
+
         setContentView(R.layout.activity_word_exam);
         ButterKnife.bind(this);
 
@@ -117,33 +143,8 @@ public class WordExamActivity extends BaseActivity {
         ARouter.getInstance().inject(this);
 
         setupViewModel();
-        app_bar.addOnOffsetChangedListener((AppBarLayout appBarLayout, int verticalOffset) -> {
 
-            if (verticalOffset == 0) {
-                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.EXPANDED) {
-                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
-                    collapsingToolbarLayout.setTitle("EXPANDED");//设置title为EXPANDED
-
-                    collapsingToolbarLayout.setTitle(mImageTitle);
-                }
-            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
-                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.COLLAPSED) {
-                    collapsingToolbarLayout.setTitle("");//设置title不显示
-                    buttonBarLayout.setVisibility(View.VISIBLE);//隐藏播放按钮
-                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
-                }
-            } else {
-                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.INTERNEDIATE) {
-                    if (mCollapsingToolbarLayoutState == CollapsingToolbarLayoutState.COLLAPSED) {
-                        buttonBarLayout.setVisibility(View.GONE);//由折叠变为中间状态时隐藏播放按钮
-                    }
-                    collapsingToolbarLayout.setTitle("粉红字帖");//设置title为INTERNEDIATE
-                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
-                }
-            }
-
-        });
-
+        setupAppBar();
 
         broken.setOnFocusChangeListener((view, b) -> {
             if (b) {
@@ -208,6 +209,41 @@ public class WordExamActivity extends BaseActivity {
 
         setupExamKeyboard();
     }
+
+
+    private void setupAppBar() {
+
+        app_bar.addOnOffsetChangedListener((AppBarLayout appBarLayout, int verticalOffset) -> {
+
+            if (verticalOffset == 0) {
+                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.EXPANDED) {
+                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
+                    collapsingToolbarLayout.setTitle("EXPANDED");//设置title为EXPANDED
+
+                    collapsingToolbarLayout.setTitle(mImageTitle);
+                }
+            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.COLLAPSED) {
+                    collapsingToolbarLayout.setTitle("");//设置title不显示
+                    buttonBarLayout.setVisibility(View.VISIBLE);//隐藏播放按钮
+                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
+                    if (canPopupTourGuide) {
+                        runOverlayListener_ContinueMethod();
+                    }
+                }
+            } else {
+                if (mCollapsingToolbarLayoutState != CollapsingToolbarLayoutState.INTERNEDIATE) {
+                    if (mCollapsingToolbarLayoutState == CollapsingToolbarLayoutState.COLLAPSED) {
+                        buttonBarLayout.setVisibility(View.GONE);//由折叠变为中间状态时隐藏播放按钮
+                    }
+                    collapsingToolbarLayout.setTitle("粉红字帖");//设置title为INTERNEDIATE
+                    mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+                }
+            }
+
+        });
+    }
+
 
     private void setupExamKeyboard() {
         mPinyinKeyboard = new PinyinKeyboard(this, R.id.keyboardview, R.xml.pinyinkbd);
@@ -358,4 +394,129 @@ public class WordExamActivity extends BaseActivity {
         }
         flightProgressDialog.show();
     }
+
+    private void runOverlayListener_ContinueMethod() {
+                /* setup enter and exit animation */
+        AlphaAnimation mEnterAnimation = new AlphaAnimation(0f, 1f);
+        mEnterAnimation.setDuration(600);
+        mEnterAnimation.setFillAfter(true);
+
+        AlphaAnimation mExitAnimation = new AlphaAnimation(1f, 0f);
+        mExitAnimation.setDuration(600);
+        mExitAnimation.setFillAfter(true);
+
+
+        // the return handler is used to manipulate the cleanup of all the tutorial elements
+        ChainTourGuide tourGuide1 = ChainTourGuide.init(this)
+                .setToolTip(new ToolTip()
+                        .setTitle("拼音正确吗？")
+                        .setDescription("注意右边提示✔表示输入正确️")
+                        .setGravity(Gravity.BOTTOM | Gravity.LEFT)
+                )
+                // note that there is no Overlay here, so the default one will be used
+                .playLater(pinyin2_indicator);
+
+        ChainTourGuide tourGuide2 = ChainTourGuide.init(this)
+                .setToolTip(new ToolTip()
+                        .setTitle("笔顺正确吗？")
+                        .setDescription("注意右边提示✔表示输入正确️")
+                        .setGravity(Gravity.BOTTOM | Gravity.LEFT)
+                        .setBackgroundColor(Color.parseColor("#c0392b"))
+                )
+                .setOverlay(new Overlay()
+                        .setBackgroundColor(Color.parseColor("#EE2c3e50"))
+                        .setEnterAnimation(mEnterAnimation)
+                        .setExitAnimation(mExitAnimation)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTourGuideHandler.next();
+                            }
+                        })
+                )
+                .playLater(strokes_indicator);
+
+        ChainTourGuide tourGuide3 = ChainTourGuide.init(this)
+                .setToolTip(new ToolTip()
+                        .setTitle("识字进度升级")
+                        .setDescription("只有正确输入拼音1、拼音2、笔顺后，才可点击按钮[...识字进度升级...]")
+                        .setGravity(Gravity.TOP)
+                )
+                .setOverlay(new Overlay()
+                        .setBackgroundColor(Color.parseColor("#AAFF0000"))
+                        .setEnterAnimation(mEnterAnimation)
+                        .setExitAnimation(mExitAnimation)
+                        .setStyle(Overlay.Style.Rectangle)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTourGuideHandler.next();
+                            }
+                        })
+                )
+                .playLater(ookButton);
+
+        ChainTourGuide tourGuide4 = ChainTourGuide.init(this)
+                .setToolTip(new ToolTip()
+                        .setTitle("拼៎音៎笔៎画៎键៎盘៎")
+                        .setDescription("长按或连续点击有³标号的键钮可以切换音标或笔画")
+                        .setGravity(Gravity.TOP)
+                )
+                .setOverlay(new Overlay()
+                        .setBackgroundColor(Color.parseColor("#EE2c3e50"))
+                        .setEnterAnimation(mEnterAnimation)
+                        .setExitAnimation(mExitAnimation)
+                        .setStyle(Overlay.Style.Rectangle)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTourGuideHandler.next();
+                                new AlertDialog.Builder(WordExamActivity.this)
+                                        .setPositiveButton(R.string.yes,
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                    }
+                                                })
+                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                SharedPreferences.Editor editor = sharedpreferences.edit();
+                                                editor.putBoolean(canPopupTourGuideKey, Boolean.FALSE);
+                                                editor.commit();
+                                                canPopupTourGuide = sharedpreferences.getBoolean(canPopupTourGuideKey, Boolean.TRUE);
+
+                                            }
+                                        })
+                                        .setTitle("提示")
+                                        .setMessage("下次继续提示主界面新手导航吗？")
+                                        .create()
+                                        .show();
+
+                            }
+                        })
+                )
+                .playLater(keyboardView);
+
+        Sequence sequence = new Sequence.SequenceBuilder()
+                .add(tourGuide1, tourGuide2, tourGuide3, tourGuide4)
+                .setDefaultOverlay(new Overlay()
+                        .setEnterAnimation(mEnterAnimation)
+                        .setExitAnimation(mExitAnimation)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mTourGuideHandler.next();
+                            }
+                        })
+                )
+                .setDefaultPointer(null)
+                .setContinueMethod(Sequence.ContinueMethod.OverlayListener)
+                .build();
+
+
+        mTourGuideHandler = ChainTourGuide.init(this).playInSequence(sequence);
+    }
+
+
 }

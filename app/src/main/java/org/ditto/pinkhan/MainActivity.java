@@ -2,16 +2,25 @@ package org.ditto.pinkhan;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -20,6 +29,7 @@ import com.roughike.bottombar.BottomBar;
 import com.xdandroid.hellodaemon.IntentWrapper;
 
 import org.ditto.feature.base.BaseFragmentActivity;
+import org.ditto.feature.base.CollapsingToolbarLayoutState;
 import org.ditto.feature.base.FragmentsPagerAdapter;
 import org.ditto.feature.my.index.FragmentMy;
 import org.ditto.feature.my.index.FragmentMyWords;
@@ -32,6 +42,11 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Pointer;
+import tourguide.tourguide.ToolTip;
+import tourguide.tourguide.TourGuide;
 
 @Route(path = "/app/MainActivity")
 public class MainActivity extends BaseFragmentActivity {
@@ -39,10 +54,22 @@ public class MainActivity extends BaseFragmentActivity {
 
     @BindView(R.id.view_pager)
     ViewPager viewPager;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.app_bar)
+    AppBarLayout app_bar;
+
+    @BindView(R.id.ads)
+    AppCompatButton adsButton;
+
     @BindView(R.id.navigation)
     BottomBar bottomBar;
+
+    @BindView(R.id.navigation_tab2)
+    View navigation_tab2;
+    private CollapsingToolbarLayoutState state;
 
     private int mBottombarTab0 = 0;
     private int mBottombarTab0Fragment0;
@@ -62,13 +89,30 @@ public class MainActivity extends BaseFragmentActivity {
     private final int SDK_PERMISSION_REQUEST = 127;
     private String permissionInfo;
 
+    private TourGuide mTourGuideHandler;
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    private String canPopupTourGuideKey = MainActivity.TAG + "canPopupTourGuide";
+    private Boolean canPopupTourGuide = Boolean.TRUE;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        canPopupTourGuide = sharedpreferences.getBoolean(canPopupTourGuideKey, Boolean.TRUE);
+
+        Log.i(TAG, String.format("canPopupTourGuide=%b", canPopupTourGuide));
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setupToolbar();
         setupPagerAndBottombar();
+        setupAppBar();
+        if (canPopupTourGuide) {
+            setupTourGuide();
+        }
     }
 
     @Override
@@ -88,7 +132,6 @@ public class MainActivity extends BaseFragmentActivity {
 
 
     private void setupToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         //toolbar.setLogo(android.R.drawable.ic_dialog_email);
         toolbar.setTitle("粉红汉字");
@@ -106,6 +149,34 @@ public class MainActivity extends BaseFragmentActivity {
 
     }
 
+
+    private void setupAppBar() {
+
+        app_bar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                if (verticalOffset == 0) {
+                    if (state != CollapsingToolbarLayoutState.EXPANDED) {
+                        state = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
+                        //collapsingToolbar.setTitle("EXPANDED");//设置title为EXPANDED
+                    }
+                } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+                    if (state != CollapsingToolbarLayoutState.COLLAPSED) {
+                        //collapsingToolbar.setTitle("COLLAPSED");//设置title不显示
+
+                        state = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
+                    }
+                } else {
+                    if (state != CollapsingToolbarLayoutState.INTERNEDIATE) {
+                        //collapsingToolbar.setTitle("INTERNEDIATE");//设置title为INTERNEDIATE
+                        state = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+                    }
+                }
+
+            }
+        });
+    }
 
     private void setupPagerAndBottombar() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -188,6 +259,30 @@ public class MainActivity extends BaseFragmentActivity {
                             && viewPager.getCurrentItem() < mBottombarTab3Fragment0)) {
                         viewPager.setCurrentItem(mBottombarTab2Fragment0, true);
                     }
+                    if (mTourGuideHandler != null) {
+                        mTourGuideHandler.cleanUp();
+                        new AlertDialog.Builder(this)
+                                .setPositiveButton(R.string.yes,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        })
+                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                        editor.putBoolean(canPopupTourGuideKey, Boolean.FALSE);
+                                        editor.commit();
+                                        canPopupTourGuide = sharedpreferences.getBoolean(canPopupTourGuideKey, Boolean.TRUE);
+
+                                    }
+                                })
+                                .setTitle("提示")
+                                .setMessage("下次继续提示主界面新手导航吗？")
+                                .create()
+                                .show();
+                    }
                     break;
                 case R.id.navigation_tab3:
                     if (!(mBottombarTab3Fragment0 <= viewPager.getCurrentItem()
@@ -210,6 +305,9 @@ public class MainActivity extends BaseFragmentActivity {
                 case R.id.navigation_tab1:
                     break;
                 case R.id.navigation_tab2:
+                    if (mTourGuideHandler != null) {
+                        mTourGuideHandler.cleanUp();
+                    }
                     ARouter.getInstance().build("/feature_my/WordExamActivity")
                             .navigation();
                     break;
@@ -277,4 +375,30 @@ public class MainActivity extends BaseFragmentActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    @OnClick(R.id.ads)
+    public void onAdsButtonClickec() {
+        ARouter.getInstance().build("/app/AdsActivity").navigation();
+    }
+
+    private void setupTourGuide() {
+        ToolTip toolTip = new ToolTip()
+                .setTitle("汉字记忆")
+                .setGravity(Gravity.TOP)
+                .setDescription("再次单击[天天向上]开始汉字记忆...");
+
+        // Setup pointer for demo
+        Pointer pointer = new Pointer();
+        pointer.setColor(Color.RED);
+        pointer.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
+//            button1.setText("BUTTON\n THAT IS\n PRETTY BIG");
+
+        // the return handler is used to manipulate the cleanup of all the tutorial elements
+        mTourGuideHandler = TourGuide.init(this).with(TourGuide.Technique.Click)
+                .setPointer(pointer)
+                .setToolTip(toolTip)
+                .setOverlay(new Overlay().setBackgroundColor(Color.parseColor("#66FF0000")))
+                .playOn(navigation_tab2);
+
+
+    }
 }

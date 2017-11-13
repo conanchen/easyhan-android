@@ -155,6 +155,7 @@ project.android.buildTypes.all { buildType ->
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-v4:26.1.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -173,7 +174,6 @@ dependencies {
 //    releaseCompile project(path: ':feature-visitor', configuration: 'release')
 //
     //Stetho : A debug bridge for Android applications
-    
 
 
     compile "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBS_VERSION"
@@ -204,8 +204,10 @@ dependencies {
     compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
     annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTERKNIFE_VERSION"
 
+    compile ("com.github.worker8:tourguide:$tourguide_version") {
+        transitive=true
+    }
 
-    
 
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
@@ -214,9 +216,10 @@ dependencies {
     compile "com.alibaba:arouter-api:$AROUTER_API_LIBS_VERSION"
     annotationProcessor "com.alibaba:arouter-compiler:$AROUTER_COMPILER_LIBS_VERSION"
 
+    compile "org.sufficientlysecure:html-textview:$html_textview_version"
 
     //https://developer.android.com/studio/build/multidex.html
-    
+
 
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'

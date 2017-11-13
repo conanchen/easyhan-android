@@ -9,4 +9,10 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_word_exam">识字考试</string>
+
+    <string name="title_activity_ads">AdsActivity</string>
+    <string name="dummy_button">粉红字帖助你快速牢记并正确书写汉字</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 </resources>
