@@ -1,8 +1,10 @@
 package org.ditto.feature.my.index;
 
 import android.support.v7.widget.RecyclerView.RecycledViewPool;
+import android.view.View;
 
 import com.airbnb.epoxy.AutoModel;
+import com.airbnb.epoxy.OnModelClickListener;
 import com.airbnb.epoxy.TypedEpoxyController;
 import com.google.gson.Gson;
 
@@ -13,6 +15,8 @@ import org.ditto.feature.my.index.epoxymodels.ItemMyAccountModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemMyWordMemoryHeaderModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemMyWordMemoryModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemPagetipModel_;
+import org.ditto.feature.my.index.epoxymodels.ItemWordCrawlerModel;
+import org.ditto.feature.my.index.epoxymodels.ItemWordCrawlerModel_;
 import org.ditto.feature.my.index.epoxymodels.ItemWordSortTypeModel_;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.dbroom.kv.VoWordSummary;
@@ -23,6 +27,8 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
 
     public interface AdapterCallbacks {
         void onWordSortTypeChangedTo(VoWordSortType.WordSortType sortType);
+
+        void onWordCrawlerClicked();
     }
 
 
@@ -47,6 +53,10 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
     @AutoModel
     ItemWordSortTypeModel_ itemWordSortTypeModel_;
 
+
+    @AutoModel
+    ItemWordCrawlerModel_ itemWordCrawlerModel_;
+
     @AutoModel
     ItemPagetipModel_ footerModel_;
 
@@ -65,18 +75,27 @@ public class MyController extends TypedEpoxyController<MyLiveDataHolder> {
         }
 
 //        itemStatusNetworkModel_.addIf(status != null && Status.Code.END_ERROR.equals(status.code), this);
+        itemWordCrawlerModel_
+                .clickListener(new OnModelClickListener<ItemWordCrawlerModel_, ItemWordCrawlerModel.Holder>() {
+                    @Override
+                    public void onClick(ItemWordCrawlerModel_ itemWordCrawlerModel_, ItemWordCrawlerModel.Holder holder, View view, int i) {
+                        callbacks.onWordCrawlerClicked();
+                    }
+                })
+                .addTo(this);
     }
 
-    private void setupMyAccount(MyLiveDataHolder myLiveDataHolder){
-        if(myLiveDataHolder.myProfile!=null){
+    private void setupMyAccount(MyLiveDataHolder myLiveDataHolder) {
+        if (myLiveDataHolder.myProfile != null) {
             accountModel_
                     .name(myLiveDataHolder.myProfile.name)
                     .idno(myLiveDataHolder.myProfile.userNo)
                     .addTo(this);
-        }else{
+        } else {
             accountModel_.addTo(this);
         }
     }
+
     private void setupMyWordStats(MyLiveDataHolder myLiveDataHolder) {
         if (myLiveDataHolder.myWordLevel1Stats != null
                 && myLiveDataHolder.myWordLevel1Stats.value != null

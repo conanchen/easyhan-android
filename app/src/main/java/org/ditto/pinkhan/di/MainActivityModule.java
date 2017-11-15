@@ -2,6 +2,7 @@ package org.ditto.pinkhan.di;
 
 import org.ditto.feature.login.LoginActivity;
 import org.ditto.feature.login.di.FragmentLoginBuildersModule;
+import org.ditto.feature.my.crawler.WordCrawlerActivity;
 import org.ditto.feature.my.di.FragmentMyBuildersModule;
 import org.ditto.feature.my.index.WordExamActivity;
 import org.ditto.feature.word.di.FragmentWordsBuildersModule;
@@ -28,6 +29,9 @@ public abstract class MainActivityModule {
 
     @ContributesAndroidInjector
     abstract WordExamActivity contributeWordExamActivity();
+
+    @ContributesAndroidInjector
+    abstract WordCrawlerActivity contributeWordCrawlerActivity();
 
     @ContributesAndroidInjector
     abstract LoginActivity contributeLoginActivity();

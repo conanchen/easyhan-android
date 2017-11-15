@@ -15,4 +15,5 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="title_activity_word_crawler">汉字爬虫</string>
 </resources>

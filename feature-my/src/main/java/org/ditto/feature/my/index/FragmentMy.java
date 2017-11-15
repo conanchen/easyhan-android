@@ -10,17 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseFragment;
+import org.ditto.feature.base.Constants;
 import org.ditto.feature.base.SampleItemAnimator;
-import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
-import org.ditto.feature.base.Constants;
+import org.ditto.lib.dbroom.kv.VoWordSortType;
 
 import javax.inject.Inject;
 
@@ -79,7 +80,7 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
     }
 
     private String getNameCurrentPageNo() {
-        return  "MYWORD_CURRENT_PGNO";
+        return "MYWORD_CURRENT_PGNO";
     }
 
     @Override
@@ -87,6 +88,7 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
         super.onResume();
         viewModel.refresh();
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -155,7 +157,12 @@ public class FragmentMy extends BaseFragment implements Injectable, MyController
 
     @Override
     public void onWordSortTypeChangedTo(VoWordSortType.WordSortType sortType) {
-        Log.i(TAG, String.format("onWordSortTypeChangedTo sortType=%s",sortType.name()));
+        Log.i(TAG, String.format("onWordSortTypeChangedTo sortType=%s", sortType.name()));
         viewModel.changeWordSortType(sortType);
+    }
+
+    @Override
+    public void onWordCrawlerClicked() {
+        ARouter.getInstance().build("/feature_my/WordCrawlerActivity").navigation();
     }
 }

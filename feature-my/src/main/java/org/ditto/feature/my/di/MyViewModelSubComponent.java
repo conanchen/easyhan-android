@@ -2,6 +2,7 @@ package org.ditto.feature.my.di;
 
 
 
+import org.ditto.feature.my.crawler.WordCrawlerViewModel;
 import org.ditto.feature.my.index.MyViewModel;
 import org.ditto.feature.my.index.MyWordViewModel;
 import org.ditto.feature.my.index.MyWordsViewModel;
@@ -20,6 +21,7 @@ public interface MyViewModelSubComponent {
     MyViewModel createMyViewModel();
     MyWordsViewModel createMyWordsViewModel();
     MyWordViewModel createMyWordViewModel();
+    WordCrawlerViewModel createWordCrawlerViewModel();
 
     @Subcomponent.Builder
     interface Builder {

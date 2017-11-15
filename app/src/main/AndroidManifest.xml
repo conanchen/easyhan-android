@@ -84,6 +84,16 @@
                 android:value="org.ditto.pinkhan.MainActivity" />
         </activity>
         <activity
+            android:name="org.ditto.feature.my.crawler.WordCrawlerActivity"
+            android:label="@string/title_activity_word_crawler"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.ditto.pinkhan.MainActivity" />
+        </activity>
+        <activity
             android:name=".AdsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_ads"

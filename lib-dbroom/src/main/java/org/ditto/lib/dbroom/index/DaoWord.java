@@ -57,4 +57,7 @@ public interface DaoWord {
 
     @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, idx ASC LIMIT :size")
     Flowable<List<Word>> getLiveMyExamWords(Integer size);
+
+    @Query("SELECT * FROM Word WHERE idx = :wordIdx LIMIT 1")
+    Maybe<Word> findOneByIdx(Integer wordIdx);
 }

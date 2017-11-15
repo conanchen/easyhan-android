@@ -62,6 +62,10 @@ public class WordRepository {
                 .take(1);
     }
 
+    public  Maybe<Word> findByIdx(Integer wordIdx) {
+        return roomFascade.daoWord.findOneByIdx(wordIdx);
+    }
+
     public interface ProgressCallback {
         void onSucess();
 

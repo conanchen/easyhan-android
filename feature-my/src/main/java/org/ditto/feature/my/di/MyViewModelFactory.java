@@ -1,6 +1,7 @@
 package org.ditto.feature.my.di;
 
 import org.ditto.feature.base.di.BaseViewModelFactory;
+import org.ditto.feature.my.crawler.WordCrawlerViewModel;
 import org.ditto.feature.my.index.MyViewModel;
 import org.ditto.feature.my.index.MyWordViewModel;
 import org.ditto.feature.my.index.MyWordsViewModel;
@@ -25,6 +26,9 @@ public class MyViewModelFactory extends BaseViewModelFactory {
 
         super.creators.put(MyWordViewModel.class,
                 () -> viewModelSubComponent.createMyWordViewModel());
+
+        super.creators.put(WordCrawlerViewModel.class,
+                () -> viewModelSubComponent.createWordCrawlerViewModel());
     }
 
 }
