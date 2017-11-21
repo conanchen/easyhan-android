@@ -99,7 +99,6 @@ public class AdsActivity extends Activity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = (HtmlTextView)findViewById(R.id.fullscreen_content);
 
-
         mContentView.setHtml(R.raw.example, new HtmlResImageGetter(mContentView));
 
         // Set up the user interaction to manually show or hide the system UI.
