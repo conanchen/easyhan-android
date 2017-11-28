@@ -10,6 +10,7 @@ import org.ditto.lib.apigrpc.ApigrpcFascade;
 import org.ditto.lib.apigrpc.JcaUtils;
 import org.ditto.lib.apigrpc.WordService;
 import org.ditto.lib.dbroom.RoomFascade;
+import org.ditto.lib.dbroom.index.Pinyin;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.Value;
@@ -23,12 +24,14 @@ import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
 import org.easyhan.common.grpc.HanziLevel;
+import org.easyhan.common.grpc.StatusResponse;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +42,6 @@ import io.grpc.CallCredentials;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -53,30 +55,52 @@ public class WordRepository {
     private ApigrpcFascade apigrpcFascade;
     private RoomFascade roomFascade;
 
-    public Flowable<Word> findMyExamWord() {
-        Random random = new Random();
-        return roomFascade.daoWord
-                .getLiveMyExamWords(20)
-                .flatMapIterable(x->x)
-                .skip(random.nextInt(20))
-                .take(1);
-    }
-
-    public  Maybe<Word> findByIdx(Integer wordIdx) {
-        return roomFascade.daoWord.findOneByIdx(wordIdx);
-    }
-
-    public interface ProgressCallback {
-        void onSucess();
-
-        void onError();
-    }
-
     @Inject
     public WordRepository(ApigrpcFascade apigrpcFascade,
                           RoomFascade roomFascade) {
         this.roomFascade = roomFascade;
         this.apigrpcFascade = apigrpcFascade;
+    }
+
+    public Flowable<Word> findMyExamWord() {
+        Random random = new Random();
+        return roomFascade.daoWord
+                .getLiveMyExamWords(20)
+                .flatMapIterable(x -> x)
+                .skip(random.nextInt(20))
+                .take(1);
+    }
+
+    public Maybe<Word> findByIdx(Integer wordIdx) {
+        return roomFascade.daoWord.findOneByIdx(wordIdx);
+    }
+
+    public void updateWordFromBaidu(String word, String html, ProgressCallback callback) {
+        apigrpcFascade.getWordService().updateWordFromBaidu(word, html, new WordService.WordCallback() {
+            @Override
+            public void onWordReceived(WordResponse image) {
+            }
+
+            @Override
+            public void onWordUpdated(StatusResponse image) {
+                callback.onSucess();
+            }
+
+            @Override
+            public void onApiError() {
+                callback.onError();
+            }
+
+            @Override
+            public void onApiCompleted() {
+
+            }
+
+            @Override
+            public void onApiReady() {
+
+            }
+        });
     }
 
     public void refresh(WordRefreshRequest wordRefreshRequest) {
@@ -85,6 +109,7 @@ public class WordRepository {
 
         apigrpcFascade.getWordService().listWords(listRequest,
                 new WordService.WordCallback() {
+
                     @Override
                     public void onApiReady() {
                         Status status = Status.builder().setCode(Status.Code.LOADING)
@@ -98,19 +123,41 @@ public class WordRepository {
                     public void onWordReceived(WordResponse response) {
 //                        postValue(Status.builder().setCode(Status.Code.LOADING)
 //                                .build());
-                        Log.i(TAG, String.format("onWordReceived save to database, word=[%s]", gson.toJson(response)));
+                        Log.i(TAG, String.format("onWordReceived save to database, word=%s,pinyins=%s,\nresponse[%s]",
+                                response.getWord(), gson.toJson(response.getPinyinsList()), gson.toJson(response)));
+                        List<Pinyin> pinyins = new ArrayList<>();
+                        for (int i = 0; i < response.getPinyinsCount(); i++) {
+                            pinyins.add(new Pinyin(response.getPinyins(i).getPinyin(), response.getPinyins(i).getMp3()));
+                        }
+
+
                         Word word = Word.builder()
                                 .setWord(response.getWord())
-                                .setIdx(response.getIdx())
-                                .setPinyin1(response.getPinyin1())
-                                .setPinyin2(response.getPinyin2())
-                                .setStrokes(response.getStrokes())
                                 .setLevel(response.getLevel().name())
+                                .setLevelIdx(response.getLevelIdx())
                                 .setCreated(response.getCreated())
                                 .setLastUpdated(response.getLastUpdated())
                                 .setVisitCount(response.getVistCount())
+                                .setPinyins(pinyins)
+                                .setRadical(response.getRadical())
+                                .setWuxing(response.getWuxing())
+                                .setTraditional(response.getTraditional())
+                                .setWubi(response.getWubi())
+                                .setStrokes(response.getStrokes15List())
+                                .setStrokes_count(response.getStrokesCount16())
+                                .setBasemean(response.getBasemean())
+                                .setDetailmean(response.getDetailmean())
+                                .setTerms(response.getTermsList())
+                                .setRiddles(response.getRiddlesList())
+                                .setFanyi(response.getFanyi())
+                                .setBishun(response.getBishun())
                                 .build();
                         roomFascade.daoWord.save(word);
+                    }
+
+                    @Override
+                    public void onWordUpdated(StatusResponse image) {
+
                     }
 
                     @Override
@@ -168,11 +215,9 @@ public class WordRepository {
         return roomFascade.daoWord.findMyLatestWord();
     }
 
-
     public LiveData<Word> find(String imageUrl) {
         return roomFascade.daoWord.findLive(imageUrl);
     }
-
 
     public void saveSampleImageIndices() {
         Observable.just(true).observeOn(Schedulers.io()).subscribeOn(Schedulers.io())
@@ -182,11 +227,8 @@ public class WordRepository {
                         roomFascade.daoWord.save(
                                 Word.builder()
                                         .setWord(String.format("一"))
-                                        .setIdx(1)
-                                        .setPinyin1("yī")
-                                        .setPinyin2("yī")
-                                        .setStrokes("-")
                                         .setLevel(HanziLevel.ONE.name())
+                                        .setLevelIdx(1)
                                         .setLastUpdated(now + 1)
                                         .build());
                     }
@@ -195,11 +237,8 @@ public class WordRepository {
 
                                 Word.builder()
                                         .setWord(String.format("乂"))
-                                        .setIdx(3501)
-                                        .setPinyin1("yì")
-                                        .setPinyin2("yì")
-                                        .setStrokes("-")
                                         .setLevel(HanziLevel.TWO.name())
+                                        .setLevelIdx(3501)
                                         .setLastUpdated(now + 1)
                                         .build());
                     }
@@ -207,11 +246,8 @@ public class WordRepository {
                         roomFascade.daoWord.save(
                                 Word.builder()
                                         .setWord(String.format("亍"))
-                                        .setIdx(6501)
-                                        .setPinyin1("chù")
-                                        .setPinyin2("chù")
-                                        .setStrokes("-")
                                         .setLevel(HanziLevel.THREE.name())
+                                        .setLevelIdx(6501)
                                         .setLastUpdated(now + 1)
                                         .build()
                         );
@@ -224,7 +260,7 @@ public class WordRepository {
         CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(voAccessToken.accessToken,
                         Long.valueOf(voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word,isFlight,
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word, isFlight,
                 new WordService.MyWordCallback() {
                     @Override
                     public void onMyWordUpserted(UpsertResponse response) {
@@ -428,6 +464,12 @@ public class WordRepository {
 
             }
         });
+    }
+
+    public interface ProgressCallback {
+        void onSucess();
+
+        void onError();
     }
 
 }

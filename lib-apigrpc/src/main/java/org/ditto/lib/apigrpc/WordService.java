@@ -5,12 +5,14 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.easyhan.common.grpc.StatusResponse;
 import org.easyhan.myword.grpc.MyWordGrpc;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertRequest;
 import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
+import org.easyhan.word.grpc.UpdateRequest;
 import org.easyhan.word.grpc.WordGrpc;
 import org.easyhan.word.grpc.WordResponse;
 
@@ -39,33 +41,18 @@ import io.grpc.stub.StreamObserver;
 public class WordService {
 
     private final static String TAG = WordService.class.getSimpleName();
-
-    public interface WordCallback extends CommonApiCallback {
-        void onWordReceived(WordResponse image);
-    }
-
-    public interface MyWordCallback extends CommonApiCallback {
-        void onMyWordUpserted(UpsertResponse image);
-
-        void onMyWordReceived(MyWordResponse value);
-
-        void onMyStatsReceived(StatsResponse value);
-    }
-
-
     private static final Gson gson = new Gson();
-
     private static final Logger logger = Logger.getLogger(WordService.class.getName());
-    private final ManagedChannel channel;
     final HealthCheckRequest wordGrpcHealthCheckRequest = HealthCheckRequest
             .newBuilder()
             .setService(WordGrpc.getServiceDescriptor().getName())
             .build();
-
     final HealthCheckRequest myWordGrpcHealthCheckRequest = HealthCheckRequest
             .newBuilder()
             .setService(MyWordGrpc.getServiceDescriptor().getName())
             .build();
+    private final ManagedChannel channel;
+    ClientCallStreamObserver<ListRequest> listRequestStream;
 
     @Inject
     public WordService(final ManagedChannel channel) {
@@ -78,7 +65,59 @@ public class WordService {
 
     }
 
-    ClientCallStreamObserver<ListRequest> listRequestStream;
+    public void updateWordFromBaidu(String word, String html, WordCallback callback) {
+        callback.onApiReady();
+        ManagedChannel channel = getManagedChannel();
+
+        ConnectivityState connectivityState = channel.getState(true);
+        Log.i(TAG, String.format("updateWord connectivityState = [%s]", gson.toJson(connectivityState)));
+
+        HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
+        WordGrpc.WordStub wordStub = WordGrpc.newStub(channel);
+
+
+        healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(wordGrpcHealthCheckRequest,
+                new StreamObserver<HealthCheckResponse>() {
+                    @Override
+                    public void onNext(HealthCheckResponse value) {
+
+                        if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
+                            Log.i(TAG, String.format("updateWord healthStub.check onNext word = [%s]", word));
+                            wordStub.withWaitForReady().update(UpdateRequest.newBuilder().setWord(word).setHtml(html).build(), new StreamObserver<StatusResponse>() {
+                                @Override
+                                public void onNext(StatusResponse statusResponse) {
+                                    callback.onWordUpdated(statusResponse);
+
+                                }
+
+                                @Override
+                                public void onError(Throwable throwable) {
+                                    callback.onApiError();
+                                }
+
+                                @Override
+                                public void onCompleted() {
+                                    callback.onApiCompleted();
+                                }
+                            });
+                        } else {
+                            Log.i(TAG, String.format("updateWord healthStub.check onNext NOT! ServingStatus.SERVING word = [%s]", word));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.i(TAG, String.format("updateWord healthStub.check onError grpc service check health\n%s", t.getMessage()));
+                        callback.onApiError();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, String.format("updateWord healthStub.check onCompleted grpc service check health\n%s", ""));
+                        callback.onApiCompleted();
+                    }
+                });
+    }
 
     public void listWords(ListRequest listRequest, WordCallback callback) {
         callback.onApiReady();
@@ -310,6 +349,20 @@ public class WordService {
                     }
                 });
 
+    }
+
+    public interface WordCallback extends CommonApiCallback {
+        void onWordReceived(WordResponse image);
+
+        void onWordUpdated(StatusResponse image);
+    }
+
+    public interface MyWordCallback extends CommonApiCallback {
+        void onMyWordUpserted(UpsertResponse image);
+
+        void onMyWordReceived(MyWordResponse value);
+
+        void onMyStatsReceived(StatsResponse value);
     }
 
     private class ListWordsStreamObserver implements ClientResponseObserver<

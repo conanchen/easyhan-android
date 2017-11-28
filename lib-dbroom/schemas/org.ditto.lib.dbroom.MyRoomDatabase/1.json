@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f0886afd3a12c58d17636a32f6aa9ce6",
+    "identityHash": "ef5b02ae212e1fed1da5084279e65790",
     "entities": [
       {
         "tableName": "MyProfile",
@@ -142,7 +142,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `idx` INTEGER NOT NULL, `pinyin1` TEXT, `pinyin2` TEXT, `strokes` TEXT, `level` TEXT, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `level` TEXT, `levelIdx` INTEGER NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `pinyins` TEXT, `radical` TEXT, `wuxing` TEXT, `traditional` TEXT, `wubi` TEXT, `strokes` TEXT, `strokes_count` INTEGER, `basemean` TEXT, `detailmean` TEXT, `terms` TEXT, `riddles` TEXT, `fanyi` TEXT, `bishun` TEXT, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
         "fields": [
           {
             "fieldPath": "word",
@@ -151,34 +151,16 @@
             "notNull": true
           },
           {
-            "fieldPath": "idx",
-            "columnName": "idx",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "pinyin1",
-            "columnName": "pinyin1",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "pinyin2",
-            "columnName": "pinyin2",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "strokes",
-            "columnName": "strokes",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "level",
             "columnName": "level",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "levelIdx",
+            "columnName": "levelIdx",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "created",
@@ -197,6 +179,84 @@
             "columnName": "visitCount",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "pinyins",
+            "columnName": "pinyins",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "radical",
+            "columnName": "radical",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wuxing",
+            "columnName": "wuxing",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "traditional",
+            "columnName": "traditional",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "wubi",
+            "columnName": "wubi",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "strokes",
+            "columnName": "strokes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "strokes_count",
+            "columnName": "strokes_count",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "basemean",
+            "columnName": "basemean",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "detailmean",
+            "columnName": "detailmean",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "terms",
+            "columnName": "terms",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "riddles",
+            "columnName": "riddles",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fanyi",
+            "columnName": "fanyi",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bishun",
+            "columnName": "bishun",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "memIdx",
@@ -225,34 +285,34 @@
         },
         "indices": [
           {
-            "name": "index_Word_level_idx",
+            "name": "index_Word_level_levelIdx",
             "unique": false,
             "columnNames": [
               "level",
-              "idx"
+              "levelIdx"
             ],
-            "createSql": "CREATE  INDEX `index_Word_level_idx` ON `${TABLE_NAME}` (`level`, `idx`)"
+            "createSql": "CREATE  INDEX `index_Word_level_levelIdx` ON `${TABLE_NAME}` (`level`, `levelIdx`)"
           },
           {
-            "name": "index_Word_level_memIdxIsOverThreshold_memIdx_idx",
+            "name": "index_Word_level_memIdxIsOverThreshold_memIdx_levelIdx",
             "unique": false,
             "columnNames": [
               "level",
               "memIdxIsOverThreshold",
               "memIdx",
-              "idx"
+              "levelIdx"
             ],
-            "createSql": "CREATE  INDEX `index_Word_level_memIdxIsOverThreshold_memIdx_idx` ON `${TABLE_NAME}` (`level`, `memIdxIsOverThreshold`, `memIdx`, `idx`)"
+            "createSql": "CREATE  INDEX `index_Word_level_memIdxIsOverThreshold_memIdx_levelIdx` ON `${TABLE_NAME}` (`level`, `memIdxIsOverThreshold`, `memIdx`, `levelIdx`)"
           },
           {
-            "name": "index_Word_memIdxIsOverThreshold_memIdx_idx",
+            "name": "index_Word_memIdxIsOverThreshold_memIdx_levelIdx",
             "unique": false,
             "columnNames": [
               "memIdxIsOverThreshold",
               "memIdx",
-              "idx"
+              "levelIdx"
             ],
-            "createSql": "CREATE  INDEX `index_Word_memIdxIsOverThreshold_memIdx_idx` ON `${TABLE_NAME}` (`memIdxIsOverThreshold`, `memIdx`, `idx`)"
+            "createSql": "CREATE  INDEX `index_Word_memIdxIsOverThreshold_memIdx_levelIdx` ON `${TABLE_NAME}` (`memIdxIsOverThreshold`, `memIdx`, `levelIdx`)"
           },
           {
             "name": "index_Word_level_lastUpdated",
@@ -375,7 +435,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f0886afd3a12c58d17636a32f6aa9ce6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ef5b02ae212e1fed1da5084279e65790\")"
     ]
   }
 }

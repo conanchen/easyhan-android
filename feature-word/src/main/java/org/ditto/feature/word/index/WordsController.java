@@ -57,11 +57,17 @@ public class WordsController extends TypedEpoxyController<PagedList<Word>> {
             Log.i(TAG, String.format(" build %d Word", words.size()));
             for (Word word : words) {
                 if (word != null && !Strings.isNullOrEmpty(word.word)) {
+                    String pinyin = "";
+                    if (word.pinyins != null && word.pinyins.size() > 1) {
+                        pinyin = String.format("%s - %s", word.pinyins.get(0).pinyin, word.pinyins.get(1).pinyin);
+                    } else if (word.pinyins != null && word.pinyins.size() > 0) {
+                       pinyin = String.format("%s", word.pinyins.get(0).pinyin);
+                    }
                     add(new ItemWordModel_()
                             .id(word.word)
                             .word(word.word)
-                            .pinyin(word.pinyin1)
-                            .idx(word.idx)
+                            .pinyin(pinyin)
+                            .idx(word.levelIdx)
                             .memIdx(word.memIdx)
                             .clickListener((model, parentView, clickedView, position) -> {
                                 // A model click listener is used instead of a normal click listener so that we can get

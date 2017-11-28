@@ -18,31 +18,20 @@ import org.ditto.lib.dbroom.index.Word;
 public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
     private final static String TAG = MyWordsController.class.getSimpleName();
     private final static Gson gson = new Gson();
-
-    public interface AdapterCallbacks {
-        void onWordItemClicked(Word word, int position);
-
-        void onPageClicked(int pageno);
-    }
-
-
     private final AdapterCallbacks callbacks;
     private final RecycledViewPool recycledViewPool;
+    @AutoModel
+    ItemRefreshHeaderModel_ headerModel_;
+    @AutoModel
+    ItemStatusNetworkModel_ itemStatusNetworkModel_;
+    @AutoModel
+    ItemPagetipModel_ footerModel_;
 
     public MyWordsController(AdapterCallbacks callbacks, RecycledViewPool recycledViewPool) {
         this.callbacks = callbacks;
         this.recycledViewPool = recycledViewPool;
         setDebugLoggingEnabled(true);
     }
-
-    @AutoModel
-    ItemRefreshHeaderModel_ headerModel_;
-
-    @AutoModel
-    ItemStatusNetworkModel_ itemStatusNetworkModel_;
-
-    @AutoModel
-    ItemPagetipModel_ footerModel_;
 
     @Override
     protected void buildModels(MyLiveWordsHolder myLiveDataHolder) {
@@ -54,9 +43,11 @@ public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
             Log.i(TAG, String.format(" build %d Word", myLiveDataHolder.words.size()));
             for (Word word : myLiveDataHolder.words) {
                 if (word != null && !Strings.isNullOrEmpty(word.word)) {
-                    String pinyin = String.format("%s", word.pinyin1);
-                    if (word.pinyin2 != null && word.pinyin2.trim().compareTo("") != 0) {
-                        pinyin = String.format("%s - %s", word.pinyin1, word.pinyin2);
+                    String pinyin = "";
+                    if (word.pinyins != null && word.pinyins.size() > 1) {
+                        pinyin = String.format("%s - %s", word.pinyins.get(0).pinyin, word.pinyins.get(1).pinyin);
+                    } else if (word.pinyins != null && word.pinyins.size() > 0) {
+                        pinyin = String.format("%s", word.pinyins.get(0).pinyin);
                     }
                     add(new ItemMyWordDetailModel_()
                             .id(word.word)
@@ -92,11 +83,17 @@ public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
 
     }
 
-
     @Override
     protected void onExceptionSwallowed(RuntimeException exception) {
         // Best practice is to throw in debug so you are aware of any issues that Epoxy notices.
         // Otherwise Epoxy does its best to swallow these exceptions and continue gracefully
         throw exception;
+    }
+
+
+    public interface AdapterCallbacks {
+        void onWordItemClicked(Word word, int position);
+
+        void onPageClicked(int pageno);
     }
 }

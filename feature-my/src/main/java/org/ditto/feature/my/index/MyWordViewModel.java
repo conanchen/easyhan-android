@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.apache.commons.lang3.StringUtils;
+import org.ditto.feature.base.WordUtils;
 import org.ditto.lib.AbsentLiveData;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
@@ -17,6 +19,8 @@ import org.ditto.lib.dbroom.kv.VoAccessToken;
 import org.ditto.lib.repository.WordRepository;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.usecases.UsecaseFascade;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -55,13 +59,9 @@ public class MyWordViewModel extends ViewModel {
     private final LiveData<MyLiveExamWordHolder> liveExamWordHolder;
 
     private final LiveData<Status> liveUpsertStatus;
-    public LiveData<Status> getLiveUpsertStatus() {
-        return liveUpsertStatus;
-    }
-
-
     @Inject
     UsecaseFascade usecaseFascade;
+
 
     @SuppressWarnings("unchecked")
     @Inject
@@ -87,10 +87,15 @@ public class MyWordViewModel extends ViewModel {
             return new LiveData<Status>() {
                 @Override
                 protected void onActive() {
-                    if (pinyin != null && pinyin.compareToIgnoreCase(liveExamWord.getValue().pinyin1) == 0) {
-                        postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
+                    if (liveExamWord.getValue().pinyins.size() > 0) {
+                        if (pinyin != null &&
+                                pinyin.compareToIgnoreCase(liveExamWord.getValue().pinyins.get(0).pinyin) == 0) {
+                            postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
+                        } else {
+                            postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
+                        }
                     } else {
-                        postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
+                        postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
                     }
                 }
             };
@@ -99,19 +104,24 @@ public class MyWordViewModel extends ViewModel {
             return new LiveData<Status>() {
                 @Override
                 protected void onActive() {
-                    if (pinyin != null && pinyin.compareToIgnoreCase(liveExamWord.getValue().pinyin2) == 0) {
-                        postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
+                    if (liveExamWord.getValue().pinyins.size() > 1) {
+                        if (pinyin != null &&
+                                pinyin.compareToIgnoreCase(liveExamWord.getValue().pinyins.get(1).pinyin) == 0) {
+                            postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
+                        } else {
+                            postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
+                        }
                     } else {
-                        postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
+                        postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
                     }
                 }
             };
         });
-        liveCheckStrokesStatus = Transformations.switchMap(mutableCheckStrokesRequest, strokes -> {
+        liveCheckStrokesStatus = Transformations.switchMap(mutableCheckStrokesRequest, inputStrokes -> {
             return new LiveData<Status>() {
                 @Override
                 protected void onActive() {
-                    if (strokes != null && strokes.compareToIgnoreCase(liveExamWord.getValue().strokes) == 0) {
+                    if (compareStrokes(inputStrokes, liveExamWord.getValue().strokes)) {
                         postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
                     } else {
                         postValue(Status.builder().setCode(Status.Code.END_ERROR).build());
@@ -122,10 +132,10 @@ public class MyWordViewModel extends ViewModel {
 
         liveExamWordHolder = new MediatorLiveData<MyLiveExamWordHolder>() {
             {
-                addSource(liveExamWord, word -> setValue(MyLiveExamWordHolder.create(word, liveCheckPinyin1Status.getValue(),liveCheckPinyin2Status.getValue(),liveCheckStrokesStatus.getValue())));
-                addSource(liveCheckPinyin1Status, status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), status,liveCheckPinyin2Status.getValue(),liveCheckStrokesStatus.getValue())));
-                addSource(liveCheckPinyin2Status, status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), liveCheckPinyin1Status.getValue(),status,liveCheckStrokesStatus.getValue())));
-                addSource(liveCheckStrokesStatus , status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), liveCheckPinyin1Status.getValue(),liveCheckPinyin2Status.getValue(),status)));
+                addSource(liveExamWord, word -> setValue(MyLiveExamWordHolder.create(word, liveCheckPinyin1Status.getValue(), liveCheckPinyin2Status.getValue(), liveCheckStrokesStatus.getValue())));
+                addSource(liveCheckPinyin1Status, status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), status, liveCheckPinyin2Status.getValue(), liveCheckStrokesStatus.getValue())));
+                addSource(liveCheckPinyin2Status, status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), liveCheckPinyin1Status.getValue(), status, liveCheckStrokesStatus.getValue())));
+                addSource(liveCheckStrokesStatus, status -> setValue(MyLiveExamWordHolder.create(liveExamWord.getValue(), liveCheckPinyin1Status.getValue(), liveCheckPinyin2Status.getValue(), status)));
             }
         };
 
@@ -161,7 +171,7 @@ public class MyWordViewModel extends ViewModel {
                                                 usecaseFascade
                                                         .repositoryFascade
                                                         .wordRepository
-                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word,isFlight,
+                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word, isFlight,
                                                                 new WordRepository.ProgressCallback() {
                                                                     @Override
                                                                     public void onSucess() {
@@ -196,6 +206,38 @@ public class MyWordViewModel extends ViewModel {
 
     }
 
+    private boolean compareStrokes(String inputStrokes, List<String> strokes) {
+        boolean result = true;
+        if (inputStrokes != null && strokes != null) {
+            char[] inputKeycodes = inputStrokes.toCharArray();
+
+            if (inputKeycodes.length == strokes.size()) {
+                for (int i = 0; i < inputKeycodes.length; i++) {
+                    String[] strokeVal = WordUtils.STROKES.get((int) inputKeycodes[i]);
+                    String[] strokeArr = StringUtils.splitByWholeSeparator(strokes.get(i), "/");
+                    boolean found = false;
+                    for (int j = 0; j < strokeArr.length; j++) {
+                        if (strokeVal[0].compareToIgnoreCase(strokeArr[j]) == 0) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result = false;
+                        break;
+                    }
+                }
+            } else {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
+    public LiveData<Status> getLiveUpsertStatus() {
+        return liveUpsertStatus;
+    }
 
     public LiveData<MyLiveExamWordHolder> getLiveExamWordHolder() {
         return liveExamWordHolder;

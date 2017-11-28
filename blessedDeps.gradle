@@ -49,7 +49,7 @@ rootProject.ext.GRPC_VERSION = "1.6.1"
 
 rootProject.ext.arch_version = "1.0.0-beta1"
 rootProject.ext.arch_paging_version = "1.0.0-alpha2"
-rootProject.ext.dagger_version = "2.11-rc2"
+rootProject.ext.dagger_version = "2.13"
 rootProject.ext.junit_version = "4.12"
 rootProject.ext.espresso_version = "2.2.2"
 rootProject.ext.retrofit_version = "2.3.0"

@@ -6,6 +6,7 @@ $ gradle --refresh-dependencies clean build
 #http://www.unicode.org/charts/PDF/U31C0.pdf
 #http://baby.sina.com.cn/wemedia/edu/2017-10-23/doc-ifymzqpq2919279.shtml
 #http://www.qqxiuzi.cn/bianma/zifuji.php
+āáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜ
 ā GB2312编码：43169BIG5编码：没有GBK编码：43169GB18030编码：43169Unicode编码：257 1
 á GB2312编码：43170BIG5编码：没有GBK编码：43170GB18030编码：43170Unicode编码：225 2
 ǎ GB2312编码：43171BIG5编码：没有GBK编码：43171GB18030编码：43171Unicode编码：462 3
@@ -32,3 +33,5 @@ $ gradle --refresh-dependencies clean build
 í GB2312编码：A8AABIG5编码： 没有GBK编码：A8AAGB18030编码： A8AAUnicode编码：ED
 ǐ GB2312编码：A8ABBIG5编码： 没有GBK编码：A8ABGB18030编码： A8ABUnicode编码：1D0
 ì GB2312编码：A8ACBIG5编码： 没有GBK编码：A8ACGB18030编码： A8ACUnicode编码：EC
+
+īíǐì
