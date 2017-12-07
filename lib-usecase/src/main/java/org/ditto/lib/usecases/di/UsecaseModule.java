@@ -4,6 +4,7 @@ import org.ditto.lib.repository.RepositoryFascade;
 import org.ditto.lib.repository.di.RepositoryModule;
 import org.ditto.lib.usecases.UsecaseFascade;
 import org.ditto.lib.usecases.UserUsecase;
+import org.ditto.lib.usecases.WordUsecase;
 
 import javax.inject.Singleton;
 
@@ -23,14 +24,21 @@ public class UsecaseModule {
     @Provides
     public UsecaseFascade provideServiceFascade(
                                                 UserUsecase userUsecase,
+                                                WordUsecase wordUsecase,
                                                 RepositoryFascade repositoryFascade) {
-        return new UsecaseFascade(  userUsecase, repositoryFascade);
+        return new UsecaseFascade(  userUsecase, wordUsecase,repositoryFascade);
     }
 
     @Singleton
     @Provides
     public UserUsecase provideUserUsecase(RepositoryFascade repositoryFascade) {
         return new UserUsecase(repositoryFascade);
+    }
+
+    @Singleton
+    @Provides
+    public WordUsecase provideWordUsecase(RepositoryFascade repositoryFascade) {
+        return new WordUsecase(repositoryFascade);
     }
 
 }

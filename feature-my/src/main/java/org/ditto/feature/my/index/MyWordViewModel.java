@@ -19,6 +19,7 @@ import org.ditto.lib.dbroom.kv.VoAccessToken;
 import org.ditto.lib.repository.WordRepository;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.usecases.UsecaseFascade;
+import org.easyhan.word.HanZi;
 
 import java.util.List;
 
@@ -213,7 +214,7 @@ public class MyWordViewModel extends ViewModel {
 
             if (inputKeycodes.length == strokes.size()) {
                 for (int i = 0; i < inputKeycodes.length; i++) {
-                    String[] strokeVal = WordUtils.STROKES.get((int) inputKeycodes[i]);
+                    String[] strokeVal = HanZi.STROKE_KEYCODES.get((int) inputKeycodes[i]);
                     String[] strokeArr = StringUtils.splitByWholeSeparator(strokes.get(i), "/");
                     boolean found = false;
                     for (int j = 0; j < strokeArr.length; j++) {

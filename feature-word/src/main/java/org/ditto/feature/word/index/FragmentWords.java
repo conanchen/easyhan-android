@@ -1,6 +1,8 @@
 package org.ditto.feature.word.index;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,12 +17,12 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 
 import org.ditto.feature.base.BaseFragment;
+import org.ditto.feature.base.Constants;
 import org.ditto.feature.base.SampleItemAnimator;
 import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
-import org.ditto.feature.base.Constants;
 import org.ditto.lib.dbroom.index.Word;
 import org.easyhan.common.grpc.HanziLevel;
 
@@ -34,23 +36,19 @@ import butterknife.ButterKnife;
  * <p/>
  */
 public class FragmentWords extends BaseFragment implements Injectable, WordsController.AdapterCallbacks {
+    public static final String MyPREFERENCES = "MyPrefs";
     private final static String TAG = FragmentWords.class.getSimpleName();
     private final static Gson gson = new Gson();
-
-    @Inject
-    WordViewModelFactory viewModelFactory;
-
-    private WordsViewModel viewModel;
-
     private static final int SPAN_COUNT = 6;
-
     private final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     private final WordsController controller = new WordsController(this, recycledViewPool);
-
+    @Inject
+    WordViewModelFactory viewModelFactory;
+    SharedPreferences sharedpreferences;
     @BindView(R2.id.itemlist)
     RecyclerView recyclerView;
-
     int currentPageNo = 0;
+    private WordsViewModel viewModel;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -111,11 +109,22 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
 
 
     private void setupController() {
+        String wordInitedName=String.format("%s.wordinited", this.getArguments().getString(Constants.HANZILEVEL));
+        sharedpreferences = this.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(WordsViewModel.class);
-
+        viewModel.getLiveInitStatus().observe(this, status -> {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(wordInitedName, Boolean.TRUE);
+            editor.commit();
+        });
         viewModel.getLiveWords().observe(this, data -> {
             controller.setData(data);
         });
+
+        boolean wordInited = sharedpreferences.getBoolean(wordInitedName, Boolean.FALSE);
+        if (!wordInited) {
+            viewModel.initWords(this.getArguments().getString(Constants.HANZILEVEL));
+        }
     }
 
     @Override

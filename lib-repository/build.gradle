@@ -85,4 +85,7 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBS_VERSION"
     testCompile 'junit:junit:4.12'
+
+    compile "org.apache.commons:commons-lang3:$commons_lang3_version"
+
 }

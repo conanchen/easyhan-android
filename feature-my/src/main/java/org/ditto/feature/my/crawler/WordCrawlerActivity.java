@@ -56,8 +56,6 @@ public class WordCrawlerActivity extends BaseActivity {
     AppCompatCheckBox auto;
     @BindView(R2.id.word_idx)
     AppCompatEditText word_idx;
-    @BindView(R2.id.word_value)
-    AppCompatEditText word_value;
     @BindView(R2.id.x5webView)
     WebView x5webView;
     @BindView(R2.id.app_bar)
@@ -154,7 +152,7 @@ public class WordCrawlerActivity extends BaseActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementById('results').outerHTML);");
+                view.loadUrl("javascript:window.INTERFACE.processContent(document.getElementsByTagName('body')[0].outerHTML);");
             }
         });
     }
@@ -211,12 +209,16 @@ public class WordCrawlerActivity extends BaseActivity {
 
     @OnClick(R2.id.next)
     public void onNextButtonClicked() {
-        mViewModel.setWordIdx(Integer.valueOf(word_idx.getText().toString()) + 1);
+        int old = Integer.valueOf(word_idx.getText().toString());
+        old = old > 0 ? old : 0;
+        mViewModel.setWordIdx(old + 1);
     }
 
-    @OnClick(R2.id.ok)
-    public void onOkButtonClicked() {
-        mViewModel.setWordIdx(Integer.valueOf(word_idx.getText().toString()) + 1);
+    @OnClick(R2.id.prev)
+    public void onPrevButtonClicked() {
+        int old = Integer.valueOf(word_idx.getText().toString());
+        old = old > 0 ? old : 0;
+        mViewModel.setWordIdx(old - 1);
     }
 
     @OnClick(R2.id.back)

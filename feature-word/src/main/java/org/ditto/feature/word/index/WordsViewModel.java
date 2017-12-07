@@ -15,6 +15,8 @@ import org.ditto.lib.AbsentLiveData;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
+import org.ditto.lib.repository.model.Status;
+import org.ditto.lib.repository.model.WordInitRequest;
 import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
 import org.ditto.lib.usecases.UsecaseFascade;
@@ -35,8 +37,10 @@ public class WordsViewModel extends ViewModel {
 
     @VisibleForTesting
     final MutableLiveData<WordLoadRequest> mutableLoadRequest = new MutableLiveData<>();
-
+    @VisibleForTesting
+    final MutableLiveData<WordInitRequest> mutableInitRequest = new MutableLiveData<>();
     private final LiveData<PagedList<Word>> liveWords;
+    private final LiveData<Status> liveInitStatus;
 
 
     @Inject
@@ -45,6 +49,13 @@ public class WordsViewModel extends ViewModel {
     @SuppressWarnings("unchecked")
     @Inject
     public WordsViewModel() {
+        liveInitStatus = Transformations.switchMap(mutableInitRequest, wordInitRequest -> {
+            if (wordInitRequest == null) {
+                return AbsentLiveData.create();
+            } else {
+                return usecaseFascade.wordUsecase.init(wordInitRequest.level, wordInitRequest.startIdx);
+            }
+        });
         liveWords = Transformations.switchMap(mutableLoadRequest, login -> {
             if (login == null) {
                 return AbsentLiveData.create();
@@ -53,6 +64,10 @@ public class WordsViewModel extends ViewModel {
                         .listPagedWordsBy(mutableLoadRequest.getValue());
             }
         });
+    }
+
+    public LiveData<Status> getLiveInitStatus() {
+        return liveInitStatus;
     }
 
     public LiveData<PagedList<Word>> getLiveWords() {
@@ -69,6 +84,7 @@ public class WordsViewModel extends ViewModel {
                 });
 
     }
+
     private int getPageSize(HanziLevel level) {
         switch (level) {
             case ONE:
@@ -113,4 +129,9 @@ public class WordsViewModel extends ViewModel {
                 });
     }
 
+    public void initWords(String level) {
+        HanziLevel hanziLevel = HanziLevel.valueOf(level);
+        WordInitRequest wordInitRequest = WordInitRequest.builder().setLevel(hanziLevel).setStartIdx(0).build();
+        mutableInitRequest.postValue(wordInitRequest);
+    }
 }

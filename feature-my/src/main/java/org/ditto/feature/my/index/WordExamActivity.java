@@ -107,8 +107,8 @@ public class WordExamActivity extends BaseActivity {
     @BindView(R2.id.strokes_indicator)
     AppCompatImageView strokes_indicator;
 
-    @BindView(R2.id.broken)
-    TextInputEditText broken;
+    @BindView(R2.id.broken_button)
+    AppCompatButton broken;
 
     @BindView(R2.id.ok)
     AppCompatButton ookButton;
@@ -489,7 +489,7 @@ public class WordExamActivity extends BaseActivity {
                                             }
                                         })
                                         .setTitle("提示")
-                                        .setMessage("下次继续提示主界面新手导航吗？")
+                                        .setMessage("下次继续提示测验界面新手导航吗？")
                                         .create()
                                         .show();
 

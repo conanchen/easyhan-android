@@ -28,6 +28,7 @@ import org.easyhan.common.grpc.StatusResponse;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertResponse;
+import org.easyhan.word.HanZi;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
@@ -464,6 +465,15 @@ public class WordRepository {
 
             }
         });
+    }
+
+    public void init(HanziLevel level,String s) {
+        roomFascade.daoWord.save(
+                Word.builder()
+                        .setWord(s)
+                        .setLevel(level.name())
+                        .setLevelIdx(9999)
+                        .build());
     }
 
     public interface ProgressCallback {

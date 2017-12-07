@@ -15,11 +15,14 @@ public class UsecaseFascade {
 
     public UserUsecase userUsecase;
     public RepositoryFascade repositoryFascade;
+    public WordUsecase wordUsecase;
 
 
     @Inject
-    public UsecaseFascade(  UserUsecase userUsecase, RepositoryFascade repositoryFascade) {
+    public UsecaseFascade(  UserUsecase userUsecase, WordUsecase wordUsecase,
+                            RepositoryFascade repositoryFascade) {
         this.userUsecase = userUsecase;
+        this.wordUsecase = wordUsecase;
         this.repositoryFascade = repositoryFascade;
         System.out.println(strAmir);
 

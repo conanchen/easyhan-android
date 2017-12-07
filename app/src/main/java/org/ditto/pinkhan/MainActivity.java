@@ -259,8 +259,9 @@ public class MainActivity extends BaseFragmentActivity {
                             && viewPager.getCurrentItem() < mBottombarTab3Fragment0)) {
                         viewPager.setCurrentItem(mBottombarTab2Fragment0, true);
                     }
-                    if (mTourGuideHandler != null) {
+                    if (mTourGuideHandler != null && canPopupTourGuide) {
                         mTourGuideHandler.cleanUp();
+
                         new AlertDialog.Builder(this)
                                 .setPositiveButton(R.string.yes,
                                         new DialogInterface.OnClickListener() {

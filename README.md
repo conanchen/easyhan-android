@@ -35,3 +35,8 @@ $ gradle --refresh-dependencies clean build
 ì GB2312编码：A8ACBIG5编码： 没有GBK编码：A8ACGB18030编码： A8ACUnicode编码：EC
 
 īíǐì
+
+Error:Execution failed for task ':app:transformResourcesWithMergeJavaResForDebug'.
+> com.android.build.api.transform.TransformException: com.android.builder.packaging.DuplicateFileException: Duplicate files copied in APK google/protobuf/field_mask.proto
+  	File1: /Users/mellychen/.gradle/caches/modules-2/files-2.1/com.github.conanchen.easyhan-api/grpc-public-javalite/master-SNAPSHOT/e0b60d4f1a7c1d2822db4edf712aa9ce01bf9762/grpc-public-javalite-master-SNAPSHOT.jar
+  	File2: /Users/mellychen/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/3.3.1/e8964a2667e55d11a4505b329a4c34247663920b/protobuf-java-3.3.1.jar
