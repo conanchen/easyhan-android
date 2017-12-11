@@ -1,4 +1,4 @@
-<resources>
+<resources   xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">粉红字帖</string>
     <string name="prompt_url">请输入图片URL</string>
     <string name="prompt_infourl">请输入推广图片的网页URL</string>
@@ -12,4 +12,10 @@
     <string name="memory_level_5">十五即相识</string>
     <string name="memory_level_6">村中相识久</string>
     <string name="memory_level_7">恨与卢君相识迟</string>
+    <string name="dummy_button">粉红字帖助你快速牢记并正确书写汉字</string>
+
+    <string name="title_template_step">Step <xliff:g id="step_number">%1$d</xliff:g>:<xliff:g id="step_word">%2$s</xliff:g>: Lorem
+        Ipsum</string>
+    <string name="lorem_ipsum"><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et magna ut erat elementum cursus in quis ipsum. Nam faucibus ultrices eros, vel tempor leo semper sit amet. Duis magna quam, congue vitae interdum nec, condimentum ut lectus. Sed commodo venenatis eros a dignissim. Nunc adipiscing turpis nec magna venenatis at ultricies ipsum bibendum. Sed volutpat urna quis nisi vulputate egestas. Etiam eu dui a enim lacinia dapibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nPhasellus orci mi, eleifend nec congue id, volutpat at neque. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer semper velit vel leo rutrum sed fermentum elit porta.]]></string>
+
 </resources>

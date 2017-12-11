@@ -5,6 +5,7 @@ import android.app.Application;
 import org.ditto.feature.login.di.LoginModule;
 import org.ditto.feature.my.di.MyModule;
 import org.ditto.feature.word.di.WordModule;
+import org.ditto.feature.word.di.WordSlideModule;
 import org.ditto.lib.usecases.di.UsecaseModule;
 import org.ditto.pinkhan.EasyhanApplication;
 
@@ -21,6 +22,9 @@ import dagger.android.AndroidInjectionModule;
         AppModule.class,
 
         MainActivityModule.class,
+        WordSlidesActivityModule.class,
+        WordSlideModule.class,
+
         LoginModule.class,
         WordModule.class,
         MyModule.class,

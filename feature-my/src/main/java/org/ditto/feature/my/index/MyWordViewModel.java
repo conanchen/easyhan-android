@@ -122,7 +122,7 @@ public class MyWordViewModel extends ViewModel {
             return new LiveData<Status>() {
                 @Override
                 protected void onActive() {
-                    if (compareStrokes(inputStrokes, liveExamWord.getValue().strokes)) {
+                    if (compareStrokes(inputStrokes, liveExamWord.getValue().strokenames)) {
                         postValue(Status.builder().setCode(Status.Code.END_SUCCESS).build());
                     } else {
                         postValue(Status.builder().setCode(Status.Code.END_ERROR).build());

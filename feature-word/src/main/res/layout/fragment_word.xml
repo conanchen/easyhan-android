@@ -1,0 +1,137 @@
+<!--
+  Copyright 2012 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <!-- Dummy content. -->
+        <LinearLayout android:layout_width="match_parent"
+            android:id="@+id/dummy_layout"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView android:id="@android:id/text1"
+                style="?android:textAppearanceLarge"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView style="?android:textAppearanceMedium"
+                android:lineSpacingMultiplier="1.2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lorem_ipsum" />
+
+        </LinearLayout>
+
+
+        <!-- The primary full-screen view. This can be replaced with whatever view
+             is needed to present your content, e.g. VideoView, SurfaceView,
+             TextureView, etc. -->
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ask300"
+            app:layout_constraintTop_toBottomOf="@+id/dummy_layout" />
+
+        <org.sufficientlysecure.htmltextview.HtmlTextView
+            android:id="@+id/fullscreen_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_light"
+            android:gravity="left"
+            android:keepScreenOn="true"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            android:textIsSelectable="true"
+            app:layout_constraintTop_toBottomOf="@+id/image1" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ask28"
+            app:layout_constraintTop_toBottomOf="@+id/fullscreen_content" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="a;sjdf;ajsdf;啊；刷卡机发；设计开发；啊健身房；金卡三代；放假啊；SD分解；艾山街道发；既然学Trie树，我们肯定要知道这玩意是用来干嘛的。
+
+     第一：词频统计。
+
+            可能有人要说了，词频统计简单啊，一个hash或者一个堆就可以打完收工，但问题来了，如果内存有限呢？还能这么
+
+             玩吗？所以这里我们就可以用trie树来压缩下空间，因为公共前缀都是用一个节点保存的。
+
+     第二: 前缀匹配
+
+            就拿上面的图来说吧，如果我想获取所有以a开头的字符串，从图中可以很明显的看到是：and,as,at，如果不用trie树，
+
+            你该怎么做呢？很显然朴素的做法时间复杂度为O(N2) ，那么用Trie树就不一样了，它可以做到h，h为你检索单词的长度，
+
+            可以说这是秒杀的效果。
+
+举个例子：现有一个编号为1的字符串and，我们要插入到trie树中，采用动态规划的思想，将编号”1“计入到每个途径的节点中，
+
+              那么以后我们要找a，an，and为前缀的字符串的编号将会轻而易举。接口；1"
+            app:layout_constraintTop_toBottomOf="@+id/image2" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/image3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ask300"
+            app:layout_constraintTop_toBottomOf="@+id/text1" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="a;sjdf;ajsdf;啊；刷卡机发；设计开发；啊健身房；金卡三代；放假啊；SD分解；艾山街道发；既然学Trie树，我们肯定要知道这玩意是用来干嘛的。第一：词频统计。
+
+            可能有人要说了，词频统计简单啊，一个hash或者一个堆就可以打完收工，但问题来了，如果内存有限呢？还能这么
+
+             玩吗？所以这里我们就可以用trie树来压缩下空间，因为公共前缀都是用一个节点保存的。
+
+     第二: 前缀匹配
+
+            就拿上面的图来说吧，如果我想获取所有以a开头的字符串，从图中可以很明显的看到是：and,as,at，如果不用trie树，
+
+            你该怎么做呢？很显然朴素的做法时间复杂度为O(N2) ，那么用Trie树就不一样了，它可以做到h，h为你检索单词的长度，
+
+            可以说这是秒杀的效果。
+
+举个例子：现有一个编号为1的字符串and，我们要插入到trie树中，采用动态规划的思想，将编号”1“计入到每个途径的节点中，
+
+              那么以后我们要找a，an，and为前缀的字符串的编号将会轻而易举。接口；1"
+            app:layout_constraintTop_toBottomOf="@+id/image3" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

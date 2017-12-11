@@ -173,7 +173,7 @@ public class FragmentMyWords extends BaseFragment implements Injectable, MyWords
 
     @Override
     public void onWordItemClicked(Word word, int position) {
-        ARouter.getInstance().build("/feature_word/WordActivity")
+        ARouter.getInstance().build("/feature_word/WordSlideActivity")
                 .withString(Constants.ROUTE_WORD, word.word)
                 .navigation();
     }

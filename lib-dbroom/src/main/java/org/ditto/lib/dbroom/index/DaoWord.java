@@ -11,8 +11,6 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
@@ -55,8 +53,12 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     Word findOne(String word);
 
-    @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC LIMIT :size")
-    Flowable<List<Word>> getLiveMyExamWords(Integer size);
+    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC LIMIT :size")
+    Flowable<List<Word>> getLiveMyExamWords(boolean defined, Integer size);
+
+
+    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC LIMIT :size")
+    LiveData<List<Word>> getLiveMySlideWords(boolean defined, Integer size);
 
     @Query("SELECT * FROM Word WHERE levelIdx = :wordIdx LIMIT 1")
     Maybe<Word> findOneByIdx(Integer wordIdx);

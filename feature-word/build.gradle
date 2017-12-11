@@ -91,5 +91,7 @@ dependencies {
     compile "com.airbnb.android:epoxy:$AIRBNB_EPOXY_LIBS_VERSION"
     annotationProcessor "com.airbnb.android:epoxy-processor:$AIRBNB_EPOXY_LIBS_VERSION"
     compile "com.airbnb.android:lottie:$LOTTIE_VERSION"
+    compile "org.sufficientlysecure:html-textview:$html_textview_version"
+
     testCompile 'junit:junit:4.12'
 }

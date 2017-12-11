@@ -5,7 +5,7 @@
     <string name="title_today">天天向上</string>
     <string name="title_three">三级</string>
     <string name="title_my">我的</string>
-    <string name="title_activity_word">WordActivity</string>
+    <string name="title_activity_word">WordSlideActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_word_exam">识字考试</string>

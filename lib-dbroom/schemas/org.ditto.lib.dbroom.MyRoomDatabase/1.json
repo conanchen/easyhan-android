@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ef5b02ae212e1fed1da5084279e65790",
+    "identityHash": "a1dd675cff0c8628343a222f6e3b9982",
     "entities": [
       {
         "tableName": "MyProfile",
@@ -142,7 +142,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `level` TEXT, `levelIdx` INTEGER NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `pinyins` TEXT, `radical` TEXT, `wuxing` TEXT, `traditional` TEXT, `wubi` TEXT, `strokes` TEXT, `strokes_count` INTEGER, `basemean` TEXT, `detailmean` TEXT, `terms` TEXT, `riddles` TEXT, `fanyi` TEXT, `bishun` TEXT, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `level` TEXT, `levelIdx` INTEGER NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `pinyins` TEXT, `radical` TEXT, `wuxing` TEXT, `traditional` TEXT, `wubi` TEXT, `strokes` TEXT, `strokenames` TEXT, `strokes_count` INTEGER, `basemean` TEXT, `detailmean` TEXT, `terms` TEXT, `riddles` TEXT, `fanyi` TEXT, `bishun` TEXT, `defined` INTEGER, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
         "fields": [
           {
             "fieldPath": "word",
@@ -217,6 +217,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "strokenames",
+            "columnName": "strokenames",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "strokes_count",
             "columnName": "strokes_count",
             "affinity": "INTEGER",
@@ -256,6 +262,12 @@
             "fieldPath": "bishun",
             "columnName": "bishun",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "defined",
+            "columnName": "defined",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -435,7 +447,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ef5b02ae212e1fed1da5084279e65790\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a1dd675cff0c8628343a222f6e3b9982\")"
     ]
   }
 }

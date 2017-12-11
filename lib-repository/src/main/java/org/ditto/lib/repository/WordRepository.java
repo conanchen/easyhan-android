@@ -23,12 +23,12 @@ import org.ditto.lib.repository.model.MyWordStatsRefreshRequest;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
+import org.ditto.lib.repository.model.WordSlidesLoadRequest;
 import org.easyhan.common.grpc.HanziLevel;
 import org.easyhan.common.grpc.StatusResponse;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertResponse;
-import org.easyhan.word.HanZi;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
@@ -66,7 +66,7 @@ public class WordRepository {
     public Flowable<Word> findMyExamWord() {
         Random random = new Random();
         return roomFascade.daoWord
-                .getLiveMyExamWords(20)
+                .getLiveMyExamWords(true, 20)
                 .flatMapIterable(x -> x)
                 .skip(random.nextInt(20))
                 .take(1);
@@ -145,13 +145,15 @@ public class WordRepository {
                                 .setTraditional(response.getTraditional())
                                 .setWubi(response.getWubi())
                                 .setStrokes(response.getStrokes15List())
-                                .setStrokes_count(response.getStrokesCount16())
+                                .setStrokenames(response.getStrokenamesList())
+                                .setStrokes_count(response.getStrokesCount17())
                                 .setBasemean(response.getBasemean())
                                 .setDetailmean(response.getDetailmean())
                                 .setTerms(response.getTermsList())
                                 .setRiddles(response.getRiddlesList())
                                 .setFanyi(response.getFanyi())
                                 .setBishun(response.getBishun())
+                                .setDefined(response.getDefined())
                                 .build();
                         roomFascade.daoWord.save(word);
                     }
@@ -467,13 +469,17 @@ public class WordRepository {
         });
     }
 
-    public void init(HanziLevel level,String s) {
+    public void init(HanziLevel level, String s) {
         roomFascade.daoWord.save(
                 Word.builder()
                         .setWord(s)
                         .setLevel(level.name())
                         .setLevelIdx(9999)
                         .build());
+    }
+
+    public LiveData<List<Word>> listWordSlidesBy(WordSlidesLoadRequest request) {
+        return roomFascade.daoWord.getLiveMySlideWords(true,request.pageSize);
     }
 
     public interface ProgressCallback {

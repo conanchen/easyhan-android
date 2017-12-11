@@ -6,7 +6,6 @@ import org.ditto.feature.my.crawler.WordCrawlerActivity;
 import org.ditto.feature.my.di.FragmentMyBuildersModule;
 import org.ditto.feature.my.index.WordExamActivity;
 import org.ditto.feature.word.di.FragmentWordsBuildersModule;
-import org.ditto.feature.word.profile.WordActivity;
 import org.ditto.lib.usecases.AppServiceCommandSenderImpl;
 import org.ditto.lib.usecases.AppServiceKeepliveTraceImpl;
 import org.ditto.pinkhan.MainActivity;
@@ -23,9 +22,6 @@ public abstract class MainActivityModule {
             FragmentMyBuildersModule.class})
 
     abstract MainActivity contributeMainActivity();
-
-    @ContributesAndroidInjector
-    abstract WordActivity contributeWordActivity();
 
     @ContributesAndroidInjector
     abstract WordExamActivity contributeWordExamActivity();

@@ -35,6 +35,7 @@ public class Word {
     public String traditional;
     public String wubi;
     public List<String> strokes;
+    public List<String> strokenames;
     public Integer strokes_count;
     public String basemean;
     public String detailmean;
@@ -42,6 +43,7 @@ public class Word {
     public List<String> riddles;
     public String fanyi;
     public String bishun;
+    public Boolean defined;
 
     public int memIdx;
     public int memIdxIsOverThreshold;
@@ -50,7 +52,7 @@ public class Word {
     public Word() {
     }
 
-    private Word(@NonNull String word, String level, int levelIdx, long created, long lastUpdated, int visitCount, List<Pinyin> pinyins, String radical, String wuxing, String traditional, String wubi, List<String> strokes, Integer strokes_count, String basemean, String detailmean, List<String> terms, List<String> riddles, String fanyi, String bishun, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
+    private Word(@NonNull String word, String level, int levelIdx, long created, long lastUpdated, int visitCount, List<Pinyin> pinyins, String radical, String wuxing, String traditional, String wubi, List<String> strokes, List<String> strokenames, Integer strokes_count, String basemean, String detailmean, List<String> terms, List<String> riddles, String fanyi, String bishun, Boolean defined, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
         this.word = word;
         this.level = level;
         this.levelIdx = levelIdx;
@@ -63,6 +65,7 @@ public class Word {
         this.traditional = traditional;
         this.wubi = wubi;
         this.strokes = strokes;
+        this.strokenames = strokenames;
         this.strokes_count = strokes_count;
         this.basemean = basemean;
         this.detailmean = detailmean;
@@ -70,6 +73,7 @@ public class Word {
         this.riddles = riddles;
         this.fanyi = fanyi;
         this.bishun = bishun;
+        this.defined = defined;
         this.memIdx = memIdx;
         this.memIdxIsOverThreshold = memIdxIsOverThreshold;
         this.memLastUpdated = memLastUpdated;
@@ -93,6 +97,7 @@ public class Word {
         private String traditional;
         private String wubi;
         private List<String> strokes;
+        private List<String> strokenames;
         private Integer strokes_count;
         private String basemean;
         private String detailmean;
@@ -100,6 +105,7 @@ public class Word {
         private List<String> riddles;
         private String fanyi;
         private String bishun;
+        private Boolean defined;
 
         private int memIdx;
         private int memIdxIsOverThreshold;
@@ -122,10 +128,10 @@ public class Word {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
 
-            Word wordObj = new Word(  word,   level,   levelIdx,   created,   lastUpdated,   visitCount,
-                     pinyins,   radical,   wuxing,   traditional,   wubi,  strokes,   strokes_count,
-                    basemean,   detailmean,   terms,   riddles,   fanyi,   bishun,   memIdx,
-                    memIdxIsOverThreshold,   memLastUpdated);
+            Word wordObj = new Word(word, level, levelIdx, created, lastUpdated, visitCount,
+                    pinyins, radical, wuxing, traditional, wubi, strokes, strokenames, strokes_count,
+                    basemean, detailmean, terms,
+                    riddles, fanyi, bishun, defined, memIdx, memIdxIsOverThreshold, memLastUpdated);
             return wordObj;
         }
 
@@ -226,6 +232,16 @@ public class Word {
 
         public Builder setMemIdx(int memIdx) {
             this.memIdx = memIdx;
+            return this;
+        }
+
+        public Builder setStrokenames(List<String> strokenames) {
+            this.strokenames = strokenames;
+            return this;
+        }
+
+        public Builder setDefined(Boolean defined) {
+            this.defined = defined;
             return this;
         }
 
