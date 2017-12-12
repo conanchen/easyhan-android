@@ -36,6 +36,7 @@ import org.ditto.feature.my.R2;
 import org.ditto.feature.my.di.MyViewModelFactory;
 import org.ditto.lib.repository.model.Status;
 import org.easyhan.common.grpc.HanziLevel;
+import org.easyhan.word.HanZi;
 
 import java.util.concurrent.TimeUnit;
 
@@ -57,73 +58,49 @@ import tourguide.tourguide.ToolTip;
 
 @Route(path = "/feature_my/WordExamActivity")
 public class WordExamActivity extends BaseActivity {
+    public static final String MyPREFERENCES = "MyPrefs";
     private final static String TAG = WordExamActivity.class.getSimpleName();
     private final static Gson gson = new Gson();
-
-    private String mImageTitle = "";
-    private org.ditto.feature.base.CollapsingToolbarLayoutState state;
-    private ChainTourGuide mTourGuideHandler;
-
-    private enum CollapsingToolbarLayoutState {
-        EXPANDED,
-        COLLAPSED,
-        INTERNEDIATE
-    }
-
-    private CollapsingToolbarLayoutState mCollapsingToolbarLayoutState;
-
     @Inject
     MyViewModelFactory mViewModelFactory;
-
-    private MyWordViewModel mViewModel;
-
     @BindView(R2.id.app_bar)
     AppBarLayout app_bar;
-
     @BindView(R2.id.backdrop)
     AppCompatTextView image;
-
     @BindView(R2.id.toolbar_button_layout)
     ButtonBarLayout buttonBarLayout;
-
     @BindView(R2.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
-
     @BindView(R2.id.pinyin1)
     TextInputEditText pinyin1;
-
     @BindView(R2.id.pinyin1_indicator)
     AppCompatImageView pinyin1_indicator;
-
     @BindView(R2.id.pinyin2)
     TextInputEditText pinyin2;
-
     @BindView(R2.id.pinyin2_indicator)
     AppCompatImageView pinyin2_indicator;
 
     @BindView(R2.id.strokes)
     TextInputEditText strokes;
-
     @BindView(R2.id.strokes_indicator)
     AppCompatImageView strokes_indicator;
-
     @BindView(R2.id.broken_button)
     AppCompatButton broken;
-
     @BindView(R2.id.ok)
     AppCompatButton ookButton;
-
     @BindView(R2.id.keyboardview)
     KeyboardView keyboardView;
-
     @BindView(R2.id.fab)
     FloatingActionButton fabButton;
-
     PinyinKeyboard mPinyinKeyboard;
     StrokeKeyboard mStrokeKeyboard;
-
     SharedPreferences sharedpreferences;
-    public static final String MyPREFERENCES = "MyPrefs";
+    AlertDialog flightProgressDialog = null;
+    private String mImageTitle = "";
+    private org.ditto.feature.base.CollapsingToolbarLayoutState state;
+    private ChainTourGuide mTourGuideHandler;
+    private CollapsingToolbarLayoutState mCollapsingToolbarLayoutState;
+    private MyWordViewModel mViewModel;
     private String canPopupTourGuideKey = WordExamActivity.TAG + "canPopupTourGuide";
     private Boolean canPopupTourGuide = Boolean.TRUE;
 
@@ -197,11 +174,19 @@ public class WordExamActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                int len = editable.toString().length();
+                if (len > 0) {
+                    int lastStroke = editable.toString().codePointAt(len - 1);
+                    String[] keyDefinition = HanZi.STROKE_KEYCODES.get(lastStroke);
+                    if (keyDefinition != null) {
+                        broken.setText(String.format("%s:%s \n想要记得牢？请点击录入你的拆字记忆法。", keyDefinition[1], keyDefinition[0]));
+                    }
+                }
+
                 mViewModel.checkStrokes(editable.toString());
             }
         });
@@ -291,9 +276,11 @@ public class WordExamActivity extends BaseActivity {
             boolean pinyin1Passed = false, pinyin2Passed = false, strokesPassed = false;
             if (examWordHolder.examWord != null) {
                 image.setText(examWordHolder.examWord.word);
-                if (HanziLevel.ONE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 1
-                        || HanziLevel.TWO.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 3
-                        || HanziLevel.THREE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 5) {
+
+                if (HanziLevel.ONE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 0
+                        || HanziLevel.TWO.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 2
+                        || HanziLevel.THREE.name().equals(examWordHolder.examWord.level) && examWordHolder.examWord.memIdx > 4) {
+                    //at least exercised 1/3/5 times to let you mark remember it.
                     fabButton.setVisibility(View.VISIBLE);
                 } else {
                     fabButton.setVisibility(View.GONE);
@@ -305,11 +292,19 @@ public class WordExamActivity extends BaseActivity {
             } else {
                 pinyin1_indicator.setImageResource(R.drawable.ic_error_black_24dp);
             }
-            if (examWordHolder.checkPinyin2Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin2Status.code)) {
-                pinyin2Passed = true;
-                pinyin2_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            if (examWordHolder.examWord.pinyins.size() > 1) {
+                pinyin2_indicator.setVisibility(View.VISIBLE);
+                pinyin2.setVisibility(View.VISIBLE);
+                if (examWordHolder.checkPinyin2Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin2Status.code)) {
+                    pinyin2Passed = true;
+                    pinyin2_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+                } else {
+                    pinyin2_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+                }
             } else {
-                pinyin2_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+                pinyin2Passed = true;
+                pinyin2_indicator.setVisibility(View.GONE);
+                pinyin2.setVisibility(View.GONE);
             }
             if (examWordHolder.checkStrokesStatus != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkStrokesStatus.code)) {
                 strokesPassed = true;
@@ -362,8 +357,6 @@ public class WordExamActivity extends BaseActivity {
     void onOKButtonClicked() {
         mViewModel.updateMyWordProgress(Boolean.FALSE);
     }
-
-    AlertDialog flightProgressDialog = null;
 
     @OnClick(R2.id.fab)
     void onFabButtonClicked() {
@@ -516,6 +509,12 @@ public class WordExamActivity extends BaseActivity {
 
 
         mTourGuideHandler = ChainTourGuide.init(this).playInSequence(sequence);
+    }
+
+    private enum CollapsingToolbarLayoutState {
+        EXPANDED,
+        COLLAPSED,
+        INTERNEDIATE
     }
 
 

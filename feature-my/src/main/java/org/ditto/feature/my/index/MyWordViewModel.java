@@ -207,18 +207,18 @@ public class MyWordViewModel extends ViewModel {
 
     }
 
-    private boolean compareStrokes(String inputStrokes, List<String> strokes) {
+    private boolean compareStrokes(String inputStrokes, List<String> strokenames) {
         boolean result = true;
-        if (inputStrokes != null && strokes != null) {
+        if (inputStrokes != null && strokenames != null) {
             char[] inputKeycodes = inputStrokes.toCharArray();
 
-            if (inputKeycodes.length == strokes.size()) {
+            if (inputKeycodes.length == strokenames.size()) {
                 for (int i = 0; i < inputKeycodes.length; i++) {
-                    String[] strokeVal = HanZi.STROKE_KEYCODES.get((int) inputKeycodes[i]);
-                    String[] strokeArr = StringUtils.splitByWholeSeparator(strokes.get(i), "/");
+                    String[] strokeDefinition = HanZi.STROKE_KEYCODES.get((int) inputKeycodes[i]);
+                    String[] strokenameArr = StringUtils.splitByWholeSeparator(strokenames.get(i), "/");
                     boolean found = false;
-                    for (int j = 0; j < strokeArr.length; j++) {
-                        if (strokeVal[0].compareToIgnoreCase(strokeArr[j]) == 0) {
+                    for (int j = 0; j < strokenameArr.length; j++) {
+                        if (strokeDefinition[0].compareToIgnoreCase(strokenameArr[j]) == 0) {
                             found = true;
                             break;
                         }
