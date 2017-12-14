@@ -22,6 +22,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
@@ -30,7 +32,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.load.DataSource;
@@ -50,6 +51,8 @@ import org.ditto.lib.dbroom.index.Pinyin;
 import org.ditto.lib.dbroom.index.Word;
 import org.easyhan.word.HanZi;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -98,6 +101,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
     HtmlTextView detailmean;
     @BindView(R2.id.riddles)
     HtmlTextView riddles;
+    MediaPlayer mediaplayer;
     private WordViewModel mViewModel;
     /**
      * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
@@ -151,11 +155,11 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
             riddles.setVisibility(View.VISIBLE);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < word.riddles.size(); i++) {
-                sb.append(String.format("<p>%s</p>",word.riddles.get(i)));
+                sb.append(String.format("<p>%s</p>", word.riddles.get(i)));
             }
 
             riddles.setHtml(sb.toString());
-            
+
         }
     }
 
@@ -176,12 +180,11 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
     }
 
 
-
     private void showTerms(Word word) {
         if (word.terms != null) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < word.terms.size(); i++) {
-                sb.append(String.format("%s   ",word.terms.get(i)));
+                sb.append(String.format("%s   ", word.terms.get(i)));
             }
             terms.setText(sb.toString());
         }
@@ -252,6 +255,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(v.getContext(), String.format("%s", pinyin.mp3), Toast.LENGTH_LONG).show();
+                            play(pinyin.mp3);
                         }
                     });
                 } else if (i == 1) {
@@ -261,6 +265,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(v.getContext(), String.format("%s", pinyin.mp3), Toast.LENGTH_LONG).show();
+                            play(pinyin.mp3);
                         }
                     });
                 } else if (i == 2) {
@@ -270,6 +275,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(v.getContext(), String.format("%s", pinyin.mp3), Toast.LENGTH_LONG).show();
+                            play(pinyin.mp3);
                         }
                     });
                 }
@@ -277,10 +283,30 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
         }
     }
 
+    private void play(String url) {
+        try {
+            mediaplayer.stop();
+            mediaplayer.setDataSource(url);
+            mediaplayer.prepare();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mediaplayer.start();
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mediaplayer = new MediaPlayer();
+        mediaplayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
     @Override

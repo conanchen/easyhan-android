@@ -78,34 +78,37 @@
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/pinyin1"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/dp_80"
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
                     android:gravity="right|center_vertical"
                     android:text="OK"
                     app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/pinyin2"
-                    app:layout_constraintTop_toBottomOf="@+id/pinyins_title" />
+                    app:layout_constraintTop_toBottomOf="@+id/pinyins_title"
+                    android:textAllCaps="false"/>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/pinyin2"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/dp_80"
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
                     android:gravity="right|center_vertical"
                     android:text="OK"
                     app:layout_constraintLeft_toRightOf="@+id/pinyin1"
                     app:layout_constraintTop_toBottomOf="@+id/pinyins_title"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textAllCaps="false"/>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/pinyin3"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/dp_80"
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
                     android:gravity="right|center_vertical"
                     android:text="OK"
-                    app:layout_constraintTop_toBottomOf="@+id/pinyin2" />
+                    app:layout_constraintTop_toBottomOf="@+id/pinyin2"
+                    android:textAllCaps="false"/>
 
 
 
