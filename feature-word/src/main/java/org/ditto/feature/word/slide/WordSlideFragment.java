@@ -158,7 +158,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
 
 
     private void showTitle(Word word) {
-        toolbar_title.setText(String.format("  %s %s ：%s", WordUtils.getTitleByMemIdx(word.memIdx), WordUtils.getDescByMemIdx(word.memIdx), word.word));
+        toolbar_title.setText(String.format("%s %s ：%s", WordUtils.getTitleByMemIdx(word.memIdx), WordUtils.getDescByMemIdx(word.memIdx), word.word));
     }
 
     private void showRiddles(Word word) {
