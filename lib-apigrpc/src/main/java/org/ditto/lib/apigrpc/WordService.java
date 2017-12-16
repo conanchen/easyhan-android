@@ -245,8 +245,8 @@ public class WordService {
                                     .newBuilder()
                                     .setWord(requestWord)
                                     .setProgressStep(isFlight ? 8 : 1)
-                                    .setUpdateBrokenStrokesMessage(updateBrokenStrokesMessage)
-                                    .setBrokenStrokesMessage(brokenStrokesMessage)
+                                    .setUpdateMemStrokes(updateBrokenStrokesMessage)
+                                    .setMemStrokes(brokenStrokesMessage)
                                     .build();
 
                             myWordStub

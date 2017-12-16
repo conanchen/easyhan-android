@@ -75,7 +75,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/pinyins_title"
@@ -143,7 +143,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/bihua_title"
@@ -182,7 +182,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/fanyi_title"
@@ -224,7 +224,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/terms_title"
@@ -266,7 +266,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/basemean_title"
@@ -302,12 +302,13 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="3dp"
             app:cardElevation="1dp"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/basemean_cardview">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8">
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/detailmean_title"
@@ -342,13 +343,14 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:cardCornerRadius="3dp"
             app:cardElevation="1dp"
-            app:layout_constraintTop_toBottomOf="@+id/detailmean_cardview">
+            app:layout_constraintTop_toBottomOf="@+id/detailmean_cardview"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_8"
-                android:layout_marginBottom="@dimen/dp_8">
+                android:layout_marginBottom="@dimen/dp_8"
+                >
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/riddles_title"
@@ -371,7 +373,8 @@
                     android:text="riddles"
                     android:textAppearance="@android:style/TextAppearance.Medium"
                     android:textIsSelectable="true"
-                    app:layout_constraintTop_toBottomOf="@+id/riddles_title" />
+                    app:layout_constraintTop_toBottomOf="@+id/riddles_title"
+                    android:paddingBottom="@dimen/dp_64"/>
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 

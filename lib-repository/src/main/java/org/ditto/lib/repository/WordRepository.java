@@ -407,7 +407,7 @@ public class WordRepository {
                                     }
                                     word.memIdx = response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
-                                    word.memBrokenStrokes = response.getBrokenStrokesMessage();
+                                    word.memBrokenStrokes = response.getMemStrokes();
                                     roomFascade.daoWord.save(word);
                                     Log.i(TAG, String.format("onMyProfileReceived save word=[%s]", gson.toJson(word)));
                                 });
