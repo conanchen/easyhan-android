@@ -12,7 +12,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
@@ -97,6 +96,7 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
     StrokeKeyboard mStrokeKeyboard;
     SharedPreferences sharedpreferences;
     AlertDialog flightProgressDialog = null;
+    BrokenStrokesDialogFragment dialogFragment = new BrokenStrokesDialogFragment();
     private String mImageTitle = "";
     private org.ditto.feature.base.CollapsingToolbarLayoutState state;
     private ChainTourGuide mTourGuideHandler;
@@ -104,8 +104,6 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
     private MyWordViewModel mViewModel;
     private String canPopupTourGuideKey = WordExamActivity.TAG + "canPopupTourGuide";
     private Boolean canPopupTourGuide = Boolean.TRUE;
-    DialogFragment dialogFragment = new BrokenStrokesDialogFragment();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,7 +267,6 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
     private void setupViewModel() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MyWordViewModel.class);
         mViewModel.getLiveExamWordHolder().observe(this, examWordHolder -> {
-            boolean pinyin1Passed = false, pinyin2Passed = false, strokesPassed = false;
             if (examWordHolder.examWord != null) {
                 image.setText(examWordHolder.examWord.word);
 
@@ -281,41 +278,15 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
                 } else {
                     fabButton.setVisibility(View.GONE);
                 }
-            }
-            if (examWordHolder.checkPinyin1Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin1Status.code)) {
-                pinyin1Passed = true;
-                pinyin1_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
-            } else {
-                pinyin1_indicator.setImageResource(R.drawable.ic_error_black_24dp);
-            }
-            if (examWordHolder.examWord.pinyins.size() > 1) {
-                pinyin2_indicator.setVisibility(View.VISIBLE);
-                pinyin2.setVisibility(View.VISIBLE);
-                if (examWordHolder.checkPinyin2Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin2Status.code)) {
-                    pinyin2Passed = true;
-                    pinyin2_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
-                } else {
-                    pinyin2_indicator.setImageResource(R.drawable.ic_error_black_24dp);
-                }
-            } else {
-                pinyin2Passed = true;
-                pinyin2_indicator.setVisibility(View.GONE);
-                pinyin2.setVisibility(View.GONE);
-            }
-            if (examWordHolder.checkStrokesStatus != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkStrokesStatus.code)) {
-                strokesPassed = true;
-                strokes_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
-            } else {
-                strokes_indicator.setImageResource(R.drawable.ic_error_black_24dp);
-            }
 
-            if (pinyin1Passed && pinyin2Passed && strokesPassed) {
-                ookButton.setEnabled(true);
-                ookButton.setText(String.format("[%s]识字进度升级到%s", examWordHolder.examWord.word, WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
-            } else {
-                ookButton.setText(String.format("[%s]识字进度升级到%s", "?", WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
-                ookButton.setEnabled(false);
+                dialogFragment.setWord(examWordHolder.examWord);
             }
+            boolean pinyin1Passed = isPinyin1Passed(examWordHolder);
+            boolean pinyin2Passed = isPinyin2Passed(examWordHolder);
+            boolean strokesPassed = isStrokesPassed(examWordHolder);
+
+            toggleOkButton(examWordHolder, pinyin1Passed, pinyin2Passed, strokesPassed);
+
         });
 
         nextExamWord();
@@ -323,7 +294,6 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
         mViewModel.getLiveUpsertStatus().observe(this, status -> {
             if (Status.Code.END_NOT_LOGIN.equals(status.code)) {
                 ARouter.getInstance().build("/feature_login/LoginActivity").navigation();
-//                mViewModel.getLiveUpsertStatus().removeObservers(WordActivity.this);
             } else if (Status.Code.END_SUCCESS.equals(status.code)) {
                 Toast.makeText(WordExamActivity.this, "识字进度升级成功，准备下一个字", Toast.LENGTH_SHORT).show();
                 nextExamWord();
@@ -336,6 +306,57 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
 
         });
 
+    }
+
+    private void toggleOkButton(MyLiveExamWordHolder examWordHolder, boolean pinyin1Passed, boolean pinyin2Passed, boolean strokesPassed) {
+        if (pinyin1Passed && pinyin2Passed && strokesPassed) {
+            ookButton.setEnabled(true);
+            ookButton.setText(String.format("[%s]识字进度升级到%s", examWordHolder.examWord.word, WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
+        } else {
+            ookButton.setText(String.format("[%s]识字进度升级到%s", "?", WordUtils.getTitleByMemIdx(examWordHolder.examWord.memIdx + 1)));
+            ookButton.setEnabled(false);
+        }
+    }
+
+    private boolean isStrokesPassed(MyLiveExamWordHolder examWordHolder) {
+        boolean strokesPassed = false;
+        if (examWordHolder.checkStrokesStatus != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkStrokesStatus.code)) {
+            strokesPassed = true;
+            strokes_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+        } else {
+            strokes_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+        }
+        return strokesPassed;
+    }
+
+    private boolean isPinyin1Passed(MyLiveExamWordHolder examWordHolder) {
+        boolean pinyin1Passed = false;
+        if (examWordHolder.checkPinyin1Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin1Status.code)) {
+            pinyin1Passed = true;
+            pinyin1_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+        } else {
+            pinyin1_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+        }
+        return pinyin1Passed;
+    }
+
+    private boolean isPinyin2Passed(MyLiveExamWordHolder examWordHolder) {
+        boolean pinyin2Passed = false;
+        if (examWordHolder.examWord.pinyins.size() > 1) {
+            pinyin2_indicator.setVisibility(View.VISIBLE);
+            pinyin2.setVisibility(View.VISIBLE);
+            if (examWordHolder.checkPinyin2Status != null && Status.Code.END_SUCCESS.equals(examWordHolder.checkPinyin2Status.code)) {
+                pinyin2Passed = true;
+                pinyin2_indicator.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            } else {
+                pinyin2_indicator.setImageResource(R.drawable.ic_error_black_24dp);
+            }
+        } else {
+            pinyin2Passed = true;
+            pinyin2_indicator.setVisibility(View.GONE);
+            pinyin2.setVisibility(View.GONE);
+        }
+        return pinyin2Passed;
     }
 
     private void nextExamWord() {
@@ -519,8 +540,6 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
         COLLAPSED,
         INTERNEDIATE
     }
-
-
 
 
 }
