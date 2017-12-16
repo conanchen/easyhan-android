@@ -10,30 +10,18 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.ditto.lib.dbroom.index.Word;
-import org.ditto.lib.dbroom.kv.KeyValue;
-import org.ditto.lib.dbroom.kv.VoAccessToken;
-import org.ditto.lib.repository.WordRepository;
-import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.usecases.UsecaseFascade;
 
 import javax.inject.Inject;
 
-import io.reactivex.MaybeObserver;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class WordViewModel extends ViewModel {
-    private static Gson gson = new Gson();
     private final static String TAG = WordViewModel.class.getSimpleName();
+    private static Gson gson = new Gson();
     @VisibleForTesting
     final MutableLiveData<String> mutableRequestWord = new MutableLiveData<String>();
     private final LiveData<Word> liveWord;
-
-    public LiveData<Word> getLiveWord() {
-        return liveWord;
-    }
-
     @Inject
     UsecaseFascade usecaseFascade;
 
@@ -41,15 +29,34 @@ public class WordViewModel extends ViewModel {
     @Inject
     public WordViewModel() {
         liveWord = Transformations.switchMap(mutableRequestWord, (String requestWord) -> {
-            Log.i(TAG,String.format("mutableRequestWord.value=%s",mutableRequestWord.getValue()));
-            return usecaseFascade.repositoryFascade.wordRepository.find(requestWord);
+            return new LiveData<Word>() {
+                @Override
+                protected void onActive() {
+                    Log.i(TAG, String.format("mutableRequestWord.value=%s", mutableRequestWord.getValue()));
+                    usecaseFascade.repositoryFascade.wordRepository
+                            .findMaybe(requestWord)
+                            .observeOn(Schedulers.io())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe(word -> {
+                                postValue(word);
+                            })
+                    ;
+                }
+            };
         });
 
 
+    }
+
+    public LiveData<Word> getLiveWord() {
+        return liveWord;
     }
 
     public void setWord(String word) {
         mutableRequestWord.setValue(word);
     }
 
+    public void download(String mWord) {
+usecaseFascade.repositoryFascade.wordRepository.download(mWord);
+    }
 }

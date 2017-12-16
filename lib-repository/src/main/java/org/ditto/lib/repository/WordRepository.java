@@ -104,6 +104,36 @@ public class WordRepository {
         });
     }
 
+    public void download(String mWord) {
+        apigrpcFascade.getWordService().download(mWord, new WordService.WordCallback() {
+
+            @Override
+            public void onApiReady() {
+            }
+
+            @Override
+            public void onWordReceived(WordResponse response) {
+                Word word = buildWord(response);
+                roomFascade.daoWord.save(word);
+            }
+
+            @Override
+            public void onWordUpdated(StatusResponse image) {
+
+            }
+
+            @Override
+            public void onApiCompleted() {
+            }
+
+            @Override
+            public void onApiError() {
+            }
+        });
+
+    }
+
+
     public void refresh(WordRefreshRequest wordRefreshRequest) {
         ListRequest listRequest = ListRequest.newBuilder()
                 .setLevel(wordRefreshRequest.level).setLastUpdated(wordRefreshRequest.lastUpdated).build();
@@ -126,35 +156,7 @@ public class WordRepository {
 //                                .build());
                         Log.i(TAG, String.format("onWordReceived save to database, word=%s,pinyins=%s,\nresponse[%s]",
                                 response.getWord(), gson.toJson(response.getPinyinsList()), gson.toJson(response)));
-                        List<Pinyin> pinyins = new ArrayList<>();
-                        for (int i = 0; i < response.getPinyinsCount(); i++) {
-                            pinyins.add(new Pinyin(response.getPinyins(i).getPinyin(), response.getPinyins(i).getMp3()));
-                        }
-
-
-                        Word word = Word.builder()
-                                .setWord(response.getWord())
-                                .setLevel(response.getLevel().name())
-                                .setLevelIdx(response.getLevelIdx())
-                                .setCreated(response.getCreated())
-                                .setLastUpdated(response.getLastUpdated())
-                                .setVisitCount(response.getVistCount())
-                                .setPinyins(pinyins)
-                                .setRadical(response.getRadical())
-                                .setWuxing(response.getWuxing())
-                                .setTraditional(response.getTraditional())
-                                .setWubi(response.getWubi())
-                                .setStrokes(response.getStrokes15List())
-                                .setStrokenames(response.getStrokenamesList())
-                                .setStrokes_count(response.getStrokesCount17())
-                                .setBasemean(response.getBasemean())
-                                .setDetailmean(response.getDetailmean())
-                                .setTerms(response.getTermsList())
-                                .setRiddles(response.getRiddlesList())
-                                .setFanyi(response.getFanyi())
-                                .setBishun(response.getBishun())
-                                .setDefined(response.getDefined())
-                                .build();
+                        Word word = buildWord(response);
                         roomFascade.daoWord.save(word);
                     }
 
@@ -181,6 +183,38 @@ public class WordRepository {
                                 gson.toJson(status), gson.toJson(listRequest)));
                     }
                 });
+    }
+
+    private Word buildWord(WordResponse response) {
+        List<Pinyin> pinyins = new ArrayList<>();
+        for (int i = 0; i < response.getPinyinsCount(); i++) {
+            pinyins.add(new Pinyin(response.getPinyins(i).getPinyin(), response.getPinyins(i).getMp3()));
+        }
+
+
+        return Word.builder()
+                .setWord(response.getWord())
+                .setLevel(response.getLevel().name())
+                .setLevelIdx(response.getLevelIdx())
+                .setCreated(response.getCreated())
+                .setLastUpdated(response.getLastUpdated())
+                .setVisitCount(response.getVistCount())
+                .setPinyins(pinyins)
+                .setRadical(response.getRadical())
+                .setWuxing(response.getWuxing())
+                .setTraditional(response.getTraditional())
+                .setWubi(response.getWubi())
+                .setStrokes(response.getStrokes15List())
+                .setStrokenames(response.getStrokenamesList())
+                .setStrokes_count(response.getStrokesCount17())
+                .setBasemean(response.getBasemean())
+                .setDetailmean(response.getDetailmean())
+                .setTerms(response.getTermsList())
+                .setRiddles(response.getRiddlesList())
+                .setFanyi(response.getFanyi())
+                .setBishun(response.getBishun())
+                .setDefined(response.getDefined())
+                .build();
     }
 
     public LiveData<PagedList<Word>> listPagedWordsBy(WordLoadRequest wordLoadRequest) {
@@ -218,8 +252,8 @@ public class WordRepository {
         return roomFascade.daoWord.findMyLatestWord();
     }
 
-    public LiveData<Word> find(String imageUrl) {
-        return roomFascade.daoWord.findLive(imageUrl);
+    public Maybe<Word> findMaybe(String imageUrl) {
+        return roomFascade.daoWord.findMaybe(imageUrl);
     }
 
     public void saveSampleImageIndices() {
@@ -259,11 +293,11 @@ public class WordRepository {
 
     }
 
-    public void upsertMyWord(VoAccessToken voAccessToken, String word, Boolean isFlight, ProgressCallback callback) {
+    public void upsertMyWord(VoAccessToken voAccessToken, String word, Boolean isFlight, Boolean updateBrokenStrokesMessage, String brokenStrokesMessage,ProgressCallback callback) {
         CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(voAccessToken.accessToken,
                         Long.valueOf(voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word, isFlight,
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word, isFlight,updateBrokenStrokesMessage,brokenStrokesMessage,
                 new WordService.MyWordCallback() {
                     @Override
                     public void onMyWordUpserted(UpsertResponse response) {
@@ -373,6 +407,7 @@ public class WordRepository {
                                     }
                                     word.memIdx = response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
+                                    word.memBrokenStrokes = response.getBrokenStrokesMessage();
                                     roomFascade.daoWord.save(word);
                                     Log.i(TAG, String.format("onMyProfileReceived save word=[%s]", gson.toJson(word)));
                                 });
@@ -469,17 +504,9 @@ public class WordRepository {
         });
     }
 
-    public void init(HanziLevel level, String s) {
-        roomFascade.daoWord.save(
-                Word.builder()
-                        .setWord(s)
-                        .setLevel(level.name())
-                        .setLevelIdx(9999)
-                        .build());
-    }
 
     public LiveData<List<Word>> listWordSlidesBy(WordSlidesLoadRequest request) {
-        return roomFascade.daoWord.getLiveMySlideWords(true,request.pageSize);
+        return roomFascade.daoWord.getLiveMySlideWords(true, request.pageSize);
     }
 
     public interface ProgressCallback {

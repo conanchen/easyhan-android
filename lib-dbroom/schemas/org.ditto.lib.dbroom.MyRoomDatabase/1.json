@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a1dd675cff0c8628343a222f6e3b9982",
+    "identityHash": "2ca0c0cb3c20bb1bac11d4946ad94cd7",
     "entities": [
       {
         "tableName": "MyProfile",
@@ -142,7 +142,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `level` TEXT, `levelIdx` INTEGER NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `pinyins` TEXT, `radical` TEXT, `wuxing` TEXT, `traditional` TEXT, `wubi` TEXT, `strokes` TEXT, `strokenames` TEXT, `strokes_count` INTEGER, `basemean` TEXT, `detailmean` TEXT, `terms` TEXT, `riddles` TEXT, `fanyi` TEXT, `bishun` TEXT, `defined` INTEGER, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, PRIMARY KEY(`word`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`word` TEXT NOT NULL, `level` TEXT, `levelIdx` INTEGER NOT NULL, `created` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `visitCount` INTEGER NOT NULL, `pinyins` TEXT, `radical` TEXT, `wuxing` TEXT, `traditional` TEXT, `wubi` TEXT, `strokes` TEXT, `strokenames` TEXT, `strokes_count` INTEGER, `basemean` TEXT, `detailmean` TEXT, `terms` TEXT, `riddles` TEXT, `fanyi` TEXT, `bishun` TEXT, `defined` INTEGER, `memIdx` INTEGER NOT NULL, `memIdxIsOverThreshold` INTEGER NOT NULL, `memLastUpdated` INTEGER NOT NULL, `memBrokenStrokes` TEXT, PRIMARY KEY(`word`))",
         "fields": [
           {
             "fieldPath": "word",
@@ -287,6 +287,12 @@
             "columnName": "memLastUpdated",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "memBrokenStrokes",
+            "columnName": "memBrokenStrokes",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -447,7 +453,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a1dd675cff0c8628343a222f6e3b9982\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2ca0c0cb3c20bb1bac11d4946ad94cd7\")"
     ]
   }
 }

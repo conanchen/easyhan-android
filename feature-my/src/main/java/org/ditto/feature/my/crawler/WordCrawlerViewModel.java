@@ -9,17 +9,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.repository.WordRepository;
 import org.ditto.lib.repository.model.Status;
 import org.ditto.lib.usecases.UsecaseFascade;
+import org.easyhan.common.grpc.HanziLevel;
+import org.easyhan.word.HanZi;
 
 import javax.inject.Inject;
-
-import io.reactivex.MaybeObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class WordCrawlerViewModel extends ViewModel {
     private final static String TAG = WordCrawlerViewModel.class.getSimpleName();
@@ -37,35 +35,25 @@ public class WordCrawlerViewModel extends ViewModel {
     @SuppressWarnings("unchecked")
     @Inject
     public WordCrawlerViewModel() {
-        liveWord = Transformations.switchMap(mutableRequestWord, (Integer requestWord) -> {
+        liveWord = Transformations.switchMap(mutableRequestWord, (Integer requestIdx) -> {
             Log.i(TAG, String.format("mutableRequestWord.value=%s", mutableRequestWord.getValue()));
             return new LiveData<Word>() {
                 @Override
                 protected void onActive() {
-                    usecaseFascade.repositoryFascade.wordRepository
-                            .findByIdx(requestWord)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe(new MaybeObserver<Word>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
+                    int mIdx = requestIdx;
+                    if(requestIdx<1 || requestIdx>HanZi.LEVEL1.length+HanZi.LEVEL2.length+HanZi.LEVEL3.length){
+                        mIdx = 1;
+                    }
 
-                        }
-
-                        @Override
-                        public void onSuccess(Word word) {
-                            postValue(word);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
+                    Word word ;
+                    if (mIdx > HanZi.LEVEL1.length + HanZi.LEVEL2.length) {
+                        word = Word.builder().setWord(HanZi.LEVEL3[mIdx - HanZi.LEVEL1.length - HanZi.LEVEL2.length - 1]).setLevel(HanziLevel.THREE.name()).setLevelIdx(mIdx).build();
+                    } else if (mIdx > HanZi.LEVEL1.length) {
+                        word = Word.builder().setWord(HanZi.LEVEL2[mIdx - HanZi.LEVEL1.length - 1]).setLevel(HanziLevel.TWO.name()).setLevelIdx(mIdx).build();
+                    } else {
+                        word = Word.builder().setWord(HanZi.LEVEL1[mIdx - 1]).setLevel(HanziLevel.ONE.name()).setLevelIdx(mIdx).build();
+                    }
+                    postValue(word);
                 }
             };
         });

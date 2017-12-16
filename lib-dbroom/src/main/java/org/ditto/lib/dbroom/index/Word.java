@@ -48,11 +48,17 @@ public class Word {
     public int memIdx;
     public int memIdxIsOverThreshold;
     public long memLastUpdated;
+    public String memBrokenStrokes;
 
     public Word() {
     }
 
-    private Word(@NonNull String word, String level, int levelIdx, long created, long lastUpdated, int visitCount, List<Pinyin> pinyins, String radical, String wuxing, String traditional, String wubi, List<String> strokes, List<String> strokenames, Integer strokes_count, String basemean, String detailmean, List<String> terms, List<String> riddles, String fanyi, String bishun, Boolean defined, int memIdx, int memIdxIsOverThreshold, long memLastUpdated) {
+    private Word(@NonNull String word, String level, int levelIdx, long created, long lastUpdated,
+                 int visitCount, List<Pinyin> pinyins, String radical, String wuxing, String traditional,
+                 String wubi, List<String> strokes, List<String> strokenames, Integer strokes_count,
+                 String basemean, String detailmean, List<String> terms, List<String> riddles,
+                 String fanyi, String bishun, Boolean defined, int memIdx, int memIdxIsOverThreshold,
+                 long memLastUpdated,String memBrokenStrokes) {
         this.word = word;
         this.level = level;
         this.levelIdx = levelIdx;
@@ -77,6 +83,7 @@ public class Word {
         this.memIdx = memIdx;
         this.memIdxIsOverThreshold = memIdxIsOverThreshold;
         this.memLastUpdated = memLastUpdated;
+        this.memBrokenStrokes = memBrokenStrokes;
     }
 
     public static Builder builder() {
@@ -110,6 +117,7 @@ public class Word {
         private int memIdx;
         private int memIdxIsOverThreshold;
         private long memLastUpdated;
+        private String memBrokenStrokes;
 
         Builder() {
         }
@@ -131,7 +139,7 @@ public class Word {
             Word wordObj = new Word(word, level, levelIdx, created, lastUpdated, visitCount,
                     pinyins, radical, wuxing, traditional, wubi, strokes, strokenames, strokes_count,
                     basemean, detailmean, terms,
-                    riddles, fanyi, bishun, defined, memIdx, memIdxIsOverThreshold, memLastUpdated);
+                    riddles, fanyi, bishun, defined, memIdx, memIdxIsOverThreshold, memLastUpdated,memBrokenStrokes);
             return wordObj;
         }
 
@@ -252,6 +260,11 @@ public class Word {
 
         public Builder setMemLastUpdated(long memLastUpdated) {
             this.memLastUpdated = memLastUpdated;
+            return this;
+        }
+
+        public Builder setMemBrokenStrokes(String memBrokenStrokes) {
+            this.memBrokenStrokes = memBrokenStrokes;
             return this;
         }
     }

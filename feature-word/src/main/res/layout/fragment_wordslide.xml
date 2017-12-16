@@ -17,17 +17,27 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content"
+    android:layout_marginTop="?attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/content_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <!-- The primary full-screen view. This can be replaced with whatever view
-             is needed to present your content, e.g. VideoView, SurfaceView,
-             TextureView, etc. -->
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:background="@color/gray"
+            />
+
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/backdrop"
             android:layout_width="match_parent"
@@ -38,7 +48,8 @@
             android:scaleType="centerCrop"
             android:text="🔄"
             android:textSize="@dimen/dp_200"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_title"
+            app:layout_constraintLeft_toLeftOf="parent"
             android:visibility="gone"
             />
 
@@ -82,6 +93,7 @@
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
                     android:gravity="right|center_vertical"
                     android:text="OK"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
                     app:layout_constraintHorizontal_chainStyle="spread"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/pinyin2"
@@ -95,6 +107,7 @@
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
                     android:gravity="right|center_vertical"
                     android:text="OK"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
                     app:layout_constraintLeft_toRightOf="@+id/pinyin1"
                     app:layout_constraintTop_toBottomOf="@+id/pinyins_title"
                     app:layout_constraintRight_toRightOf="parent"
@@ -105,6 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_80"
                     android:drawableRight="@drawable/ic_play_arrow_black_24dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
                     android:gravity="right|center_vertical"
                     android:text="OK"
                     app:layout_constraintTop_toBottomOf="@+id/pinyin2"
@@ -145,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/dp_4"
                     android:layout_marginRight="@dimen/dp_4"
-                    android:text="1.点：ㄅ 2.点：ㄅ 3.点：ㄅ 4.点：ㄅ 5.点：ㄅ 6.点：ㄅ 7.点：ㄅ 8.点：ㄅ 1.点：ㄅ 2.点：ㄅ 3.点：ㄅ 4.点：ㄅ 5.点：ㄅ 6.点：ㄅ 7.点：ㄅ 8.点：ㄅ "
+                    android:text="数据不全，没有录入笔画"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintTop_toBottomOf="@id/bihua_title" />
 

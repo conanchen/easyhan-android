@@ -24,7 +24,6 @@ import org.ditto.feature.word.R;
 import org.ditto.feature.word.R2;
 import org.ditto.feature.word.di.WordViewModelFactory;
 import org.ditto.lib.dbroom.index.Word;
-import org.ditto.lib.repository.model.Status;
 import org.easyhan.common.grpc.HanziLevel;
 import org.easyhan.word.HanZi;
 
@@ -37,35 +36,28 @@ import butterknife.ButterKnife;
  * A fragment representing a listCommandsBy of Items.
  * <p/>
  */
-public class FragmentWords extends BaseFragment implements Injectable, WordsController.AdapterCallbacks {
-    public static final String MyPREFERENCES = "MyPrefs";
-    private final static String TAG = FragmentWords.class.getSimpleName();
+public class FragmentWords1000 extends BaseFragment implements Words1000Controller.AdapterCallbacks {
+    private final static String TAG = FragmentWords1000.class.getSimpleName();
     private final static Gson gson = new Gson();
-    private static final int SPAN_COUNT = 6;
+    private static final int SPAN_COUNT = 4;
     private final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-    private final WordsController controller = new WordsController(this, recycledViewPool);
-    @Inject
-    WordViewModelFactory viewModelFactory;
-    SharedPreferences sharedpreferences;
+    private final Words1000Controller controller = new Words1000Controller(this, recycledViewPool);
     @BindView(R2.id.itemlist)
     RecyclerView recyclerView;
-    int currentPageNo = 0;
-    private WordsViewModel viewModel;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public FragmentWords() {
+    public FragmentWords1000() {
     }
 
 
-    public static FragmentWords create(String title, HanziLevel level) {
+    public static FragmentWords1000 create(String title) {
         Preconditions.checkNotNull(title);
-        FragmentWords fragment = new FragmentWords();
+        FragmentWords1000 fragment = new FragmentWords1000();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.TITLE, title);
-        bundle.putString(Constants.HANZILEVEL, level.name());
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -74,34 +66,14 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            currentPageNo = savedInstanceState.getInt(getNameCurrentPageNo());
-            Log.i(TAG, String.format("onActivityCreated savedInstanceState.getInt(%s)=%d", getNameCurrentPageNo(), currentPageNo));
-        }
+
         setupController();
     }
 
-    private String getNameCurrentPageNo() {
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        return level.name() + "_CURRENT_PGNO";
+    private void setupController() {
+        controller.setData(HanZi.LEVEL1000);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        viewModel.refresh(level);
-        viewModel.loadPage(level, currentPageNo);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(getNameCurrentPageNo(), currentPageNo);
-        Log.i(TAG, String.format("onSaveInstanceState outState.putInt(%s, %d)", getNameCurrentPageNo(), currentPageNo));
-    }
 
     @Override
     public void onDestroyView() {
@@ -110,14 +82,6 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
     }
 
 
-    private void setupController() {
-        sharedpreferences = this.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(WordsViewModel.class);
-        viewModel.getLiveWords().observe(this, data -> {
-            controller.setData(data);
-        });
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,38 +109,15 @@ public class FragmentWords extends BaseFragment implements Injectable, WordsCont
 
         recyclerView.setAdapter(controller.getAdapter());
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (!recyclerView.canScrollVertically(-1)) {
-                        Log.i(TAG, "callback.onScrollToTop() -1,viewModel.refresh()");
-                        HanziLevel level = HanziLevel.valueOf(getArguments().getString(Constants.HANZILEVEL));
-                        viewModel.refresh(level);
-                    }
-                }
-            }
-        });
-
-
         return recyclerView;
     }
 
 
     @Override
-    public void onWordItemClicked(Word word, int position) {
+    public void onWordItemClicked(String word, int position) {
         ARouter.getInstance().build("/feature_word/WordSlideActivity")
-                .withString(Constants.ROUTE_WORD, word.word)
+                .withString(Constants.ROUTE_WORD, word)
                 .navigation();
     }
 
-    @Override
-    public void onPageClicked(int pageno) {
-        Preconditions.checkNotNull(this.getArguments().getString(Constants.HANZILEVEL));
-        HanziLevel level = HanziLevel.valueOf(this.getArguments().getString(Constants.HANZILEVEL));
-        viewModel.refresh(level);
-        viewModel.loadPage(level, pageno);
-        currentPageNo = pageno;
-    }
 }

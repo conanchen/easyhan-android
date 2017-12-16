@@ -21,6 +21,7 @@ import org.ditto.lib.repository.model.WordLoadRequest;
 import org.ditto.lib.repository.model.WordRefreshRequest;
 import org.ditto.lib.usecases.UsecaseFascade;
 import org.easyhan.common.grpc.HanziLevel;
+import org.easyhan.word.HanZi;
 
 import javax.inject.Inject;
 
@@ -37,10 +38,7 @@ public class WordsViewModel extends ViewModel {
 
     @VisibleForTesting
     final MutableLiveData<WordLoadRequest> mutableLoadRequest = new MutableLiveData<>();
-    @VisibleForTesting
-    final MutableLiveData<WordInitRequest> mutableInitRequest = new MutableLiveData<>();
     private final LiveData<PagedList<Word>> liveWords;
-    private final LiveData<Status> liveInitStatus;
 
 
     @Inject
@@ -49,13 +47,6 @@ public class WordsViewModel extends ViewModel {
     @SuppressWarnings("unchecked")
     @Inject
     public WordsViewModel() {
-        liveInitStatus = Transformations.switchMap(mutableInitRequest, wordInitRequest -> {
-            if (wordInitRequest == null) {
-                return AbsentLiveData.create();
-            } else {
-                return usecaseFascade.wordUsecase.init(wordInitRequest.level, wordInitRequest.startIdx);
-            }
-        });
         liveWords = Transformations.switchMap(mutableLoadRequest, login -> {
             if (login == null) {
                 return AbsentLiveData.create();
@@ -66,9 +57,6 @@ public class WordsViewModel extends ViewModel {
         });
     }
 
-    public LiveData<Status> getLiveInitStatus() {
-        return liveInitStatus;
-    }
 
     public LiveData<PagedList<Word>> getLiveWords() {
         return this.liveWords;
@@ -88,12 +76,12 @@ public class WordsViewModel extends ViewModel {
     private int getPageSize(HanziLevel level) {
         switch (level) {
             case ONE:
-                return 195;//3500/18;
+                return HanZi.LEVEL1.length / 18 + 1;//3500/18;
             case TWO:
-                return 168;//3000/18;
+                return HanZi.LEVEL2.length / 18 + 1;//3000/18;
             case THREE:
             default:
-                return 87;//1605/18;
+                return HanZi.LEVEL3.length / 18 + 1;//1605/18;
         }
     }
 
@@ -127,11 +115,5 @@ public class WordsViewModel extends ViewModel {
                 }, throwable -> {
                     Log.i(TAG, throwable.getMessage());
                 });
-    }
-
-    public void initWords(String level) {
-        HanziLevel hanziLevel = HanziLevel.valueOf(level);
-        WordInitRequest wordInitRequest = WordInitRequest.builder().setLevel(hanziLevel).setStartIdx(0).build();
-        mutableInitRequest.postValue(wordInitRequest);
     }
 }

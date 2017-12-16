@@ -12,6 +12,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
@@ -57,7 +58,7 @@ import tourguide.tourguide.ToolTip;
 
 
 @Route(path = "/feature_my/WordExamActivity")
-public class WordExamActivity extends BaseActivity {
+public class WordExamActivity extends BaseActivity implements BrokenStrokesDialogFragment.BrokenStrokesDialogListener {
     public static final String MyPREFERENCES = "MyPrefs";
     private final static String TAG = WordExamActivity.class.getSimpleName();
     private final static Gson gson = new Gson();
@@ -85,7 +86,7 @@ public class WordExamActivity extends BaseActivity {
     @BindView(R2.id.strokes_indicator)
     AppCompatImageView strokes_indicator;
     @BindView(R2.id.broken_button)
-    AppCompatButton broken;
+    AppCompatButton broken_button;
     @BindView(R2.id.ok)
     AppCompatButton ookButton;
     @BindView(R2.id.keyboardview)
@@ -103,6 +104,7 @@ public class WordExamActivity extends BaseActivity {
     private MyWordViewModel mViewModel;
     private String canPopupTourGuideKey = WordExamActivity.TAG + "canPopupTourGuide";
     private Boolean canPopupTourGuide = Boolean.TRUE;
+    DialogFragment dialogFragment = new BrokenStrokesDialogFragment();
 
 
     @Override
@@ -123,17 +125,7 @@ public class WordExamActivity extends BaseActivity {
 
         setupAppBar();
 
-        broken.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                Observable
-                        .just(true)
-                        .delay(500, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aBoolean -> {
-                            app_bar.setExpanded(false, true);
-                        });
-            }
-        });
+
         pinyin1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -183,7 +175,7 @@ public class WordExamActivity extends BaseActivity {
                     int lastStroke = editable.toString().codePointAt(len - 1);
                     String[] keyDefinition = HanZi.STROKE_KEYCODES.get(lastStroke);
                     if (keyDefinition != null) {
-                        broken.setText(String.format("%s:%s \n想要记得牢？请点击录入你的拆字记忆法。", keyDefinition[1], keyDefinition[0]));
+                        broken_button.setText(String.format("%s:%s \n想要记得牢？请点击录入你的拆字记忆法。", keyDefinition[1], keyDefinition[0]));
                     }
                 }
 
@@ -195,6 +187,10 @@ public class WordExamActivity extends BaseActivity {
         setupExamKeyboard();
     }
 
+    @OnClick(R2.id.broken_button)
+    public void onBrokenButtonClicked() {
+        dialogFragment.show(this.getSupportFragmentManager(), BrokenStrokesDialogFragment.class.getSimpleName());
+    }
 
     private void setupAppBar() {
 
@@ -221,7 +217,7 @@ public class WordExamActivity extends BaseActivity {
                     if (mCollapsingToolbarLayoutState == CollapsingToolbarLayoutState.COLLAPSED) {
                         buttonBarLayout.setVisibility(View.GONE);//由折叠变为中间状态时隐藏播放按钮
                     }
-                    collapsingToolbarLayout.setTitle("粉红字帖");//设置title为INTERNEDIATE
+                    collapsingToolbarLayout.setTitle("粉红汉字");//设置title为INTERNEDIATE
                     mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
                 }
             }
@@ -511,11 +507,20 @@ public class WordExamActivity extends BaseActivity {
         mTourGuideHandler = ChainTourGuide.init(this).playInSequence(sequence);
     }
 
+    @Override
+    public void onBrokenStrokesMessageChanged(String brokenStrokesMessage) {
+        broken_button.setText(brokenStrokesMessage);
+        mViewModel.setBrokenStrokesMessage(brokenStrokesMessage);
+    }
+
+
     private enum CollapsingToolbarLayoutState {
         EXPANDED,
         COLLAPSED,
         INTERNEDIATE
     }
+
+
 
 
 }

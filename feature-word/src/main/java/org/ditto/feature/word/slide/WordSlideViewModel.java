@@ -5,7 +5,6 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
-import android.arch.paging.PagedList;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -17,6 +16,7 @@ import org.ditto.lib.dbroom.kv.KeyValue;
 import org.ditto.lib.dbroom.kv.VoWordSortType;
 import org.ditto.lib.repository.model.WordSlidesLoadRequest;
 import org.ditto.lib.usecases.UsecaseFascade;
+import org.easyhan.common.grpc.HanziLevel;
 
 import java.util.List;
 
@@ -39,7 +39,6 @@ public class WordSlideViewModel extends ViewModel {
     private final LiveData<WordSlideHolder> liveWordSlides;
 
 
-
     @Inject
     UsecaseFascade usecaseFascade;
     private String defaultWord;
@@ -52,7 +51,31 @@ public class WordSlideViewModel extends ViewModel {
             if (login == null) {
                 return AbsentLiveData.create();
             } else {
-                return usecaseFascade.repositoryFascade.wordRepository.find(mutableLoadRequest.getValue().defaultWord);
+                return new LiveData<Word>() {
+                    @Override
+                    protected void onActive() {
+                        Maybe<Word> dbValue = usecaseFascade.repositoryFascade.wordRepository
+                                .findMaybe(mutableLoadRequest.getValue().defaultWord);
+                        Maybe<Word> defValue = Maybe
+                                .just(Word.builder()
+                                        .setWord(mutableLoadRequest.getValue().defaultWord)
+                                        .setLevel(HanziLevel.ONE.name())
+                                        .setLastUpdated(0)
+                                        .build());
+
+                        Maybe.concat(dbValue, defValue).firstElement()
+                                .observeOn(Schedulers.io())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe(word -> {
+                                    if (word.lastUpdated == 0) {//defValue
+                                        usecaseFascade.repositoryFascade.wordRepository.download(mutableLoadRequest.getValue().defaultWord);
+                                    }
+                                    postValue(word);
+                                })
+                        ;
+                    }
+                };
+
             }
         });
 

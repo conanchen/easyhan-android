@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">粉红字帖</string>
+    <string name="app_name">粉红汉字</string>
     <string name="title_one">一级</string>
     <string name="title_two">二级</string>
     <string name="title_today">天天向上</string>
@@ -11,7 +11,7 @@
     <string name="title_activity_word_exam">识字考试</string>
 
     <string name="title_activity_ads">AdsActivity</string>
-    <string name="dummy_button">粉红字帖助你快速牢记并正确书写汉字</string>
+    <string name="dummy_button">粉红汉字助你快速牢记并正确书写汉字</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="yes">是</string>
     <string name="no">否</string>

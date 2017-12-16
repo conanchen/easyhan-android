@@ -54,6 +54,7 @@ public class MyWordsController extends TypedEpoxyController<MyLiveWordsHolder> {
                             .word(word.word)
                             .pinyin(pinyin)
                             .memIdx(word.memIdx)
+                            .memBrokenStrokes(word.memBrokenStrokes)
                             .clickListener((model, parentView, clickedView, position) -> {
                                 // A model click listener is used instead of a normal click listener so that we can get
                                 // the current position of the view. Since the view may have been moved when the colors

@@ -113,7 +113,7 @@ public class WordCrawlerActivity extends BaseActivity {
                     if (mCollapsingToolbarLayoutState == CollapsingToolbarLayoutState.COLLAPSED) {
                         buttonBarLayout.setVisibility(View.GONE);//由折叠变为中间状态时隐藏播放按钮
                     }
-                    collapsingToolbarLayout.setTitle("粉红字帖");//设置title为INTERNEDIATE
+                    collapsingToolbarLayout.setTitle("粉红汉字");//设置title为INTERNEDIATE
                     mCollapsingToolbarLayoutState = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
                 }
             }
@@ -183,7 +183,7 @@ public class WordCrawlerActivity extends BaseActivity {
             word_idx.setText(String.valueOf(word.levelIdx));
             x5webView.loadUrl("http://hanyu.baidu.com/zici/s?wd=" + word.word);
 
-            toolbar_title.setText(String.format("%s %s ：%s", WordUtils.getTitleByMemIdx(word.memIdx), WordUtils.getDescByMemIdx(word.memIdx), word.word));
+            toolbar_title.setText(String.format("%s",   word.word));
 
 
         });

@@ -11,6 +11,7 @@ import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertRequest;
 import org.easyhan.myword.grpc.UpsertResponse;
+import org.easyhan.word.grpc.GetRequest;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.UpdateRequest;
 import org.easyhan.word.grpc.WordGrpc;
@@ -159,6 +160,61 @@ public class WordService {
 
     }
 
+    public void download(String word, WordCallback callback) {
+        callback.onApiReady();
+        ManagedChannel channel = getManagedChannel();
+
+        ConnectivityState connectivityState = channel.getState(true);
+        Log.i(TAG, String.format("download connectivityState = [%s]", gson.toJson(connectivityState)));
+
+        HealthGrpc.HealthStub healthStub = HealthGrpc.newStub(channel);
+        WordGrpc.WordStub wordStub = WordGrpc.newStub(channel);
+        GetRequest getRequest = GetRequest.newBuilder().setWord(word).build();
+        healthStub.withDeadlineAfter(60, TimeUnit.SECONDS).check(wordGrpcHealthCheckRequest,
+                new StreamObserver<HealthCheckResponse>() {
+                    @Override
+                    public void onNext(HealthCheckResponse value) {
+
+                        if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
+                            Log.i(TAG, String.format("download healthStub.check onNext getRequest = [%s]", gson.toJson(getRequest)));
+                            wordStub.withWaitForReady().get(getRequest,
+                                    new StreamObserver<WordResponse>( ) {
+                                        @Override
+                                        public void onNext(WordResponse wordResponse) {
+                                            Log.i(TAG, String.format("download  onNext wordResponse = [%s]", gson.toJson(wordResponse)));
+                                            callback.onWordReceived(wordResponse);
+                                        }
+
+                                        @Override
+                                        public void onError(Throwable throwable) {
+
+                                        }
+
+                                        @Override
+                                        public void onCompleted() {
+
+                                        }
+                                    });
+                        } else {
+                            Log.i(TAG, String.format("download healthStub.check onNext NOT! ServingStatus.SERVING getRequest = [%s]", gson.toJson(getRequest)));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.i(TAG, String.format("download healthStub.check onError grpc service check health\n%s", t.getMessage()));
+                        callback.onApiError();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, String.format("download healthStub.check onCompleted grpc service check health\n%s", ""));
+                        callback.onApiCompleted();
+                    }
+                });
+
+    }
+
     private ManagedChannel getManagedChannel() {
         return OkHttpChannelBuilder
                 .forAddress(BuildConfig.GRPC_SERVER_HOST, BuildConfig.GRPC_SERVER_PORT)
@@ -167,7 +223,7 @@ public class WordService {
                 .build();
     }
 
-    public void upsertMyWord(CallCredentials callCredentials, String requestWord, Boolean isFlight, MyWordCallback callback) {
+    public void upsertMyWord(CallCredentials callCredentials, String requestWord, Boolean isFlight, Boolean updateBrokenStrokesMessage, String brokenStrokesMessage,MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -189,6 +245,8 @@ public class WordService {
                                     .newBuilder()
                                     .setWord(requestWord)
                                     .setProgressStep(isFlight ? 8 : 1)
+                                    .setUpdateBrokenStrokesMessage(updateBrokenStrokesMessage)
+                                    .setBrokenStrokesMessage(brokenStrokesMessage)
                                     .build();
 
                             myWordStub

@@ -30,44 +30,4 @@ public class WordUsecase {
         this.repositoryFascade = repositoryFascade;
     }
 
-    public LiveData<Status> init(HanziLevel level, int startIdx) {
-        return new LiveData<Status>() {
-            @Override
-            protected void onActive() {
-                Observable
-                        .just(level)
-                        .map(level -> {
-                            String[] words = null;
-                            switch (level) {
-                                case ONE:
-                                    words = StringUtils.splitByWholeSeparator(HanZi.LEVEL1, ",");
-                                    break;
-                                case TWO:
-                                    words = StringUtils.splitByWholeSeparator(HanZi.LEVEL2, ",");
-                                    break;
-                                case THREE:
-                                    words = StringUtils.splitByWholeSeparator(HanZi.LEVEL3, ",");
-                                    break;
-                            }
-                            Log.i(TAG,String.format("map level=%s num=%d",level.name(),words.length));
-                            return words;
-                        })
-                        .flatMapIterable(new Function<String[], Iterable<String>>() {
-                            @Override
-                            public Iterable<String> apply(String[] strings) throws Exception {
-                                return Arrays.asList(strings);
-                            }
-                        })
-                        .skip(startIdx)
-                        .doOnComplete(() -> {
-                            postValue(Status.builder().setCode(Status.Code.END_SUCCESS).setMessage("init word ok").build());
-                        })
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(Schedulers.io()).subscribe(s -> {
-                            repositoryFascade.wordRepository.init(level, s);
-                        }
-                );
-            }
-        };
-    }
 }

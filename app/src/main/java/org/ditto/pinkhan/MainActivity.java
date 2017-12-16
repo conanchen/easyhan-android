@@ -34,6 +34,7 @@ import org.ditto.feature.base.FragmentsPagerAdapter;
 import org.ditto.feature.my.index.FragmentMy;
 import org.ditto.feature.my.index.FragmentMyWords;
 import org.ditto.feature.word.index.FragmentWords;
+import org.ditto.feature.word.index.FragmentWords1000;
 import org.easyhan.common.grpc.HanziLevel;
 
 import java.util.ArrayList;
@@ -190,6 +191,7 @@ public class MainActivity extends BaseFragmentActivity {
 
         mBottombarTab2Fragment0 = fmList.size();
         fmList.put(fmIdx++, FragmentMyWords.create("好好学习"));
+        fmList.put(fmIdx++, FragmentWords1000.create("千字文"));
         mBottombarTab3Fragment0 = fmList.size();
         fmList.put(fmIdx++, FragmentWords.create("二级字表", HanziLevel.TWO));
         mBottombarTab4Fragment0 = fmList.size();

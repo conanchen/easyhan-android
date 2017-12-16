@@ -8,6 +8,7 @@ import com.airbnb.epoxy.EpoxyHolder;
 import com.airbnb.epoxy.EpoxyModelClass;
 import com.airbnb.epoxy.EpoxyModelWithHolder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ditto.feature.my.R;
 import org.ditto.feature.my.R2;
 import org.ditto.feature.base.WordUtils;
@@ -33,6 +34,9 @@ public abstract class ItemMyWordDetailModel extends EpoxyModelWithHolder<ItemMyW
     @EpoxyAttribute
     int memIdx;
 
+    @EpoxyAttribute
+    String memBrokenStrokes;
+
     @EpoxyAttribute(DoNotHash)
     View.OnClickListener clickListener;
 
@@ -42,7 +46,7 @@ public abstract class ItemMyWordDetailModel extends EpoxyModelWithHolder<ItemMyW
         holder.word.setText(word);
         holder.pinyin.setText(pinyin);
         holder.title.setText(WordUtils.getTitleByMemIdx(memIdx));
-//        holder.detail.setText(detaill);
+        holder.detail.setText(StringUtils.isEmpty(memBrokenStrokes)?"我的拆字记忆法我的拆字记忆法我的拆字记忆法我的拆字记忆法我的拆字记忆法":memBrokenStrokes);
         holder.view.setOnClickListener(clickListener);
     }
 

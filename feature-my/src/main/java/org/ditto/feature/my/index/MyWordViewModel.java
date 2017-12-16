@@ -62,6 +62,7 @@ public class MyWordViewModel extends ViewModel {
     private final LiveData<Status> liveUpsertStatus;
     @Inject
     UsecaseFascade usecaseFascade;
+    private String brokenStrokesMessage;
 
 
     @SuppressWarnings("unchecked")
@@ -172,7 +173,7 @@ public class MyWordViewModel extends ViewModel {
                                                 usecaseFascade
                                                         .repositoryFascade
                                                         .wordRepository
-                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word, isFlight,
+                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word, isFlight, true,brokenStrokesMessage,
                                                                 new WordRepository.ProgressCallback() {
                                                                     @Override
                                                                     public void onSucess() {
@@ -264,4 +265,10 @@ public class MyWordViewModel extends ViewModel {
     public void updateMyWordProgress(Boolean isFlight) {
         mutableRequestUpsertMyWord.setValue(isFlight);
     }
+
+    public void setBrokenStrokesMessage(String brokenStrokesMessage) {
+        this.brokenStrokesMessage = brokenStrokesMessage;
+    }
+
+
 }

@@ -41,6 +41,7 @@ import com.bumptech.glide.request.target.Target;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ditto.feature.base.BaseFragment;
+import org.ditto.feature.base.WordUtils;
 import org.ditto.feature.base.di.Injectable;
 import org.ditto.feature.base.glide.GlideApp;
 import org.ditto.feature.word.R;
@@ -58,6 +59,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -79,6 +81,10 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
     @Inject
     WordSlideViewModelFactory viewModelFactory;
     SharedPreferences sharedpreferences;
+
+    @BindView(R2.id.toolbar_title)
+    AppCompatTextView toolbar_title;
+
     @BindView(R2.id.backdrop)
     AppCompatTextView backdrop;
     @BindView(R2.id.bishun)
@@ -135,6 +141,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
         sharedpreferences = this.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         mViewModel = ViewModelProviders.of(this, viewModelFactory).get(WordViewModel.class);
         mViewModel.getLiveWord().observe(this, word -> {
+            showTitle(word);
             showBishun(word);
             showPinyins(word);
             showStrokenames(word);
@@ -147,6 +154,11 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
         mPageNumber = getArguments().getInt(ARG_PAGE);
         mWord = getArguments().getString(ARG_WORD);
         mViewModel.setWord(mWord);
+    }
+
+
+    private void showTitle(Word word) {
+        toolbar_title.setText(String.format("  %s %s ：%s", WordUtils.getTitleByMemIdx(word.memIdx), WordUtils.getDescByMemIdx(word.memIdx), word.word));
     }
 
     private void showRiddles(Word word) {
@@ -314,7 +326,7 @@ public class WordSlideFragment extends BaseFragment implements Injectable {
                              Bundle savedInstanceState) {
         // Inflate the layout containing a title and body text.
         ViewGroup rootView = (ViewGroup) inflater
-                .inflate(R.layout.fragment_word, container, false);
+                .inflate(R.layout.fragment_wordslide, container, false);
         ButterKnife.bind(this, rootView);
 
         setupController();
