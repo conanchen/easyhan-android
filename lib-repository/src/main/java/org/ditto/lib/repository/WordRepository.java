@@ -28,7 +28,6 @@ import org.easyhan.common.grpc.HanziLevel;
 import org.easyhan.common.grpc.StatusResponse;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
-import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordResponse;
 
@@ -293,33 +292,27 @@ public class WordRepository {
 
     }
 
-    public void upsertMyWord(VoAccessToken voAccessToken, String word, Boolean isFlight, Boolean updateBrokenStrokesMessage, String brokenStrokesMessage,ProgressCallback callback) {
+    public void upsertMyWord(VoAccessToken voAccessToken, String word, Boolean isFlight, Boolean updateMemStrokes, String memStrokes, ProgressCallback callback) {
         CallCredentials callCredentials = JcaUtils
                 .getCallCredentials(voAccessToken.accessToken,
                         Long.valueOf(voAccessToken.expiresIn));
-        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word, isFlight,updateBrokenStrokesMessage,brokenStrokesMessage,
+        apigrpcFascade.getWordService().upsertMyWord(callCredentials, word, isFlight, updateMemStrokes, memStrokes,
                 new WordService.MyWordCallback() {
                     @Override
-                    public void onMyWordUpserted(UpsertResponse response) {
+                    public void onMyWordReceived(MyWordResponse response) {
                         Log.i(TAG, String.format("onMyWordUpserted upsertResponse.getMemIdx()=%d", response.getMemIdx()));
                         roomFascade.daoWord.findMaybe(word)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe(word -> {
-                                    if (response.getMemIdx() > 7) {
-                                        word.memIdxIsOverThreshold = 1;
-                                    }
-                                    word.memIdx = response.getMemIdx();
+                                    word.memIdx = response.getMemIdx() > 7 ? -1 : response.getMemIdx();
+                                    word.memLastUpdated = response.getLastUpdated();
+                                    word.memBrokenStrokes = response.getMemStrokes();
                                     roomFascade.daoWord.save(word);
                                     Log.i(TAG, String.format("onMyWordUpserted save word=[%s]", gson.toJson(word)));
                                 });
 
                         callback.onSucess();
-                    }
-
-                    @Override
-                    public void onMyWordReceived(MyWordResponse value) {
-                        //Nothing to do for  upsertMyWord
                     }
 
                     @Override
@@ -385,10 +378,6 @@ public class WordRepository {
                                 gson.toJson(status), gson.toJson(listRequest)));
                     }
 
-                    @Override
-                    public void onMyWordUpserted(UpsertResponse image) {
-                        //Nothing to do here
-                    }
 
                     @Override
                     public void onMyStatsReceived(StatsResponse value) {
@@ -402,10 +391,7 @@ public class WordRepository {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io())
                                 .subscribe(word -> {
-                                    if (response.getMemIdx() > 7) {
-                                        word.memIdxIsOverThreshold = 1;
-                                    }
-                                    word.memIdx = response.getMemIdx();
+                                    word.memIdx = response.getMemIdx() > 7 ? -1 : response.getMemIdx();
                                     word.memLastUpdated = response.getLastUpdated();
                                     word.memBrokenStrokes = response.getMemStrokes();
                                     roomFascade.daoWord.save(word);
@@ -437,10 +423,6 @@ public class WordRepository {
         CallCredentials callCredentials = JcaUtils.getCallCredentials(request.voAccessToken.accessToken,
                 Long.valueOf(request.voAccessToken.expiresIn));
         apigrpcFascade.getWordService().listMyStats(callCredentials, new WordService.MyWordCallback() {
-            @Override
-            public void onMyWordUpserted(UpsertResponse image) {
-                // nothing to do here
-            }
 
             @Override
             public void onMyWordReceived(MyWordResponse value) {

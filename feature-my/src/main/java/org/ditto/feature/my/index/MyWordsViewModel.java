@@ -126,7 +126,7 @@ public class MyWordsViewModel extends ViewModel {
     }
 
     private int getPageSize() {
-        return 493;//8105/18
+        return 100;
     }
 
 

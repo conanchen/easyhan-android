@@ -1,35 +1,24 @@
 package org.ditto.lib.apigrpc;
 
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.auth.oauth2.AccessToken;
-import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.gson.Gson;
 
 import org.ditto.sigin.grpc.QQSigninRequest;
 import org.ditto.sigin.grpc.SigninGrpc;
 import org.ditto.sigin.grpc.SigninResponse;
-import org.easyhan.myword.grpc.MyWordResponse;
-import org.easyhan.myword.grpc.StatsResponse;
-import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.WordGrpc;
-import org.easyhan.word.grpc.WordResponse;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.grpc.CallCredentials;
 import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
-import io.grpc.auth.MoreCallCredentials;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;

@@ -8,19 +8,10 @@ import com.google.gson.Gson;
 import org.easyhan.myprofile.grpc.GetRequest;
 import org.easyhan.myprofile.grpc.MyProfileGrpc;
 import org.easyhan.myprofile.grpc.MyProfileResponse;
-import org.easyhan.myword.grpc.MyWordGrpc;
-import org.easyhan.myword.grpc.MyWordResponse;
-import org.easyhan.myword.grpc.StatsResponse;
-import org.easyhan.myword.grpc.UpsertRequest;
-import org.easyhan.myword.grpc.UpsertResponse;
-import org.easyhan.word.grpc.ListRequest;
-import org.easyhan.word.grpc.WordGrpc;
-import org.easyhan.word.grpc.WordResponse;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.grpc.CallCredentials;
@@ -30,8 +21,6 @@ import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.okhttp.OkHttpChannelBuilder;
-import io.grpc.stub.ClientCallStreamObserver;
-import io.grpc.stub.ClientResponseObserver;
 import io.grpc.stub.StreamObserver;
 
 /**

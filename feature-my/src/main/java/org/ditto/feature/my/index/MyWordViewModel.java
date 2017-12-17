@@ -11,7 +11,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ditto.feature.base.WordUtils;
 import org.ditto.lib.AbsentLiveData;
 import org.ditto.lib.dbroom.index.Word;
 import org.ditto.lib.dbroom.kv.KeyValue;
@@ -62,7 +61,8 @@ public class MyWordViewModel extends ViewModel {
     private final LiveData<Status> liveUpsertStatus;
     @Inject
     UsecaseFascade usecaseFascade;
-    private String brokenStrokesMessage;
+    private String memStrokes;
+    private boolean updateMemStrokes = false;
 
 
     @SuppressWarnings("unchecked")
@@ -78,6 +78,7 @@ public class MyWordViewModel extends ViewModel {
                     protected void onActive() {
                         usecaseFascade.repositoryFascade.wordRepository
                                 .findMyExamWord().singleElement().subscribe(word -> {
+                            updateMemStrokes = false;
                             postValue(word);
                         });
                     }
@@ -173,7 +174,7 @@ public class MyWordViewModel extends ViewModel {
                                                 usecaseFascade
                                                         .repositoryFascade
                                                         .wordRepository
-                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word, isFlight, true,brokenStrokesMessage,
+                                                        .upsertMyWord(voAccessToken, liveExamWord.getValue().word, isFlight, updateMemStrokes, memStrokes,
                                                                 new WordRepository.ProgressCallback() {
                                                                     @Override
                                                                     public void onSucess() {
@@ -266,8 +267,9 @@ public class MyWordViewModel extends ViewModel {
         mutableRequestUpsertMyWord.setValue(isFlight);
     }
 
-    public void setBrokenStrokesMessage(String brokenStrokesMessage) {
-        this.brokenStrokesMessage = brokenStrokesMessage;
+    public void setMemStrokes(String memStrokes) {
+        this.memStrokes = memStrokes;
+        this.updateMemStrokes = true;
     }
 
 

@@ -1,8 +1,5 @@
 package org.ditto.feature.base;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by admin on 2017/11/9.
  */
@@ -20,7 +17,7 @@ public class WordUtils {
     };
 
     public static String getTitleByMemIdx(int memIdx) {
-        if (memIdx < 7) {
+        if (memIdx > -1 && memIdx < 7) {
             return ms[memIdx][0];
         } else {
             return ms[7][0];
@@ -28,7 +25,7 @@ public class WordUtils {
     }
 
     public static String getDescByMemIdx(int memIdx) {
-        if (memIdx < 7) {
+        if (memIdx > -1 && memIdx < 7) {
             return ms[memIdx][1];
         } else {
             return ms[7][1];

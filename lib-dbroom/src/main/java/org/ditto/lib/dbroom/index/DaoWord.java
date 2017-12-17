@@ -29,7 +29,7 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE level = :level ORDER by levelIdx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByIdx(String level);
 
-    @Query("SELECT * FROM Word WHERE level = :level ORDER by memIdxIsOverThreshold ASC, memIdx DESC ")
+    @Query("SELECT * FROM Word WHERE level = :level ORDER by memIdx DESC, levelIdx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedWordsOrderByMemIdx(String level);
 
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
@@ -44,7 +44,7 @@ public interface DaoWord {
     @Query("SELECT * FROM Word ORDER by levelIdx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByIdx();
 
-    @Query("SELECT * FROM Word ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC ")
+    @Query("SELECT * FROM Word ORDER by memIdx DESC, levelIdx ASC ")
     public abstract LivePagedListProvider<Integer, Word> listLivePagedMyWordsOrderByMemIdx();
 
     @Query("SELECT * FROM Word WHERE memIdx <> 0 ORDER BY memLastUpdated DESC LIMIT 1")
@@ -53,11 +53,11 @@ public interface DaoWord {
     @Query("SELECT * FROM Word WHERE word = :word LIMIT 1")
     Word findOne(String word);
 
-    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC LIMIT :size")
+    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdx DESC, levelIdx ASC LIMIT :size")
     Flowable<List<Word>> getLiveMyExamWords(boolean defined, Integer size);
 
 
-    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdxIsOverThreshold ASC, memIdx DESC, levelIdx ASC LIMIT :size")
+    @Query("SELECT * FROM Word WHERE defined = :defined ORDER by memIdx DESC, levelIdx ASC LIMIT :size")
     LiveData<List<Word>> getLiveMySlideWords(boolean defined, Integer size);
 
     @Query("SELECT * FROM Word WHERE levelIdx = :wordIdx LIMIT 1")

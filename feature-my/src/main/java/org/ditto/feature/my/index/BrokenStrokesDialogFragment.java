@@ -4,10 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -36,8 +36,10 @@ public class BrokenStrokesDialogFragment extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_brokenstrokes, null);
+        AppCompatTextView broken_message_title = view.findViewById(R.id.broken_message_title);
+        broken_message_title.setText(String.format("拆字记忆法：%s",word.word));
         AppCompatEditText appCompatEditText = view.findViewById(R.id.broken_message);
-        appCompatEditText.setText(StringUtils.isEmpty(word.memBrokenStrokes)?"":word.memBrokenStrokes);
+        appCompatEditText.setText(StringUtils.isEmpty(word.memBrokenStrokes) ? "" : word.memBrokenStrokes);
         builder.setView(view)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

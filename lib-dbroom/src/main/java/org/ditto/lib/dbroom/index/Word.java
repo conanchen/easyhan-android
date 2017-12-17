@@ -14,8 +14,8 @@ import java.util.List;
  */
 @Entity(indices = {
         @Index(value = {"level", "levelIdx"}),
-        @Index(value = {"level", "memIdxIsOverThreshold", "memIdx", "levelIdx"}),
-        @Index(value = {"memIdxIsOverThreshold", "memIdx", "levelIdx"}),
+        @Index(value = {"level", "memIdx", "levelIdx"}),
+        @Index(value = {"memIdx", "levelIdx"}),
         @Index(value = {"level", "lastUpdated"})
 })
 public class Word {
@@ -46,7 +46,6 @@ public class Word {
     public Boolean defined;
 
     public int memIdx;
-    public int memIdxIsOverThreshold;
     public long memLastUpdated;
     public String memBrokenStrokes;
 
@@ -57,7 +56,7 @@ public class Word {
                  int visitCount, List<Pinyin> pinyins, String radical, String wuxing, String traditional,
                  String wubi, List<String> strokes, List<String> strokenames, Integer strokes_count,
                  String basemean, String detailmean, List<String> terms, List<String> riddles,
-                 String fanyi, String bishun, Boolean defined, int memIdx, int memIdxIsOverThreshold,
+                 String fanyi, String bishun, Boolean defined, int memIdx,
                  long memLastUpdated,String memBrokenStrokes) {
         this.word = word;
         this.level = level;
@@ -81,7 +80,6 @@ public class Word {
         this.bishun = bishun;
         this.defined = defined;
         this.memIdx = memIdx;
-        this.memIdxIsOverThreshold = memIdxIsOverThreshold;
         this.memLastUpdated = memLastUpdated;
         this.memBrokenStrokes = memBrokenStrokes;
     }
@@ -115,7 +113,6 @@ public class Word {
         private Boolean defined;
 
         private int memIdx;
-        private int memIdxIsOverThreshold;
         private long memLastUpdated;
         private String memBrokenStrokes;
 
@@ -139,7 +136,7 @@ public class Word {
             Word wordObj = new Word(word, level, levelIdx, created, lastUpdated, visitCount,
                     pinyins, radical, wuxing, traditional, wubi, strokes, strokenames, strokes_count,
                     basemean, detailmean, terms,
-                    riddles, fanyi, bishun, defined, memIdx, memIdxIsOverThreshold, memLastUpdated,memBrokenStrokes);
+                    riddles, fanyi, bishun, defined, memIdx, memLastUpdated,memBrokenStrokes);
             return wordObj;
         }
 
@@ -250,11 +247,6 @@ public class Word {
 
         public Builder setDefined(Boolean defined) {
             this.defined = defined;
-            return this;
-        }
-
-        public Builder setMemIdxIsOverThreshold(int memIdxIsOverThreshold) {
-            this.memIdxIsOverThreshold = memIdxIsOverThreshold;
             return this;
         }
 

@@ -531,7 +531,7 @@ public class WordExamActivity extends BaseActivity implements BrokenStrokesDialo
     @Override
     public void onBrokenStrokesMessageChanged(String brokenStrokesMessage) {
         broken_button.setText(brokenStrokesMessage);
-        mViewModel.setBrokenStrokesMessage(brokenStrokesMessage);
+        mViewModel.setMemStrokes(brokenStrokesMessage);
     }
 
 

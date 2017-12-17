@@ -10,7 +10,6 @@ import org.easyhan.myword.grpc.MyWordGrpc;
 import org.easyhan.myword.grpc.MyWordResponse;
 import org.easyhan.myword.grpc.StatsResponse;
 import org.easyhan.myword.grpc.UpsertRequest;
-import org.easyhan.myword.grpc.UpsertResponse;
 import org.easyhan.word.grpc.GetRequest;
 import org.easyhan.word.grpc.ListRequest;
 import org.easyhan.word.grpc.UpdateRequest;
@@ -178,7 +177,7 @@ public class WordService {
                         if (value.getStatus() == HealthCheckResponse.ServingStatus.SERVING) {
                             Log.i(TAG, String.format("download healthStub.check onNext getRequest = [%s]", gson.toJson(getRequest)));
                             wordStub.withWaitForReady().get(getRequest,
-                                    new StreamObserver<WordResponse>( ) {
+                                    new StreamObserver<WordResponse>() {
                                         @Override
                                         public void onNext(WordResponse wordResponse) {
                                             Log.i(TAG, String.format("download  onNext wordResponse = [%s]", gson.toJson(wordResponse)));
@@ -223,7 +222,7 @@ public class WordService {
                 .build();
     }
 
-    public void upsertMyWord(CallCredentials callCredentials, String requestWord, Boolean isFlight, Boolean updateBrokenStrokesMessage, String brokenStrokesMessage,MyWordCallback callback) {
+    public void upsertMyWord(CallCredentials callCredentials, String requestWord, Boolean isFlight, Boolean updateMemStrokes, String memStrokes, MyWordCallback callback) {
         callback.onApiReady();
         ManagedChannel channel = getManagedChannel();
 
@@ -245,18 +244,18 @@ public class WordService {
                                     .newBuilder()
                                     .setWord(requestWord)
                                     .setProgressStep(isFlight ? 8 : 1)
-                                    .setUpdateMemStrokes(updateBrokenStrokesMessage)
-                                    .setMemStrokes(brokenStrokesMessage)
+                                    .setUpdateMemStrokes(updateMemStrokes)
+                                    .setMemStrokes(!updateMemStrokes || memStrokes == null ? "" : memStrokes == null ? "" : memStrokes)
                                     .build();
 
                             myWordStub
                                     .withWaitForReady()
                                     .withCallCredentials(callCredentials)
-                                    .upsert(upsertRequest, new StreamObserver<UpsertResponse>() {
+                                    .upsert(upsertRequest, new StreamObserver<MyWordResponse>() {
                                         @Override
-                                        public void onNext(UpsertResponse value) {
+                                        public void onNext(MyWordResponse value) {
                                             Log.i(TAG, String.format("upsertMyWord upsert.onNext UpsertResponse=%s", gson.toJson(value)));
-                                            callback.onMyWordUpserted(value);
+                                            callback.onMyWordReceived(value);
                                         }
 
                                         @Override
@@ -416,7 +415,6 @@ public class WordService {
     }
 
     public interface MyWordCallback extends CommonApiCallback {
-        void onMyWordUpserted(UpsertResponse image);
 
         void onMyWordReceived(MyWordResponse value);
 
